@@ -1,2 +1,2 @@
-class placeholder_gui():
-    pass
+class placeholder():
+  pass
