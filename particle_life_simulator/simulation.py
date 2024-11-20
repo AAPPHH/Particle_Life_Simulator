@@ -1,0 +1,2 @@
+class simulation():
+    pass
