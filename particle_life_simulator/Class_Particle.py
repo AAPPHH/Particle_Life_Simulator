@@ -1,49 +1,50 @@
+import numpy as np
+
+# Particle class
 class Particle:
     def __init__(self, position, velocity, particle_type, color, interaction_strength, influence_radius, friction, random_motion):
         """
-        Initialisiert die Attribute des Partikels mit den gegebenen Parametern.
-        Alle Attribute sind Platzhalter.
+        Initialize the attributes of the particle with the given parameters.
         """
-        self.position = position  # Vector: Position des Partikels
-        self.velocity = velocity  # Vector: Geschwindigkeit des Partikels
-        self.type = particle_type  # str oder int: Typ des Partikels
-        self.color = color  # RGB-Tuple: Farbe des Partikels
-        self.interaction_strength = interaction_strength  # float: Stärke der Interaktionen
-        self.influence_radius = influence_radius  # float: Einflussradius
-        self.friction = friction  # float: Reibung
-        self.random_motion = random_motion  # float: Zufallsbewegung
+        self.position = np.array(position, dtype=float)  # Position of the particle
+        self.velocity = np.array(velocity, dtype=float)  # Velocity of the particle
+        self.type = particle_type  # Type of the particle
+        self.color = color  # Color of the particle
+        self.interaction_strength = interaction_strength  # Strength of interactions
+        self.influence_radius = influence_radius  # Influence radius
+        self.friction = friction  # Friction coefficient
+        self.random_motion = random_motion  # Random motion intensity
 
     def update_position(self, delta_time):
         """
-        Aktualisiert die Position des Partikels basierend auf der Geschwindigkeit und der Zeitdifferenz.
-        Placeholder für die Logik.
+        Update the particle's position based on its velocity and the time difference.
         """
-        pass
+        self.position += self.velocity * delta_time
 
     def apply_interaction(self, other_particle):
         """
-        Berechnet die Kraft zwischen diesem Partikel und einem anderen und passt die Geschwindigkeit an.
-        Placeholder für die Logik.
+        Calculate the force between this particle and another and adjust the velocity.
+        Placeholder for the logic.
         """
-        pass
+        pass  # Interaction logic can be implemented here
 
     def apply_friction(self):
         """
-        Reduziert die Geschwindigkeit basierend auf der Reibung.
-        Placeholder für die Logik.
+        Reduce the velocity based on friction.
         """
-        pass
+        self.velocity *= (1 - self.friction)
 
     def randomize_movement(self):
         """
-        Fügt der Geschwindigkeit zufällige Bewegungen hinzu, um natürliche Zufälligkeit zu simulieren.
-        Placeholder für die Logik.
+        Add random movement to the velocity to simulate natural randomness.
         """
-        pass
+        random_velocity = (np.random.rand(2) - 0.5) * self.random_motion
+        self.velocity += random_velocity
 
+    @staticmethod
     def resolve_collisions(particles):
         """
-        Überprüft, ob sich mehr als zwei Partikel an derselben Position befinden,
-        und verschiebt sie, falls notwendig.
+        Check if more than two particles are at the same position and adjust them if necessary.
+        Placeholder for the collision resolution logic.
         """
         pass
