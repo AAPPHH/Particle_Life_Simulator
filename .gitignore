@@ -42,3 +42,6 @@ coverage.xml
 
 # Eclipse
 .settings
+
+# Ignore tests directory
+tests/
