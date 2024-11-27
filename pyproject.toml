@@ -13,7 +13,7 @@ authors = [
     { name = "Aleem Hussain", email = "aleem.hussain@study.hs-duesseldorf.de" },
      {name="Zayd Badla ",email="zayd.badla@study.hs-duesseldorf.de"},
      {name="Fouad Ghazal ",email="fouad.ghazal@study.hs-duesseldorf.de"},
-     {name="Abdelali Oumachi", email = "abdelali.oumachi@gmail.com"},
+     {name="Abdelali Oumachi", email = "abdelali.oumachi@study.hs-duesseldorf.de"},
 ]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
