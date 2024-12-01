@@ -1,76 +1,22 @@
-import numpy as np
-import pygame
-class Gui_Manager:
-    def __init__(self, simulation, width=800, height=600, scale=8):
-        """
-        Initialize the GUI manager with the simulation instance.
-        """
-        self.simulation = simulation
-        self.width = width
-        self.height = height
-        self.scale = scale
-        self.array_shape = (height // scale, width // scale)
-        self.bg_color = (30, 30, 30)
-        self.screen = None
-        self.clock = pygame.time.Clock()
+import dearpygui.dearpygui as dpg
 
-    def initialize(self):
-        """
-        Initialize Pygame and create the window.
-        """
-        pygame.init()
-        self.screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption("Numpy Array Visualization")
+dpg.create_context()
 
-    def render(self):
-        """
-        Render the simulation onto the screen.
-        """
-        array = np.zeros(self.array_shape, dtype=np.uint8)
+with dpg.window(label="Window a la Abdelali"):
 
-        for particle in self.simulation.particles:
-            x, y = int(particle.position[0]), int(particle.position[1])
-            if 0 <= x < self.array_shape[1] and 0 <= y < self.array_shape[0]:
-                array[y, x] = 255
+    with dpg.drawlist(width=800, height=800):
 
-        self.screen.fill(self.bg_color)
+        # !!!
+        dpg.draw_circle(center=(200, 200), radius=2, color=(255, 255, 255, 255), fill=(255, 255, 255, 255))
+        # !!!
+        
+        dpg.draw_line((10, 10), (100, 100), color=(255, 0, 0, 255), thickness=1)
+        dpg.draw_text((0, 0), "Cooler Text", color=(250, 250, 250, 255), size=15)
+        dpg.draw_arrow((50, 70), (100, 65), color=(0, 200, 255), thickness=1, size=10)
 
-        for y in range(self.array_shape[0]):
-            for x in range(self.array_shape[1]):
-                color_value = array[y, x]
-                color = (color_value, color_value, color_value)
-                rect = pygame.Rect(x * self.scale, y * self.scale, self.scale, self.scale)
-                self.screen.fill(color, rect)
 
-        for particle in self.simulation.particles:
-            x, y = particle.position * self.scale
-            rect = pygame.Rect(x, y, self.scale, self.scale)
-            pygame.draw.rect(self.screen, particle.color, rect)
-
-        pygame.display.flip()
-        self.clock.tick(60)
-
-    def handle_events(self):
-        """
-        Handle Pygame events such as quitting the application.
-        """
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.simulation.is_running = False
-                return False
-        return True
-
-    def run(self):
-        """
-        Main loop of the GUI manager.
-        """
-        self.initialize()
-        self.simulation.start()
-
-        running = True
-        while running and self.simulation.is_running:
-            running = self.handle_events()
-            self.simulation.update()
-            self.render()
-
-        pygame.quit()
+dpg.create_viewport(title="Eeeeeeeewa", width=800, height=600)
+dpg.setup_dearpygui()
+dpg.show_viewport()
+dpg.start_dearpygui()
+dpg.destroy_context()
