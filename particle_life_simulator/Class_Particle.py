@@ -1,50 +1,152 @@
-import numpy as np
+import random
+import math
 
-# Particle class
-class Particle:
-    def __init__(self, position, velocity, particle_type, color, interaction_strength, influence_radius, friction, random_motion):
+class CreateParticle:
+    def __init__(self, num_particles: int = 1000, x_max: int = 1920, y_max: int = 1080,
+                 speed_range: tuple = (-2, 2), radius: int = 5):
         """
-        Initialize the attributes of the particle with the given parameters.
-        """
-        self.position = np.array(position, dtype=float)  # Position of the particle
-        self.velocity = np.array(velocity, dtype=float)  # Velocity of the particle
-        self.type = particle_type  # Type of the particle
-        self.color = color  # Color of the particle
-        self.interaction_strength = interaction_strength  # Strength of interactions
-        self.influence_radius = influence_radius  # Influence radius
-        self.friction = friction  # Friction coefficient
-        self.random_motion = random_motion  # Random motion intensity
+        Initializes the CreateParticle class with the given parameters.
 
-    def update_position(self, delta_time):
+        Args:
+            num_particles (int): Number of particles to generate.
+            x_max (int): Maximum x-coordinate for the particles.
+            y_max (int): Maximum y-coordinate for the particles.
+            speed_range (tuple): Range of initial speeds for the particles.
+            radius (int): Radius of each particle.
         """
-        Update the particle's position based on its velocity and the time difference.
-        """
-        self.position += self.velocity * delta_time
+        self.num_particles = num_particles
+        self.x_max = x_max
+        self.y_max = y_max
+        self.speed_range = speed_range
+        self.particles = []
+        self.radius = radius
 
-    def apply_interaction(self, other_particle):
+    def generate_particles(self) -> None:
         """
-        Calculate the force between this particle and another and adjust the velocity.
-        Placeholder for the logic.
+        Generates particles with random positions and velocities, ensuring they don't overlap initially.
         """
-        pass  # Interaction logic can be implemented here
+        self.particles = []
+        while len(self.particles) < self.num_particles:
+            x = random.randint(self.radius, self.x_max - self.radius)
+            y = random.randint(self.radius, self.y_max - self.radius)
+            vx = random.uniform(*self.speed_range)
+            vy = random.uniform(*self.speed_range)
 
-    def apply_friction(self):
-        """
-        Reduce the velocity based on friction.
-        """
-        self.velocity *= (1 - self.friction)
+            if all(self._distance(x, y, px, py) >= 2 * self.radius for px, py, _, _ in self.particles):
+                self.particles.append((x, y, vx, vy))
 
-    def randomize_movement(self):
+    def update_positions(self) -> None:
         """
-        Add random movement to the velocity to simulate natural randomness.
+        Updates the positions of all particles, handles collisions and boundary conditions.
         """
-        random_velocity = (np.random.rand(2) - 0.5) * self.random_motion
-        self.velocity += random_velocity
+        updated_particles = []
+
+        for i, (x1, y1, vx1, vy1) in enumerate(self.particles):
+            x1 += vx1
+            y1 += vy1
+
+            # Handle horizontal boundary conditions (wrap around)
+            if x1 - self.radius < 0:
+                x1 = self.x_max - self.radius
+
+            if x1 + self.radius > self.x_max:
+                x1 = self.radius
+
+            # Handle vertical boundary conditions (wrap around)
+            if y1 - self.radius < 0:
+                y1 = self.y_max - self.radius
+
+            if y1 + self.radius > self.y_max:
+                y1 = self.radius
+
+            # Check for collisions with other particles
+            for j, (x2, y2, vx2, vy2) in enumerate(self.particles):
+                if i != j and self._distance(x1, y1, x2, y2) < 2 * self.radius:
+                    vx1, vy1, vx2, vy2 = self._handle_collision(x1, y1, vx1, vy1, x2, y2, vx2, vy2)
+
+                    # Resolve overlap
+                    overlap = 2 * self.radius - self._distance(x1, y1, x2, y2)
+                    if overlap > 0:
+                        distance = self._distance(x1, y1, x2, y2)
+                        if distance == 0:
+                            distance = 0.1
+                        separation_vector_x = (x1 - x2) / distance
+                        separation_vector_y = (y1 - y2) / distance
+                        x1 += separation_vector_x * overlap / 2
+                        y1 += separation_vector_y * overlap / 2
+                        x2 -= separation_vector_x * overlap / 2
+                        y2 -= separation_vector_y * overlap / 2
+
+                    self.particles[j] = (x2, y2, vx2, vy2)
+
+            updated_particles.append((x1, y1, vx1, vy1))
+
+        self.particles = updated_particles
+
+    def get_positions(self) -> list:
+        """
+        Retrieves the current positions of all particles.
+
+        Returns:
+            list: A list of tuples containing the x and y positions of each particle.
+        """
+        return [(x, y) for x, y, _, _ in self.particles]
+
+    def _handle_collision(self, x1: float, y1: float, vx1: float, vy1: float,
+                          x2: float, y2: float, vx2: float, vy2: float) -> tuple:
+        """
+        Calculates new velocities after an elastic collision between two particles.
+
+        Args:
+            x1 (float): X-coordinate of the first particle.
+            y1 (float): Y-coordinate of the first particle.
+            vx1 (float): Velocity in x-direction of the first particle.
+            vy1 (float): Velocity in y-direction of the first particle.
+            x2 (float): X-coordinate of the second particle.
+            y2 (float): Y-coordinate of the second particle.
+            vx2 (float): Velocity in x-direction of the second particle.
+            vy2 (float): Velocity in y-direction of the second particle.
+
+        Returns:
+            tuple: Updated velocities (vx1, vy1, vx2, vy2) after collision.
+        """
+        dx = x2 - x1
+        dy = y2 - y1
+        distance = math.hypot(dx, dy)
+
+        if distance == 0:
+            return vx1, vy1, vx2, vy2
+
+        nx = dx / distance
+        ny = dy / distance
+
+        dvx = vx1 - vx2
+        dvy = vy1 - vy2
+
+        dot_product = dvx * nx + dvy * ny
+
+        if dot_product > 0:
+            return vx1, vy1, vx2, vy2
+
+        vx1 -= dot_product * nx
+        vy1 -= dot_product * ny
+        vx2 += dot_product * nx
+        vy2 += dot_product * ny
+
+        return vx1, vy1, vx2, vy2
 
     @staticmethod
-    def resolve_collisions(particles):
+    def _distance(x1: float, y1: float, x2: float, y2: float) -> float:
         """
-        Check if more than two particles are at the same position and adjust them if necessary.
-        Placeholder for the collision resolution logic.
+        Calculates the Euclidean distance between two points.
+
+        Args:
+            x1 (float): X-coordinate of the first point.
+            y1 (float): Y-coordinate of the first point.
+            x2 (float): X-coordinate of the second point.
+            y2 (float): Y-coordinate of the second point.
+
+        Returns:
+            float: The distance between the two points.
         """
-        pass
+        return math.hypot(x2 - x1, y2 - y1)

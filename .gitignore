@@ -43,5 +43,5 @@ coverage.xml
 # Eclipse
 .settings
 
-# Ignore tests directory
-tests/
+# Personal sandbox dictionary
+sandbox/
