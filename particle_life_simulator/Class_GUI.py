@@ -51,9 +51,11 @@ class GUI:
         Draws the particles in the drawing area.
 
         Args:
-            particles (list): A list of tuples containing the x and y positions of each particle.
+            particles (list): A list of dictionaries containing the x and y positions of each particle.
         """
-        for x, y in particles:
+        for particle in particles:
+            x = particle['x']
+            y = particle['y']
             adjusted_y = self.window_height - y
             dpg.draw_circle((x, adjusted_y),
                             radius=self.particle_size / 2,
