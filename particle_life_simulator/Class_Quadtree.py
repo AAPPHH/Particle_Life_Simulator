@@ -1,5 +1,5 @@
 class Quadtree:
-    def __init__(self, x_min, y_min, x_max, y_max, capacity=100):
+    def __init__(self, x_min, y_min, x_max, y_max, capacity=4):
         self.x_min = x_min
         self.y_min = y_min
         self.x_max = x_max
