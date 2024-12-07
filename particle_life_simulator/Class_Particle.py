@@ -1,7 +1,7 @@
 import random
 import math
 
-from Class_Quadtree import Quadtree
+from cython_quadtree import Quadtree
 
 class CreateParticle:
     def __init__(self, num_particles: int = 1000, x_max: int = 1920, y_max: int = 1080,
@@ -13,6 +13,7 @@ class CreateParticle:
         self.particles = []
         self.radius = radius
         self.quadtree = Quadtree(0, 0, x_max, y_max)
+        self.update_counter = 0
 
     def generate_particles(self) -> None:
         self.particles = []
