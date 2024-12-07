@@ -32,74 +32,108 @@ class CreateParticle:
             vx = random.uniform(*self.speed_range)
             vy = random.uniform(*self.speed_range)
 
-            # Check overlap
-            if all(self._distance(x, y, p['x'], p['y']) >= 2 * self.radius for p in self.particles):
-                self.particles.append({'x': x, 'y': y, 'vx': vx, 'vy': vy})
+            if all(self._distance(x, y, px, py) >= 2 * self.radius for px, py, _, _ in self.particles):
+                self.particles.append((x, y, vx, vy))
 
     def update_positions(self) -> None:
         """
         Updates the positions of all particles, handles collisions and boundary conditions.
         """
-        for particle in self.particles:
-            particle['x'] += particle['vx']
-            particle['y'] += particle['vy']
+        updated_particles = []
 
-            # Handle boundaries
-            if particle['x'] - self.radius < 0:
-                particle['x'] = self.x_max - self.radius
-            elif particle['x'] + self.radius > self.x_max:
-                particle['x'] = self.radius
+        for i, (x1, y1, vx1, vy1) in enumerate(self.particles):
+            x1 += vx1
+            y1 += vy1
 
-            if particle['y'] - self.radius < 0:
-                particle['y'] = self.y_max - self.radius
-            elif particle['y'] + self.radius > self.y_max:
-                particle['y'] = self.radius
+            # Handle horizontal boundary conditions (wrap around)
+            if x1 - self.radius < 0:
+                x1 = self.x_max - self.radius
 
-            # Check collisions
-            for other in self.particles:
-                if particle is not other and self._distance(particle['x'], particle['y'], other['x'], other['y']) < 2 * self.radius:
-                    self._handle_collision(particle, other)
+            if x1 + self.radius > self.x_max:
+                x1 = self.radius
+
+            # Handle vertical boundary conditions (wrap around)
+            if y1 - self.radius < 0:
+                y1 = self.y_max - self.radius
+
+            if y1 + self.radius > self.y_max:
+                y1 = self.radius
+
+            # Check for collisions with other particles
+            for j, (x2, y2, vx2, vy2) in enumerate(self.particles):
+                if i != j and self._distance(x1, y1, x2, y2) < 2 * self.radius:
+                    vx1, vy1, vx2, vy2 = self._handle_collision(x1, y1, vx1, vy1, x2, y2, vx2, vy2)
+
+                    # Resolve overlap
+                    overlap = 2 * self.radius - self._distance(x1, y1, x2, y2)
+                    if overlap > 0:
+                        distance = self._distance(x1, y1, x2, y2)
+                        if distance == 0:
+                            distance = 0.1
+                        separation_vector_x = (x1 - x2) / distance
+                        separation_vector_y = (y1 - y2) / distance
+                        x1 += separation_vector_x * overlap / 2
+                        y1 += separation_vector_y * overlap / 2
+                        x2 -= separation_vector_x * overlap / 2
+                        y2 -= separation_vector_y * overlap / 2
+
+                    self.particles[j] = (x2, y2, vx2, vy2)
+
+            updated_particles.append((x1, y1, vx1, vy1))
+
+        self.particles = updated_particles
 
     def get_positions(self) -> list:
         """
         Retrieves the current positions of all particles.
 
         Returns:
-            list: A list of dictionaries containing the x and y positions of each particle.
+            list: A list of tuples containing the x and y positions of each particle.
         """
-        return [{'x': p['x'], 'y': p['y']} for p in self.particles]
+        return [(x, y) for x, y, _, _ in self.particles]
 
-    def _handle_collision(self, p1: dict, p2: dict) -> None:
+    def _handle_collision(self, x1: float, y1: float, vx1: float, vy1: float,
+                          x2: float, y2: float, vx2: float, vy2: float) -> tuple:
         """
-        Handles elastic collision between two particles.
+        Calculates new velocities after an elastic collision between two particles.
 
         Args:
-            p1 (dict): First particle.
-            p2 (dict): Second particle.
+            x1 (float): X-coordinate of the first particle.
+            y1 (float): Y-coordinate of the first particle.
+            vx1 (float): Velocity in x-direction of the first particle.
+            vy1 (float): Velocity in y-direction of the first particle.
+            x2 (float): X-coordinate of the second particle.
+            y2 (float): Y-coordinate of the second particle.
+            vx2 (float): Velocity in x-direction of the second particle.
+            vy2 (float): Velocity in y-direction of the second particle.
+
+        Returns:
+            tuple: Updated velocities (vx1, vy1, vx2, vy2) after collision.
         """
-        dx = p2['x'] - p1['x']
-        dy = p2['y'] - p1['y']
+        dx = x2 - x1
+        dy = y2 - y1
         distance = math.hypot(dx, dy)
 
         if distance == 0:
-            return
+            return vx1, vy1, vx2, vy2
 
         nx = dx / distance
         ny = dy / distance
 
-        dvx = p1['vx'] - p2['vx']
-        dvy = p1['vy'] - p2['vy']
+        dvx = vx1 - vx2
+        dvy = vy1 - vy2
 
         dot_product = dvx * nx + dvy * ny
 
         if dot_product > 0:
-            return
+            return vx1, vy1, vx2, vy2
 
-        # Adjust velocities
-        p1['vx'] -= dot_product * nx
-        p1['vy'] -= dot_product * ny
-        p2['vx'] += dot_product * nx
-        p2['vy'] += dot_product * ny
+        vx1 -= dot_product * nx
+        vy1 -= dot_product * ny
+        vx2 += dot_product * nx
+        vy2 += dot_product * ny
+
+        return vx1, vy1, vx2, vy2
 
     @staticmethod
     def _distance(x1: float, y1: float, x2: float, y2: float) -> float:
