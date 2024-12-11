@@ -14,7 +14,7 @@ dpg.create_context()
 
 with dpg.window(label="Window a la Abdelali", tag="main_window"):
 
-    with dpg.drawlist(width=screen_width, height=screen_height):
+    with dpg.drawlist(width=16000, height=9000):
 
         # !!!
         dpg.draw_circle(center=(200, 200), radius=2, color=(255, 0, 0, 255), fill=(255, 255, 255, 255))
