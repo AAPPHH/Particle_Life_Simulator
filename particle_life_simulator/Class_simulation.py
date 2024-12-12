@@ -4,17 +4,19 @@ from Class_Particle import CreateParticle
 from Class_GUI import GUI
 
 class Simulation:
-    def __init__(self, particle_creator: CreateParticle, gui: GUI):
+    def __init__(self, particle_creator: CreateParticle, gui: GUI, max_frames: int = 600):
         """
-        Initializes the Simulation with a particle creator and a GUI.
+        Initializes the Simulation with a particle creator, GUI, and a maximum frame count.
 
         Args:
             particle_creator (CreateParticle): An instance to manage particles.
             gui (GUI): An instance to handle the graphical interface.
+            max_frames (int): Maximum number of frames for the simulation.
         """
         self.particle_creator = particle_creator
         self.gui = gui
         self.running = True
+        self.max_frames = max_frames  # Maximum frames to run
 
     def start(self) -> None:
         """
@@ -22,19 +24,16 @@ class Simulation:
         """
         self.gui.setup_window()
 
-        last_time = time.time()  # Start time for FPS calculation
-        frame_count = 0          # Counter for rendered frames
+        frame_count = 0
 
         while dpg.is_dearpygui_running() and self.running:
-            current_time = time.time()
             frame_count += 1
 
-            if current_time - last_time >= 1.0:
-                elapsed_time = current_time - last_time
-                fps = frame_count / elapsed_time
-                self.gui.update_fps(fps)
-                frame_count = 0
-                last_time = current_time
+            # Stop simulation after max_frames
+            if frame_count >= self.max_frames:
+                print("Simulation beendet: Frame-Limit erreicht.")
+                self.running = False
+                break
 
             self.update()
             dpg.render_dearpygui_frame()
