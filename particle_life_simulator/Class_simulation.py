@@ -2,6 +2,8 @@ import time
 import dearpygui.dearpygui as dpg
 from Class_Particle import CreateParticle
 from Class_GUI import GUI
+from concurrent.futures import ProcessPoolExecutor
+import multiprocessing
 
 class Simulation:
     def __init__(self, particle_creator: CreateParticle, gui: GUI):
@@ -15,6 +17,7 @@ class Simulation:
         self.particle_creator = particle_creator
         self.gui = gui
         self.running = True
+        self.num_processes = multiprocessing.cpu_count()  # Use all available cores
 
     def start(self) -> None:
         """
@@ -46,7 +49,33 @@ class Simulation:
         """
         Updates the particle positions and redraws them.
         """
-        self.particle_creator.update_positions()
         positions = self.particle_creator.get_positions()
-        self.gui.clear_drawlist()
-        self.gui.draw_particles(positions)
+        self.run_parallel_updates(positions)
+        self.gui.draw_particles(self.particle_creator.get_positions())
+
+    def run_parallel_updates(self, positions):
+        """
+        Parallelize the position updates and interactions.
+        """
+        chunk_size = len(positions) // self.num_processes
+        position_chunks = [
+            positions[i:i + chunk_size]
+            for i in range(0, len(positions), chunk_size)
+        ]
+
+        with ProcessPoolExecutor(max_workers=self.num_processes) as executor:
+            results = list(executor.map(self.update_position_chunk, position_chunks))
+
+        # Flatten the results back into a single list
+        updated_positions = [pos for chunk in results for pos in chunk]
+        self.particle_creator.set_positions(updated_positions)
+
+    def update_position_chunk(self, position_chunk):
+        """
+        Update a chunk of positions, handling boundary logic or interactions if necessary.
+        """
+        updated_positions = []
+        for x, y in position_chunk:
+            x, y = self.particle_creator._handle_boundaries(x, y)
+            updated_positions.append((x, y))
+        return updated_positions
