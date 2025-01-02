@@ -38,7 +38,6 @@ class Simulation:
 
             self.update()
             dpg.render_dearpygui_frame()
-            time.sleep(0.016)
 
         self.gui.cleanup()
 
