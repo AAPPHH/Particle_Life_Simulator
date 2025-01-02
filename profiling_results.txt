@@ -1,0 +1,81 @@
+         243505410 function calls (183287832 primitive calls) in 96.041 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000   96.041   96.041 profiler.py:8(main)
+        1    0.037    0.037   95.789   95.789 Class_simulation.py:19(start)
+     4198    0.008    0.000   92.272    0.022 Class_simulation.py:44(update)
+     4198    7.382    0.002   79.000    0.019 Class_Particle.py:30(update_positions)
+45960348/4198000   47.668    0.000   56.192    0.000 Class_Quadtree.py:38(query)
+     4198    1.143    0.000   12.661    0.003 Class_GUI.py:49(draw_particles)
+  4198000    1.699    0.000   11.519    0.000 dearpygui.py:8150(draw_circle)
+  4198000    9.500    0.000    9.500    0.000 {built-in method dearpygui._dearpygui.draw_circle}
+     4199    0.600    0.000    8.595    0.002 Class_Particle.py:65(update_quadtree)
+22654230/4199000    7.054    0.000    7.993    0.000 Class_Quadtree.py:11(insert)
+ 45960348    4.703    0.000    4.703    0.000 Class_Quadtree.py:54(intersects)
+ 16711406    2.346    0.000    3.519    0.000 Class_Particle.py:110(_distance)
+     4198    0.004    0.000    3.361    0.001 dearpygui.py:9256(render_dearpygui_frame)
+     4198    3.358    0.001    3.358    0.001 {built-in method dearpygui._dearpygui.render_dearpygui_frame}
+ 41762348    3.325    0.000    3.325    0.000 {method 'extend' of 'list' objects}
+  5274746    1.679    0.000    2.048    0.000 Class_Particle.py:83(_handle_collision)
+ 21986152    1.542    0.000    1.542    0.000 {built-in method math.hypot}
+ 14034611    1.254    0.000    1.254    0.000 {method 'append' of 'list' objects}
+  4198000    0.950    0.000    0.950    0.000 Class_Particle.py:70(_handle_boundaries)
+ 11537238    0.516    0.000    0.516    0.000 {built-in method builtins.len}
+     4198    0.007    0.000    0.499    0.000 Class_GUI.py:43(clear_drawlist)
+     4198    0.006    0.000    0.492    0.000 dearpygui.py:8021(delete_item)
+     4198    0.486    0.000    0.486    0.000 {built-in method dearpygui._dearpygui.delete_item}
+  4198005    0.319    0.000    0.319    0.000 {method 'keys' of 'dict' objects}
+        1    0.001    0.001    0.252    0.252 Class_Particle.py:18(generate_particles)
+     1078    0.037    0.000    0.244    0.000 {built-in method builtins.all}
+   526178    0.104    0.000    0.207    0.000 Class_Particle.py:26(<genexpr>)
+        1    0.000    0.000    0.109    0.109 Class_GUI.py:17(setup_window)
+        1    0.000    0.000    0.108    0.108 dearpygui.py:9645(show_viewport)
+        1    0.108    0.108    0.108    0.108 {built-in method dearpygui._dearpygui.show_viewport}
+     4198    0.103    0.000    0.103    0.000 Class_Particle.py:114(get_positions)
+    44586    0.065    0.000    0.084    0.000 Class_Quadtree.py:28(subdivide)
+   182544    0.020    0.000    0.020    0.000 Class_Quadtree.py:2(__init__)
+     4199    0.003    0.000    0.004    0.000 dearpygui.py:8958(is_dearpygui_running)
+     2156    0.000    0.000    0.003    0.000 random.py:336(randint)
+     2156    0.001    0.000    0.003    0.000 random.py:295(randrange)
+     4199    0.003    0.000    0.003    0.000 {built-in method time.time}
+       94    0.001    0.000    0.002    0.000 Class_GUI.py:34(update_fps)
+       94    0.000    0.000    0.002    0.000 dearpygui.py:9538(set_value)
+       94    0.002    0.000    0.002    0.000 {built-in method dearpygui._dearpygui.set_value}
+     4199    0.001    0.000    0.001    0.000 {built-in method dearpygui._dearpygui.is_dearpygui_running}
+     2156    0.001    0.000    0.001    0.000 random.py:245(_randbelow_with_getrandbits)
+        1    0.000    0.000    0.001    0.001 Class_GUI.py:63(cleanup)
+        1    0.000    0.000    0.001    0.001 dearpygui.py:8034(destroy_context)
+        1    0.001    0.001    0.001    0.001 {built-in method dearpygui._dearpygui.destroy_context}
+     2156    0.000    0.000    0.001    0.000 random.py:498(uniform)
+     6468    0.000    0.000    0.000    0.000 {built-in method _operator.index}
+     3283    0.000    0.000    0.000    0.000 {method 'getrandbits' of '_random.Random' objects}
+     2156    0.000    0.000    0.000    0.000 {method 'random' of '_random.Random' objects}
+     2156    0.000    0.000    0.000    0.000 {method 'bit_length' of 'int' objects}
+        1    0.000    0.000    0.000    0.000 dearpygui.py:7894(create_context)
+        1    0.000    0.000    0.000    0.000 {built-in method dearpygui._dearpygui.create_context}
+        4    0.000    0.000    0.000    0.000 {built-in method builtins.next}
+        2    0.000    0.000    0.000    0.000 contextlib.py:136(__enter__)
+        2    0.000    0.000    0.000    0.000 dearpygui.py:2923(window)
+        1    0.000    0.000    0.000    0.000 dearpygui.py:9586(setup_dearpygui)
+        1    0.000    0.000    0.000    0.000 {built-in method dearpygui._dearpygui.setup_dearpygui}
+        1    0.000    0.000    0.000    0.000 {built-in method dearpygui._dearpygui.add_window}
+        2    0.000    0.000    0.000    0.000 dearpygui.py:1827(drawlist)
+        1    0.000    0.000    0.000    0.000 {built-in method dearpygui._dearpygui.add_drawlist}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 dearpygui.py:7384(add_text)
+        1    0.000    0.000    0.000    0.000 {built-in method dearpygui._dearpygui.add_text}
+        2    0.000    0.000    0.000    0.000 contextlib.py:303(helper)
+        1    0.000    0.000    0.000    0.000 dearpygui.py:7994(create_viewport)
+        2    0.000    0.000    0.000    0.000 contextlib.py:108(__init__)
+        1    0.000    0.000    0.000    0.000 {built-in method dearpygui._dearpygui.create_viewport}
+        2    0.000    0.000    0.000    0.000 contextlib.py:145(__exit__)
+        2    0.000    0.000    0.000    0.000 {built-in method dearpygui._dearpygui.push_container_stack}
+        1    0.000    0.000    0.000    0.000 Class_Particle.py:7(__init__)
+        2    0.000    0.000    0.000    0.000 {built-in method builtins.getattr}
+        1    0.000    0.000    0.000    0.000 Class_simulation.py:7(__init__)
+        2    0.000    0.000    0.000    0.000 {built-in method dearpygui._dearpygui.pop_container_stack}
+        1    0.000    0.000    0.000    0.000 Class_GUI.py:4(__init__)
+
+
