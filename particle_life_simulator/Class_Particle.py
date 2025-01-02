@@ -1,7 +1,21 @@
 import random
 import math
+import os
+import sys
+import subprocess
 
-from Class_Quadtree import Quadtree
+try:
+    from quadtree.cython_quadtree import Quadtree
+except ImportError:
+    import os, sys, subprocess
+    this_dir = os.path.dirname(__file__)
+    setup_path = os.path.join(this_dir, "quadtree", "setup.py")
+    ret = subprocess.call([
+        sys.executable, setup_path,
+        "build_ext", "--inplace"
+    ], cwd=os.path.join(this_dir, "quadtree"))  # Wechselt in den richtigen Ordner
+    from quadtree.cython_quadtree import Quadtree
+
 
 class CreateParticle:
     def __init__(self, num_particles: int = 1000, x_max: int = 1920, y_max: int = 1080,

@@ -17,3 +17,5 @@ dependencies:
       - twine
       - wheel
       - dearpygui
+      - numpy
+      - cython
