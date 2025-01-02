@@ -3505,6 +3505,8 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 static void __pyx_f_15cython_quadtree_8Quadtree_subdivide(struct __pyx_obj_15cython_quadtree_Quadtree *__pyx_v_self, int __pyx_skip_dispatch) {
   double __pyx_v_mid_x;
   double __pyx_v_mid_y;
+  PyObject *__pyx_v_particle = NULL;
+  PyObject *__pyx_v_subtree = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -3516,6 +3518,10 @@ static void __pyx_f_15cython_quadtree_8Quadtree_subdivide(struct __pyx_obj_15cyt
   PyObject *__pyx_t_8 = NULL;
   PyObject *__pyx_t_9 = NULL;
   PyObject *__pyx_t_10 = NULL;
+  Py_ssize_t __pyx_t_11;
+  Py_ssize_t __pyx_t_12;
+  PyObject *(*__pyx_t_13)(PyObject *);
+  int __pyx_t_14;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -3577,7 +3583,7 @@ static void __pyx_f_15cython_quadtree_8Quadtree_subdivide(struct __pyx_obj_15cyt
  *     cpdef void subdivide(self):
  *         cdef double mid_x = (self.x_min + self.x_max) / 2.0             # <<<<<<<<<<<<<<
  *         cdef double mid_y = (self.y_min + self.y_max) / 2.0
- *         self.subtrees = [
+ * 
  */
   __pyx_v_mid_x = ((__pyx_v_self->x_min + __pyx_v_self->x_max) / 2.0);
 
@@ -3585,180 +3591,180 @@ static void __pyx_f_15cython_quadtree_8Quadtree_subdivide(struct __pyx_obj_15cyt
  *     cpdef void subdivide(self):
  *         cdef double mid_x = (self.x_min + self.x_max) / 2.0
  *         cdef double mid_y = (self.y_min + self.y_max) / 2.0             # <<<<<<<<<<<<<<
- *         self.subtrees = [
- *             Quadtree(self.x_min, self.y_min, mid_x,      mid_y,      self.capacity),
+ * 
+ *         # Erstelle die vier Unterbume
  */
   __pyx_v_mid_y = ((__pyx_v_self->y_min + __pyx_v_self->y_max) / 2.0);
 
-  /* "cython_quadtree.pyx":45
- *         cdef double mid_y = (self.y_min + self.y_max) / 2.0
+  /* "cython_quadtree.pyx":47
+ *         # Erstelle die vier Unterbume
  *         self.subtrees = [
  *             Quadtree(self.x_min, self.y_min, mid_x,      mid_y,      self.capacity),             # <<<<<<<<<<<<<<
  *             Quadtree(mid_x,      self.y_min, self.x_max, mid_y,      self.capacity),
  *             Quadtree(self.x_min, mid_y,      mid_x,      self.y_max, self.capacity),
  */
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->x_min); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->x_min); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 47, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->y_min); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->y_min); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 47, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_mid_x); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_mid_x); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 47, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_mid_y); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_mid_y); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 47, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_self->capacity); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_self->capacity); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 47, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_7 = PyTuple_New(5); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __pyx_t_7 = PyTuple_New(5); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 47, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_GIVEREF(__pyx_t_1);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_1)) __PYX_ERR(0, 45, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_1)) __PYX_ERR(0, 47, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_2);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_2)) __PYX_ERR(0, 45, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_2)) __PYX_ERR(0, 47, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_3);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_7, 2, __pyx_t_3)) __PYX_ERR(0, 45, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_7, 2, __pyx_t_3)) __PYX_ERR(0, 47, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_4);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_7, 3, __pyx_t_4)) __PYX_ERR(0, 45, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_7, 3, __pyx_t_4)) __PYX_ERR(0, 47, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_6);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_7, 4, __pyx_t_6)) __PYX_ERR(0, 45, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_7, 4, __pyx_t_6)) __PYX_ERR(0, 47, __pyx_L1_error);
   __pyx_t_1 = 0;
   __pyx_t_2 = 0;
   __pyx_t_3 = 0;
   __pyx_t_4 = 0;
   __pyx_t_6 = 0;
-  __pyx_t_6 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_15cython_quadtree_Quadtree), __pyx_t_7, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_15cython_quadtree_Quadtree), __pyx_t_7, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 47, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-  /* "cython_quadtree.pyx":46
+  /* "cython_quadtree.pyx":48
  *         self.subtrees = [
  *             Quadtree(self.x_min, self.y_min, mid_x,      mid_y,      self.capacity),
  *             Quadtree(mid_x,      self.y_min, self.x_max, mid_y,      self.capacity),             # <<<<<<<<<<<<<<
  *             Quadtree(self.x_min, mid_y,      mid_x,      self.y_max, self.capacity),
  *             Quadtree(mid_x,      mid_y,      self.x_max, self.y_max, self.capacity)
  */
-  __pyx_t_7 = PyFloat_FromDouble(__pyx_v_mid_x); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 46, __pyx_L1_error)
+  __pyx_t_7 = PyFloat_FromDouble(__pyx_v_mid_x); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 48, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->y_min); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 46, __pyx_L1_error)
+  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->y_min); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 48, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_self->x_max); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 46, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_self->x_max); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 48, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_mid_y); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 46, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_mid_y); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 48, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->capacity); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 46, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->capacity); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 48, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_8 = PyTuple_New(5); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 46, __pyx_L1_error)
+  __pyx_t_8 = PyTuple_New(5); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 48, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   __Pyx_GIVEREF(__pyx_t_7);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_7)) __PYX_ERR(0, 46, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_7)) __PYX_ERR(0, 48, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_4);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_8, 1, __pyx_t_4)) __PYX_ERR(0, 46, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_8, 1, __pyx_t_4)) __PYX_ERR(0, 48, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_3);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_8, 2, __pyx_t_3)) __PYX_ERR(0, 46, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_8, 2, __pyx_t_3)) __PYX_ERR(0, 48, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_2);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_8, 3, __pyx_t_2)) __PYX_ERR(0, 46, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_8, 3, __pyx_t_2)) __PYX_ERR(0, 48, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_1);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_8, 4, __pyx_t_1)) __PYX_ERR(0, 46, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_8, 4, __pyx_t_1)) __PYX_ERR(0, 48, __pyx_L1_error);
   __pyx_t_7 = 0;
   __pyx_t_4 = 0;
   __pyx_t_3 = 0;
   __pyx_t_2 = 0;
   __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_15cython_quadtree_Quadtree), __pyx_t_8, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 46, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_15cython_quadtree_Quadtree), __pyx_t_8, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 48, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
-  /* "cython_quadtree.pyx":47
+  /* "cython_quadtree.pyx":49
  *             Quadtree(self.x_min, self.y_min, mid_x,      mid_y,      self.capacity),
  *             Quadtree(mid_x,      self.y_min, self.x_max, mid_y,      self.capacity),
  *             Quadtree(self.x_min, mid_y,      mid_x,      self.y_max, self.capacity),             # <<<<<<<<<<<<<<
  *             Quadtree(mid_x,      mid_y,      self.x_max, self.y_max, self.capacity)
  *         ]
  */
-  __pyx_t_8 = PyFloat_FromDouble(__pyx_v_self->x_min); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 47, __pyx_L1_error)
+  __pyx_t_8 = PyFloat_FromDouble(__pyx_v_self->x_min); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 49, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_mid_y); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 47, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_mid_y); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 49, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_mid_x); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 47, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_mid_x); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 49, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->y_max); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 47, __pyx_L1_error)
+  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->y_max); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 49, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_self->capacity); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 47, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_self->capacity); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 49, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_9 = PyTuple_New(5); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 47, __pyx_L1_error)
+  __pyx_t_9 = PyTuple_New(5); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 49, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
   __Pyx_GIVEREF(__pyx_t_8);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_8)) __PYX_ERR(0, 47, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_8)) __PYX_ERR(0, 49, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_2);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_2)) __PYX_ERR(0, 47, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_2)) __PYX_ERR(0, 49, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_3);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_9, 2, __pyx_t_3)) __PYX_ERR(0, 47, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_9, 2, __pyx_t_3)) __PYX_ERR(0, 49, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_4);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_9, 3, __pyx_t_4)) __PYX_ERR(0, 47, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_9, 3, __pyx_t_4)) __PYX_ERR(0, 49, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_7);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_9, 4, __pyx_t_7)) __PYX_ERR(0, 47, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_9, 4, __pyx_t_7)) __PYX_ERR(0, 49, __pyx_L1_error);
   __pyx_t_8 = 0;
   __pyx_t_2 = 0;
   __pyx_t_3 = 0;
   __pyx_t_4 = 0;
   __pyx_t_7 = 0;
-  __pyx_t_7 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_15cython_quadtree_Quadtree), __pyx_t_9, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 47, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_15cython_quadtree_Quadtree), __pyx_t_9, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 49, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-  /* "cython_quadtree.pyx":48
+  /* "cython_quadtree.pyx":50
  *             Quadtree(mid_x,      self.y_min, self.x_max, mid_y,      self.capacity),
  *             Quadtree(self.x_min, mid_y,      mid_x,      self.y_max, self.capacity),
  *             Quadtree(mid_x,      mid_y,      self.x_max, self.y_max, self.capacity)             # <<<<<<<<<<<<<<
  *         ]
  * 
  */
-  __pyx_t_9 = PyFloat_FromDouble(__pyx_v_mid_x); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 48, __pyx_L1_error)
+  __pyx_t_9 = PyFloat_FromDouble(__pyx_v_mid_x); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 50, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
-  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_mid_y); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 48, __pyx_L1_error)
+  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_mid_y); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 50, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_self->x_max); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 48, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_self->x_max); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 50, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->y_max); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 48, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->y_max); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 50, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_8 = __Pyx_PyInt_From_int(__pyx_v_self->capacity); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 48, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyInt_From_int(__pyx_v_self->capacity); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 50, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
-  __pyx_t_10 = PyTuple_New(5); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 48, __pyx_L1_error)
+  __pyx_t_10 = PyTuple_New(5); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 50, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
   __Pyx_GIVEREF(__pyx_t_9);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_9)) __PYX_ERR(0, 48, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_9)) __PYX_ERR(0, 50, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_4);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_t_4)) __PYX_ERR(0, 48, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_t_4)) __PYX_ERR(0, 50, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_3);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 2, __pyx_t_3)) __PYX_ERR(0, 48, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 2, __pyx_t_3)) __PYX_ERR(0, 50, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_2);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 3, __pyx_t_2)) __PYX_ERR(0, 48, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 3, __pyx_t_2)) __PYX_ERR(0, 50, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_8);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 4, __pyx_t_8)) __PYX_ERR(0, 48, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 4, __pyx_t_8)) __PYX_ERR(0, 50, __pyx_L1_error);
   __pyx_t_9 = 0;
   __pyx_t_4 = 0;
   __pyx_t_3 = 0;
   __pyx_t_2 = 0;
   __pyx_t_8 = 0;
-  __pyx_t_8 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_15cython_quadtree_Quadtree), __pyx_t_10, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 48, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_15cython_quadtree_Quadtree), __pyx_t_10, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 50, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-  /* "cython_quadtree.pyx":44
- *         cdef double mid_x = (self.x_min + self.x_max) / 2.0
- *         cdef double mid_y = (self.y_min + self.y_max) / 2.0
+  /* "cython_quadtree.pyx":46
+ * 
+ *         # Erstelle die vier Unterbume
  *         self.subtrees = [             # <<<<<<<<<<<<<<
  *             Quadtree(self.x_min, self.y_min, mid_x,      mid_y,      self.capacity),
  *             Quadtree(mid_x,      self.y_min, self.x_max, mid_y,      self.capacity),
  */
-  __pyx_t_10 = PyList_New(4); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 44, __pyx_L1_error)
+  __pyx_t_10 = PyList_New(4); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 46, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
   __Pyx_GIVEREF(__pyx_t_6);
-  if (__Pyx_PyList_SET_ITEM(__pyx_t_10, 0, __pyx_t_6)) __PYX_ERR(0, 44, __pyx_L1_error);
+  if (__Pyx_PyList_SET_ITEM(__pyx_t_10, 0, __pyx_t_6)) __PYX_ERR(0, 46, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_1);
-  if (__Pyx_PyList_SET_ITEM(__pyx_t_10, 1, __pyx_t_1)) __PYX_ERR(0, 44, __pyx_L1_error);
+  if (__Pyx_PyList_SET_ITEM(__pyx_t_10, 1, __pyx_t_1)) __PYX_ERR(0, 46, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_7);
-  if (__Pyx_PyList_SET_ITEM(__pyx_t_10, 2, __pyx_t_7)) __PYX_ERR(0, 44, __pyx_L1_error);
+  if (__Pyx_PyList_SET_ITEM(__pyx_t_10, 2, __pyx_t_7)) __PYX_ERR(0, 46, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_8);
-  if (__Pyx_PyList_SET_ITEM(__pyx_t_10, 3, __pyx_t_8)) __PYX_ERR(0, 44, __pyx_L1_error);
+  if (__Pyx_PyList_SET_ITEM(__pyx_t_10, 3, __pyx_t_8)) __PYX_ERR(0, 46, __pyx_L1_error);
   __pyx_t_6 = 0;
   __pyx_t_1 = 0;
   __pyx_t_7 = 0;
@@ -3767,6 +3773,191 @@ static void __pyx_f_15cython_quadtree_8Quadtree_subdivide(struct __pyx_obj_15cyt
   __Pyx_GOTREF(__pyx_v_self->subtrees);
   __Pyx_DECREF(__pyx_v_self->subtrees);
   __pyx_v_self->subtrees = __pyx_t_10;
+  __pyx_t_10 = 0;
+
+  /* "cython_quadtree.pyx":54
+ * 
+ *         # Verschiebe vorhandene Partikel in die Unterbume
+ *         for particle in self.particles:             # <<<<<<<<<<<<<<
+ *             for subtree in self.subtrees:
+ *                 if subtree.insert(particle):
+ */
+  if (unlikely(__pyx_v_self->particles == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
+    __PYX_ERR(0, 54, __pyx_L1_error)
+  }
+  __pyx_t_10 = __pyx_v_self->particles; __Pyx_INCREF(__pyx_t_10);
+  __pyx_t_11 = 0;
+  for (;;) {
+    {
+      Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_10);
+      #if !CYTHON_ASSUME_SAFE_MACROS
+      if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 54, __pyx_L1_error)
+      #endif
+      if (__pyx_t_11 >= __pyx_temp) break;
+    }
+    #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+    __pyx_t_8 = PyList_GET_ITEM(__pyx_t_10, __pyx_t_11); __Pyx_INCREF(__pyx_t_8); __pyx_t_11++; if (unlikely((0 < 0))) __PYX_ERR(0, 54, __pyx_L1_error)
+    #else
+    __pyx_t_8 = __Pyx_PySequence_ITEM(__pyx_t_10, __pyx_t_11); __pyx_t_11++; if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 54, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_8);
+    #endif
+    __Pyx_XDECREF_SET(__pyx_v_particle, __pyx_t_8);
+    __pyx_t_8 = 0;
+
+    /* "cython_quadtree.pyx":55
+ *         # Verschiebe vorhandene Partikel in die Unterbume
+ *         for particle in self.particles:
+ *             for subtree in self.subtrees:             # <<<<<<<<<<<<<<
+ *                 if subtree.insert(particle):
+ *                     break
+ */
+    if (likely(PyList_CheckExact(__pyx_v_self->subtrees)) || PyTuple_CheckExact(__pyx_v_self->subtrees)) {
+      __pyx_t_8 = __pyx_v_self->subtrees; __Pyx_INCREF(__pyx_t_8);
+      __pyx_t_12 = 0;
+      __pyx_t_13 = NULL;
+    } else {
+      __pyx_t_12 = -1; __pyx_t_8 = PyObject_GetIter(__pyx_v_self->subtrees); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 55, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
+      __pyx_t_13 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_8); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 55, __pyx_L1_error)
+    }
+    for (;;) {
+      if (likely(!__pyx_t_13)) {
+        if (likely(PyList_CheckExact(__pyx_t_8))) {
+          {
+            Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_8);
+            #if !CYTHON_ASSUME_SAFE_MACROS
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 55, __pyx_L1_error)
+            #endif
+            if (__pyx_t_12 >= __pyx_temp) break;
+          }
+          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+          __pyx_t_7 = PyList_GET_ITEM(__pyx_t_8, __pyx_t_12); __Pyx_INCREF(__pyx_t_7); __pyx_t_12++; if (unlikely((0 < 0))) __PYX_ERR(0, 55, __pyx_L1_error)
+          #else
+          __pyx_t_7 = __Pyx_PySequence_ITEM(__pyx_t_8, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 55, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_7);
+          #endif
+        } else {
+          {
+            Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_8);
+            #if !CYTHON_ASSUME_SAFE_MACROS
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 55, __pyx_L1_error)
+            #endif
+            if (__pyx_t_12 >= __pyx_temp) break;
+          }
+          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+          __pyx_t_7 = PyTuple_GET_ITEM(__pyx_t_8, __pyx_t_12); __Pyx_INCREF(__pyx_t_7); __pyx_t_12++; if (unlikely((0 < 0))) __PYX_ERR(0, 55, __pyx_L1_error)
+          #else
+          __pyx_t_7 = __Pyx_PySequence_ITEM(__pyx_t_8, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 55, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_7);
+          #endif
+        }
+      } else {
+        __pyx_t_7 = __pyx_t_13(__pyx_t_8);
+        if (unlikely(!__pyx_t_7)) {
+          PyObject* exc_type = PyErr_Occurred();
+          if (exc_type) {
+            if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+            else __PYX_ERR(0, 55, __pyx_L1_error)
+          }
+          break;
+        }
+        __Pyx_GOTREF(__pyx_t_7);
+      }
+      __Pyx_XDECREF_SET(__pyx_v_subtree, __pyx_t_7);
+      __pyx_t_7 = 0;
+
+      /* "cython_quadtree.pyx":56
+ *         for particle in self.particles:
+ *             for subtree in self.subtrees:
+ *                 if subtree.insert(particle):             # <<<<<<<<<<<<<<
+ *                     break
+ * 
+ */
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_subtree, __pyx_n_s_insert); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 56, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __pyx_t_6 = NULL;
+      __pyx_t_5 = 0;
+      #if CYTHON_UNPACK_METHODS
+      if (likely(PyMethod_Check(__pyx_t_1))) {
+        __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_1);
+        if (likely(__pyx_t_6)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+          __Pyx_INCREF(__pyx_t_6);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_1, function);
+          __pyx_t_5 = 1;
+        }
+      }
+      #endif
+      {
+        PyObject *__pyx_callargs[2] = {__pyx_t_6, __pyx_v_particle};
+        __pyx_t_7 = __Pyx_PyObject_FastCall(__pyx_t_1, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
+        __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+        if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 56, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_7);
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      }
+      __pyx_t_14 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely((__pyx_t_14 < 0))) __PYX_ERR(0, 56, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      if (__pyx_t_14) {
+
+        /* "cython_quadtree.pyx":57
+ *             for subtree in self.subtrees:
+ *                 if subtree.insert(particle):
+ *                     break             # <<<<<<<<<<<<<<
+ * 
+ *         # Leere die Partikelliste der aktuellen Region
+ */
+        goto __pyx_L6_break;
+
+        /* "cython_quadtree.pyx":56
+ *         for particle in self.particles:
+ *             for subtree in self.subtrees:
+ *                 if subtree.insert(particle):             # <<<<<<<<<<<<<<
+ *                     break
+ * 
+ */
+      }
+
+      /* "cython_quadtree.pyx":55
+ *         # Verschiebe vorhandene Partikel in die Unterbume
+ *         for particle in self.particles:
+ *             for subtree in self.subtrees:             # <<<<<<<<<<<<<<
+ *                 if subtree.insert(particle):
+ *                     break
+ */
+    }
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    goto __pyx_L8_for_end;
+    __pyx_L6_break:;
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    goto __pyx_L8_for_end;
+    __pyx_L8_for_end:;
+
+    /* "cython_quadtree.pyx":54
+ * 
+ *         # Verschiebe vorhandene Partikel in die Unterbume
+ *         for particle in self.particles:             # <<<<<<<<<<<<<<
+ *             for subtree in self.subtrees:
+ *                 if subtree.insert(particle):
+ */
+  }
+  __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+
+  /* "cython_quadtree.pyx":60
+ * 
+ *         # Leere die Partikelliste der aktuellen Region
+ *         self.particles = []             # <<<<<<<<<<<<<<
+ * 
+ *     cpdef list query(self, double x_min, double y_min, double x_max, double y_max):
+ */
+  __pyx_t_10 = PyList_New(0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 60, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_10);
+  __Pyx_GIVEREF(__pyx_t_10);
+  __Pyx_GOTREF(__pyx_v_self->particles);
+  __Pyx_DECREF(__pyx_v_self->particles);
+  __pyx_v_self->particles = ((PyObject*)__pyx_t_10);
   __pyx_t_10 = 0;
 
   /* "cython_quadtree.pyx":41
@@ -3791,6 +3982,8 @@ static void __pyx_f_15cython_quadtree_8Quadtree_subdivide(struct __pyx_obj_15cyt
   __Pyx_XDECREF(__pyx_t_10);
   __Pyx_AddTraceback("cython_quadtree.Quadtree.subdivide", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_particle);
+  __Pyx_XDECREF(__pyx_v_subtree);
   __Pyx_RefNannyFinishContext();
 }
 
@@ -3862,8 +4055,8 @@ static PyObject *__pyx_pf_15cython_quadtree_8Quadtree_4subdivide(struct __pyx_ob
   return __pyx_r;
 }
 
-/* "cython_quadtree.pyx":51
- *         ]
+/* "cython_quadtree.pyx":62
+ *         self.particles = []
  * 
  *     cpdef list query(self, double x_min, double y_min, double x_max, double y_max):             # <<<<<<<<<<<<<<
  *         cdef list results = []
@@ -3913,17 +4106,17 @@ static PyObject *__pyx_f_15cython_quadtree_8Quadtree_query(struct __pyx_obj_15cy
     if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
       PY_UINT64_T __pyx_typedict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_query); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 51, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_query); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 62, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!__Pyx_IsSameCFunction(__pyx_t_1, (void*) __pyx_pw_15cython_quadtree_8Quadtree_7query)) {
         __Pyx_XDECREF(__pyx_r);
-        __pyx_t_3 = PyFloat_FromDouble(__pyx_v_x_min); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 51, __pyx_L1_error)
+        __pyx_t_3 = PyFloat_FromDouble(__pyx_v_x_min); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 62, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
-        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_y_min); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 51, __pyx_L1_error)
+        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_y_min); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 62, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
-        __pyx_t_5 = PyFloat_FromDouble(__pyx_v_x_max); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 51, __pyx_L1_error)
+        __pyx_t_5 = PyFloat_FromDouble(__pyx_v_x_max); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 62, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_6 = PyFloat_FromDouble(__pyx_v_y_max); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 51, __pyx_L1_error)
+        __pyx_t_6 = PyFloat_FromDouble(__pyx_v_y_max); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 62, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_7 = __pyx_t_1; __pyx_t_8 = NULL;
@@ -3948,11 +4141,11 @@ static PyObject *__pyx_f_15cython_quadtree_8Quadtree_query(struct __pyx_obj_15cy
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 51, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 62, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
         }
-        if (!(likely(PyList_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_2))) __PYX_ERR(0, 51, __pyx_L1_error)
+        if (!(likely(PyList_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_2))) __PYX_ERR(0, 62, __pyx_L1_error)
         __pyx_r = ((PyObject*)__pyx_t_2);
         __pyx_t_2 = 0;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -3971,30 +4164,30 @@ static PyObject *__pyx_f_15cython_quadtree_8Quadtree_query(struct __pyx_obj_15cy
     #endif
   }
 
-  /* "cython_quadtree.pyx":52
+  /* "cython_quadtree.pyx":63
  * 
  *     cpdef list query(self, double x_min, double y_min, double x_max, double y_max):
  *         cdef list results = []             # <<<<<<<<<<<<<<
  *         if not self.intersects(x_min, y_min, x_max, y_max):
  *             return results
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_results = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "cython_quadtree.pyx":53
+  /* "cython_quadtree.pyx":64
  *     cpdef list query(self, double x_min, double y_min, double x_max, double y_max):
  *         cdef list results = []
  *         if not self.intersects(x_min, y_min, x_max, y_max):             # <<<<<<<<<<<<<<
  *             return results
  * 
  */
-  __pyx_t_10 = ((struct __pyx_vtabstruct_15cython_quadtree_Quadtree *)__pyx_v_self->__pyx_vtab)->intersects(__pyx_v_self, __pyx_v_x_min, __pyx_v_y_min, __pyx_v_x_max, __pyx_v_y_max, 0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 53, __pyx_L1_error)
+  __pyx_t_10 = ((struct __pyx_vtabstruct_15cython_quadtree_Quadtree *)__pyx_v_self->__pyx_vtab)->intersects(__pyx_v_self, __pyx_v_x_min, __pyx_v_y_min, __pyx_v_x_max, __pyx_v_y_max, 0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 64, __pyx_L1_error)
   __pyx_t_11 = (!__pyx_t_10);
   if (__pyx_t_11) {
 
-    /* "cython_quadtree.pyx":54
+    /* "cython_quadtree.pyx":65
  *         cdef list results = []
  *         if not self.intersects(x_min, y_min, x_max, y_max):
  *             return results             # <<<<<<<<<<<<<<
@@ -4006,7 +4199,7 @@ static PyObject *__pyx_f_15cython_quadtree_8Quadtree_query(struct __pyx_obj_15cy
     __pyx_r = __pyx_v_results;
     goto __pyx_L0;
 
-    /* "cython_quadtree.pyx":53
+    /* "cython_quadtree.pyx":64
  *     cpdef list query(self, double x_min, double y_min, double x_max, double y_max):
  *         cdef list results = []
  *         if not self.intersects(x_min, y_min, x_max, y_max):             # <<<<<<<<<<<<<<
@@ -4015,7 +4208,7 @@ static PyObject *__pyx_f_15cython_quadtree_8Quadtree_query(struct __pyx_obj_15cy
  */
   }
 
-  /* "cython_quadtree.pyx":57
+  /* "cython_quadtree.pyx":68
  * 
  *         cdef double x, y
  *         for particle in self.particles:             # <<<<<<<<<<<<<<
@@ -4024,7 +4217,7 @@ static PyObject *__pyx_f_15cython_quadtree_8Quadtree_query(struct __pyx_obj_15cy
  */
   if (unlikely(__pyx_v_self->particles == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-    __PYX_ERR(0, 57, __pyx_L1_error)
+    __PYX_ERR(0, 68, __pyx_L1_error)
   }
   __pyx_t_1 = __pyx_v_self->particles; __Pyx_INCREF(__pyx_t_1);
   __pyx_t_12 = 0;
@@ -4032,46 +4225,46 @@ static PyObject *__pyx_f_15cython_quadtree_8Quadtree_query(struct __pyx_obj_15cy
     {
       Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_1);
       #if !CYTHON_ASSUME_SAFE_MACROS
-      if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 57, __pyx_L1_error)
+      if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 68, __pyx_L1_error)
       #endif
       if (__pyx_t_12 >= __pyx_temp) break;
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_12); __Pyx_INCREF(__pyx_t_2); __pyx_t_12++; if (unlikely((0 < 0))) __PYX_ERR(0, 57, __pyx_L1_error)
+    __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_12); __Pyx_INCREF(__pyx_t_2); __pyx_t_12++; if (unlikely((0 < 0))) __PYX_ERR(0, 68, __pyx_L1_error)
     #else
-    __pyx_t_2 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 57, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 68, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     #endif
     __Pyx_XDECREF_SET(__pyx_v_particle, __pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "cython_quadtree.pyx":58
+    /* "cython_quadtree.pyx":69
  *         cdef double x, y
  *         for particle in self.particles:
  *             x = particle[0]             # <<<<<<<<<<<<<<
  *             y = particle[1]
  *             if x_min <= x <= x_max and y_min <= y <= y_max:
  */
-    __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_particle, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 58, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_particle, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 69, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_13 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_13 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 58, __pyx_L1_error)
+    __pyx_t_13 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_13 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 69, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_v_x = __pyx_t_13;
 
-    /* "cython_quadtree.pyx":59
+    /* "cython_quadtree.pyx":70
  *         for particle in self.particles:
  *             x = particle[0]
  *             y = particle[1]             # <<<<<<<<<<<<<<
  *             if x_min <= x <= x_max and y_min <= y <= y_max:
  *                 results.append(particle)
  */
-    __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_particle, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_particle, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 70, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_13 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_13 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 59, __pyx_L1_error)
+    __pyx_t_13 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_13 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 70, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_v_y = __pyx_t_13;
 
-    /* "cython_quadtree.pyx":60
+    /* "cython_quadtree.pyx":71
  *             x = particle[0]
  *             y = particle[1]
  *             if x_min <= x <= x_max and y_min <= y <= y_max:             # <<<<<<<<<<<<<<
@@ -4095,16 +4288,16 @@ static PyObject *__pyx_f_15cython_quadtree_8Quadtree_query(struct __pyx_obj_15cy
     __pyx_L7_bool_binop_done:;
     if (__pyx_t_11) {
 
-      /* "cython_quadtree.pyx":61
+      /* "cython_quadtree.pyx":72
  *             y = particle[1]
  *             if x_min <= x <= x_max and y_min <= y <= y_max:
  *                 results.append(particle)             # <<<<<<<<<<<<<<
  * 
  *         cdef Quadtree subtree
  */
-      __pyx_t_14 = __Pyx_PyList_Append(__pyx_v_results, __pyx_v_particle); if (unlikely(__pyx_t_14 == ((int)-1))) __PYX_ERR(0, 61, __pyx_L1_error)
+      __pyx_t_14 = __Pyx_PyList_Append(__pyx_v_results, __pyx_v_particle); if (unlikely(__pyx_t_14 == ((int)-1))) __PYX_ERR(0, 72, __pyx_L1_error)
 
-      /* "cython_quadtree.pyx":60
+      /* "cython_quadtree.pyx":71
  *             x = particle[0]
  *             y = particle[1]
  *             if x_min <= x <= x_max and y_min <= y <= y_max:             # <<<<<<<<<<<<<<
@@ -4113,7 +4306,7 @@ static PyObject *__pyx_f_15cython_quadtree_8Quadtree_query(struct __pyx_obj_15cy
  */
     }
 
-    /* "cython_quadtree.pyx":57
+    /* "cython_quadtree.pyx":68
  * 
  *         cdef double x, y
  *         for particle in self.particles:             # <<<<<<<<<<<<<<
@@ -4123,7 +4316,7 @@ static PyObject *__pyx_f_15cython_quadtree_8Quadtree_query(struct __pyx_obj_15cy
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "cython_quadtree.pyx":64
+  /* "cython_quadtree.pyx":75
  * 
  *         cdef Quadtree subtree
  *         if self.subtrees is not None:             # <<<<<<<<<<<<<<
@@ -4133,7 +4326,7 @@ static PyObject *__pyx_f_15cython_quadtree_8Quadtree_query(struct __pyx_obj_15cy
   __pyx_t_11 = (__pyx_v_self->subtrees != Py_None);
   if (__pyx_t_11) {
 
-    /* "cython_quadtree.pyx":65
+    /* "cython_quadtree.pyx":76
  *         cdef Quadtree subtree
  *         if self.subtrees is not None:
  *             for subtree in self.subtrees:             # <<<<<<<<<<<<<<
@@ -4145,9 +4338,9 @@ static PyObject *__pyx_f_15cython_quadtree_8Quadtree_query(struct __pyx_obj_15cy
       __pyx_t_12 = 0;
       __pyx_t_15 = NULL;
     } else {
-      __pyx_t_12 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_self->subtrees); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 65, __pyx_L1_error)
+      __pyx_t_12 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_self->subtrees); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 76, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_15 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 65, __pyx_L1_error)
+      __pyx_t_15 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 76, __pyx_L1_error)
     }
     for (;;) {
       if (likely(!__pyx_t_15)) {
@@ -4155,28 +4348,28 @@ static PyObject *__pyx_f_15cython_quadtree_8Quadtree_query(struct __pyx_obj_15cy
           {
             Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_1);
             #if !CYTHON_ASSUME_SAFE_MACROS
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 65, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 76, __pyx_L1_error)
             #endif
             if (__pyx_t_12 >= __pyx_temp) break;
           }
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_12); __Pyx_INCREF(__pyx_t_2); __pyx_t_12++; if (unlikely((0 < 0))) __PYX_ERR(0, 65, __pyx_L1_error)
+          __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_12); __Pyx_INCREF(__pyx_t_2); __pyx_t_12++; if (unlikely((0 < 0))) __PYX_ERR(0, 76, __pyx_L1_error)
           #else
-          __pyx_t_2 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 65, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 76, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           #endif
         } else {
           {
             Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_1);
             #if !CYTHON_ASSUME_SAFE_MACROS
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 65, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 76, __pyx_L1_error)
             #endif
             if (__pyx_t_12 >= __pyx_temp) break;
           }
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_12); __Pyx_INCREF(__pyx_t_2); __pyx_t_12++; if (unlikely((0 < 0))) __PYX_ERR(0, 65, __pyx_L1_error)
+          __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_12); __Pyx_INCREF(__pyx_t_2); __pyx_t_12++; if (unlikely((0 < 0))) __PYX_ERR(0, 76, __pyx_L1_error)
           #else
-          __pyx_t_2 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 65, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 76, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           #endif
         }
@@ -4186,29 +4379,29 @@ static PyObject *__pyx_f_15cython_quadtree_8Quadtree_query(struct __pyx_obj_15cy
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 65, __pyx_L1_error)
+            else __PYX_ERR(0, 76, __pyx_L1_error)
           }
           break;
         }
         __Pyx_GOTREF(__pyx_t_2);
       }
-      if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_15cython_quadtree_Quadtree))))) __PYX_ERR(0, 65, __pyx_L1_error)
+      if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_15cython_quadtree_Quadtree))))) __PYX_ERR(0, 76, __pyx_L1_error)
       __Pyx_XDECREF_SET(__pyx_v_subtree, ((struct __pyx_obj_15cython_quadtree_Quadtree *)__pyx_t_2));
       __pyx_t_2 = 0;
 
-      /* "cython_quadtree.pyx":66
+      /* "cython_quadtree.pyx":77
  *         if self.subtrees is not None:
  *             for subtree in self.subtrees:
  *                 results.extend(subtree.query(x_min, y_min, x_max, y_max))             # <<<<<<<<<<<<<<
  * 
  *         return results
  */
-      __pyx_t_2 = ((struct __pyx_vtabstruct_15cython_quadtree_Quadtree *)__pyx_v_subtree->__pyx_vtab)->query(__pyx_v_subtree, __pyx_v_x_min, __pyx_v_y_min, __pyx_v_x_max, __pyx_v_y_max, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 66, __pyx_L1_error)
+      __pyx_t_2 = ((struct __pyx_vtabstruct_15cython_quadtree_Quadtree *)__pyx_v_subtree->__pyx_vtab)->query(__pyx_v_subtree, __pyx_v_x_min, __pyx_v_y_min, __pyx_v_x_max, __pyx_v_y_max, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 77, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_14 = __Pyx_PyList_Extend(__pyx_v_results, __pyx_t_2); if (unlikely(__pyx_t_14 == ((int)-1))) __PYX_ERR(0, 66, __pyx_L1_error)
+      __pyx_t_14 = __Pyx_PyList_Extend(__pyx_v_results, __pyx_t_2); if (unlikely(__pyx_t_14 == ((int)-1))) __PYX_ERR(0, 77, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-      /* "cython_quadtree.pyx":65
+      /* "cython_quadtree.pyx":76
  *         cdef Quadtree subtree
  *         if self.subtrees is not None:
  *             for subtree in self.subtrees:             # <<<<<<<<<<<<<<
@@ -4218,7 +4411,7 @@ static PyObject *__pyx_f_15cython_quadtree_8Quadtree_query(struct __pyx_obj_15cy
     }
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "cython_quadtree.pyx":64
+    /* "cython_quadtree.pyx":75
  * 
  *         cdef Quadtree subtree
  *         if self.subtrees is not None:             # <<<<<<<<<<<<<<
@@ -4227,7 +4420,7 @@ static PyObject *__pyx_f_15cython_quadtree_8Quadtree_query(struct __pyx_obj_15cy
  */
   }
 
-  /* "cython_quadtree.pyx":68
+  /* "cython_quadtree.pyx":79
  *                 results.extend(subtree.query(x_min, y_min, x_max, y_max))
  * 
  *         return results             # <<<<<<<<<<<<<<
@@ -4239,8 +4432,8 @@ static PyObject *__pyx_f_15cython_quadtree_8Quadtree_query(struct __pyx_obj_15cy
   __pyx_r = __pyx_v_results;
   goto __pyx_L0;
 
-  /* "cython_quadtree.pyx":51
- *         ]
+  /* "cython_quadtree.pyx":62
+ *         self.particles = []
  * 
  *     cpdef list query(self, double x_min, double y_min, double x_max, double y_max):             # <<<<<<<<<<<<<<
  *         cdef list results = []
@@ -4330,7 +4523,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 51, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 62, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
@@ -4338,9 +4531,9 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[1]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 51, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 62, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("query", 1, 4, 4, 1); __PYX_ERR(0, 51, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("query", 1, 4, 4, 1); __PYX_ERR(0, 62, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
@@ -4348,9 +4541,9 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[2]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 51, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 62, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("query", 1, 4, 4, 2); __PYX_ERR(0, 51, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("query", 1, 4, 4, 2); __PYX_ERR(0, 62, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
@@ -4358,14 +4551,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[3]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 51, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 62, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("query", 1, 4, 4, 3); __PYX_ERR(0, 51, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("query", 1, 4, 4, 3); __PYX_ERR(0, 62, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "query") < 0)) __PYX_ERR(0, 51, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "query") < 0)) __PYX_ERR(0, 62, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 4)) {
       goto __pyx_L5_argtuple_error;
@@ -4375,14 +4568,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
       values[2] = __Pyx_Arg_FASTCALL(__pyx_args, 2);
       values[3] = __Pyx_Arg_FASTCALL(__pyx_args, 3);
     }
-    __pyx_v_x_min = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_x_min == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 51, __pyx_L3_error)
-    __pyx_v_y_min = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_y_min == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 51, __pyx_L3_error)
-    __pyx_v_x_max = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_x_max == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 51, __pyx_L3_error)
-    __pyx_v_y_max = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_y_max == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 51, __pyx_L3_error)
+    __pyx_v_x_min = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_x_min == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 62, __pyx_L3_error)
+    __pyx_v_y_min = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_y_min == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 62, __pyx_L3_error)
+    __pyx_v_x_max = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_x_max == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 62, __pyx_L3_error)
+    __pyx_v_y_max = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_y_max == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 62, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("query", 1, 4, 4, __pyx_nargs); __PYX_ERR(0, 51, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("query", 1, 4, 4, __pyx_nargs); __PYX_ERR(0, 62, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -4418,7 +4611,7 @@ static PyObject *__pyx_pf_15cython_quadtree_8Quadtree_6query(struct __pyx_obj_15
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("query", 1);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_15cython_quadtree_8Quadtree_query(__pyx_v_self, __pyx_v_x_min, __pyx_v_y_min, __pyx_v_x_max, __pyx_v_y_max, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_15cython_quadtree_8Quadtree_query(__pyx_v_self, __pyx_v_x_min, __pyx_v_y_min, __pyx_v_x_max, __pyx_v_y_max, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 62, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4435,7 +4628,7 @@ static PyObject *__pyx_pf_15cython_quadtree_8Quadtree_6query(struct __pyx_obj_15
   return __pyx_r;
 }
 
-/* "cython_quadtree.pyx":70
+/* "cython_quadtree.pyx":81
  *         return results
  * 
  *     cpdef bint intersects(self, double x_min, double y_min, double x_max, double y_max):             # <<<<<<<<<<<<<<
@@ -4477,16 +4670,16 @@ static int __pyx_f_15cython_quadtree_8Quadtree_intersects(struct __pyx_obj_15cyt
     if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
       PY_UINT64_T __pyx_typedict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_intersects); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 70, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_intersects); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!__Pyx_IsSameCFunction(__pyx_t_1, (void*) __pyx_pw_15cython_quadtree_8Quadtree_9intersects)) {
-        __pyx_t_3 = PyFloat_FromDouble(__pyx_v_x_min); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 70, __pyx_L1_error)
+        __pyx_t_3 = PyFloat_FromDouble(__pyx_v_x_min); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 81, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
-        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_y_min); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 70, __pyx_L1_error)
+        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_y_min); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 81, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
-        __pyx_t_5 = PyFloat_FromDouble(__pyx_v_x_max); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 70, __pyx_L1_error)
+        __pyx_t_5 = PyFloat_FromDouble(__pyx_v_x_max); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 81, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_6 = PyFloat_FromDouble(__pyx_v_y_max); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 70, __pyx_L1_error)
+        __pyx_t_6 = PyFloat_FromDouble(__pyx_v_y_max); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 81, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_7 = __pyx_t_1; __pyx_t_8 = NULL;
@@ -4511,11 +4704,11 @@ static int __pyx_f_15cython_quadtree_8Quadtree_intersects(struct __pyx_obj_15cyt
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 70, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
         }
-        __pyx_t_10 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 70, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 81, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __pyx_r = __pyx_t_10;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -4534,7 +4727,7 @@ static int __pyx_f_15cython_quadtree_8Quadtree_intersects(struct __pyx_obj_15cyt
     #endif
   }
 
-  /* "cython_quadtree.pyx":72
+  /* "cython_quadtree.pyx":83
  *     cpdef bint intersects(self, double x_min, double y_min, double x_max, double y_max):
  *         return not (
  *             x_max < self.x_min or             # <<<<<<<<<<<<<<
@@ -4548,7 +4741,7 @@ static int __pyx_f_15cython_quadtree_8Quadtree_intersects(struct __pyx_obj_15cyt
     goto __pyx_L3_bool_binop_done;
   }
 
-  /* "cython_quadtree.pyx":73
+  /* "cython_quadtree.pyx":84
  *         return not (
  *             x_max < self.x_min or
  *             x_min > self.x_max or             # <<<<<<<<<<<<<<
@@ -4562,7 +4755,7 @@ static int __pyx_f_15cython_quadtree_8Quadtree_intersects(struct __pyx_obj_15cyt
     goto __pyx_L3_bool_binop_done;
   }
 
-  /* "cython_quadtree.pyx":74
+  /* "cython_quadtree.pyx":85
  *             x_max < self.x_min or
  *             x_min > self.x_max or
  *             y_max < self.y_min or             # <<<<<<<<<<<<<<
@@ -4576,7 +4769,7 @@ static int __pyx_f_15cython_quadtree_8Quadtree_intersects(struct __pyx_obj_15cyt
     goto __pyx_L3_bool_binop_done;
   }
 
-  /* "cython_quadtree.pyx":75
+  /* "cython_quadtree.pyx":86
  *             x_min > self.x_max or
  *             y_max < self.y_min or
  *             y_min > self.y_max             # <<<<<<<<<<<<<<
@@ -4586,7 +4779,7 @@ static int __pyx_f_15cython_quadtree_8Quadtree_intersects(struct __pyx_obj_15cyt
   __pyx_t_10 = __pyx_t_11;
   __pyx_L3_bool_binop_done:;
 
-  /* "cython_quadtree.pyx":71
+  /* "cython_quadtree.pyx":82
  * 
  *     cpdef bint intersects(self, double x_min, double y_min, double x_max, double y_max):
  *         return not (             # <<<<<<<<<<<<<<
@@ -4596,7 +4789,7 @@ static int __pyx_f_15cython_quadtree_8Quadtree_intersects(struct __pyx_obj_15cyt
   __pyx_r = (!__pyx_t_10);
   goto __pyx_L0;
 
-  /* "cython_quadtree.pyx":70
+  /* "cython_quadtree.pyx":81
  *         return results
  * 
  *     cpdef bint intersects(self, double x_min, double y_min, double x_max, double y_max):             # <<<<<<<<<<<<<<
@@ -4683,7 +4876,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 70, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 81, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
@@ -4691,9 +4884,9 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[1]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 70, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 81, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("intersects", 1, 4, 4, 1); __PYX_ERR(0, 70, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("intersects", 1, 4, 4, 1); __PYX_ERR(0, 81, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
@@ -4701,9 +4894,9 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[2]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 70, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 81, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("intersects", 1, 4, 4, 2); __PYX_ERR(0, 70, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("intersects", 1, 4, 4, 2); __PYX_ERR(0, 81, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
@@ -4711,14 +4904,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[3]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 70, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 81, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("intersects", 1, 4, 4, 3); __PYX_ERR(0, 70, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("intersects", 1, 4, 4, 3); __PYX_ERR(0, 81, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "intersects") < 0)) __PYX_ERR(0, 70, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "intersects") < 0)) __PYX_ERR(0, 81, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 4)) {
       goto __pyx_L5_argtuple_error;
@@ -4728,14 +4921,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
       values[2] = __Pyx_Arg_FASTCALL(__pyx_args, 2);
       values[3] = __Pyx_Arg_FASTCALL(__pyx_args, 3);
     }
-    __pyx_v_x_min = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_x_min == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 70, __pyx_L3_error)
-    __pyx_v_y_min = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_y_min == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 70, __pyx_L3_error)
-    __pyx_v_x_max = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_x_max == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 70, __pyx_L3_error)
-    __pyx_v_y_max = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_y_max == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 70, __pyx_L3_error)
+    __pyx_v_x_min = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_x_min == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 81, __pyx_L3_error)
+    __pyx_v_y_min = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_y_min == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 81, __pyx_L3_error)
+    __pyx_v_x_max = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_x_max == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 81, __pyx_L3_error)
+    __pyx_v_y_max = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_y_max == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 81, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("intersects", 1, 4, 4, __pyx_nargs); __PYX_ERR(0, 70, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("intersects", 1, 4, 4, __pyx_nargs); __PYX_ERR(0, 81, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -4772,8 +4965,8 @@ static PyObject *__pyx_pf_15cython_quadtree_8Quadtree_8intersects(struct __pyx_o
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("intersects", 1);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_15cython_quadtree_8Quadtree_intersects(__pyx_v_self, __pyx_v_x_min, __pyx_v_y_min, __pyx_v_x_max, __pyx_v_y_max, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 70, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 70, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_15cython_quadtree_8Quadtree_intersects(__pyx_v_self, __pyx_v_x_min, __pyx_v_y_min, __pyx_v_x_max, __pyx_v_y_max, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 81, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
@@ -6505,26 +6698,26 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__5);
   __pyx_codeobj__6 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__5, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cython_quadtree_pyx, __pyx_n_s_subdivide, 41, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__6)) __PYX_ERR(0, 41, __pyx_L1_error)
 
-  /* "cython_quadtree.pyx":51
- *         ]
+  /* "cython_quadtree.pyx":62
+ *         self.particles = []
  * 
  *     cpdef list query(self, double x_min, double y_min, double x_max, double y_max):             # <<<<<<<<<<<<<<
  *         cdef list results = []
  *         if not self.intersects(x_min, y_min, x_max, y_max):
  */
-  __pyx_tuple__7 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_x_min, __pyx_n_s_y_min, __pyx_n_s_x_max, __pyx_n_s_y_max); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_tuple__7 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_x_min, __pyx_n_s_y_min, __pyx_n_s_x_max, __pyx_n_s_y_max); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(0, 62, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__7);
   __Pyx_GIVEREF(__pyx_tuple__7);
-  __pyx_codeobj__8 = (PyObject*)__Pyx_PyCode_New(5, 0, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__7, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cython_quadtree_pyx, __pyx_n_s_query, 51, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__8)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_codeobj__8 = (PyObject*)__Pyx_PyCode_New(5, 0, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__7, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cython_quadtree_pyx, __pyx_n_s_query, 62, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__8)) __PYX_ERR(0, 62, __pyx_L1_error)
 
-  /* "cython_quadtree.pyx":70
+  /* "cython_quadtree.pyx":81
  *         return results
  * 
  *     cpdef bint intersects(self, double x_min, double y_min, double x_max, double y_max):             # <<<<<<<<<<<<<<
  *         return not (
  *             x_max < self.x_min or
  */
-  __pyx_codeobj__9 = (PyObject*)__Pyx_PyCode_New(5, 0, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__7, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cython_quadtree_pyx, __pyx_n_s_intersects, 70, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__9)) __PYX_ERR(0, 70, __pyx_L1_error)
+  __pyx_codeobj__9 = (PyObject*)__Pyx_PyCode_New(5, 0, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__7, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cython_quadtree_pyx, __pyx_n_s_intersects, 81, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__9)) __PYX_ERR(0, 81, __pyx_L1_error)
 
   /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
@@ -6986,29 +7179,29 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_ptype_15cython_quadtree_Quadtree);
 
-  /* "cython_quadtree.pyx":51
- *         ]
+  /* "cython_quadtree.pyx":62
+ *         self.particles = []
  * 
  *     cpdef list query(self, double x_min, double y_min, double x_max, double y_max):             # <<<<<<<<<<<<<<
  *         cdef list results = []
  *         if not self.intersects(x_min, y_min, x_max, y_max):
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_15cython_quadtree_8Quadtree_7query, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_Quadtree_query, NULL, __pyx_n_s_cython_quadtree, __pyx_d, ((PyObject *)__pyx_codeobj__8)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_15cython_quadtree_8Quadtree_7query, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_Quadtree_query, NULL, __pyx_n_s_cython_quadtree, __pyx_d, ((PyObject *)__pyx_codeobj__8)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 62, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_15cython_quadtree_Quadtree, __pyx_n_s_query, __pyx_t_2) < 0) __PYX_ERR(0, 51, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_15cython_quadtree_Quadtree, __pyx_n_s_query, __pyx_t_2) < 0) __PYX_ERR(0, 62, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_ptype_15cython_quadtree_Quadtree);
 
-  /* "cython_quadtree.pyx":70
+  /* "cython_quadtree.pyx":81
  *         return results
  * 
  *     cpdef bint intersects(self, double x_min, double y_min, double x_max, double y_max):             # <<<<<<<<<<<<<<
  *         return not (
  *             x_max < self.x_min or
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_15cython_quadtree_8Quadtree_9intersects, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_Quadtree_intersects, NULL, __pyx_n_s_cython_quadtree, __pyx_d, ((PyObject *)__pyx_codeobj__9)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 70, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_15cython_quadtree_8Quadtree_9intersects, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_Quadtree_intersects, NULL, __pyx_n_s_cython_quadtree, __pyx_d, ((PyObject *)__pyx_codeobj__9)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_15cython_quadtree_Quadtree, __pyx_n_s_intersects, __pyx_t_2) < 0) __PYX_ERR(0, 70, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_15cython_quadtree_Quadtree, __pyx_n_s_intersects, __pyx_t_2) < 0) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_ptype_15cython_quadtree_Quadtree);
 

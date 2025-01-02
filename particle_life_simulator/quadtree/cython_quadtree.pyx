@@ -41,12 +41,23 @@ cdef class Quadtree:
     cpdef void subdivide(self):
         cdef double mid_x = (self.x_min + self.x_max) / 2.0
         cdef double mid_y = (self.y_min + self.y_max) / 2.0
+
+        # Erstelle die vier Unterbäume
         self.subtrees = [
             Quadtree(self.x_min, self.y_min, mid_x,      mid_y,      self.capacity),
             Quadtree(mid_x,      self.y_min, self.x_max, mid_y,      self.capacity),
             Quadtree(self.x_min, mid_y,      mid_x,      self.y_max, self.capacity),
             Quadtree(mid_x,      mid_y,      self.x_max, self.y_max, self.capacity)
         ]
+
+        # Verschiebe vorhandene Partikel in die Unterbäume
+        for particle in self.particles:
+            for subtree in self.subtrees:
+                if subtree.insert(particle):
+                    break
+
+        # Leere die Partikelliste der aktuellen Region
+        self.particles = []
 
     cpdef list query(self, double x_min, double y_min, double x_max, double y_max):
         cdef list results = []
