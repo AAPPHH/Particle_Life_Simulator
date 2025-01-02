@@ -1,0 +1,19 @@
+name: particle_life_simulator
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.12
+  - setuptools
+  - wheel
+  - pip
+  - pip:
+      - black
+      - flake8
+      - isort
+      - pytest
+      - pytest-cov
+      - ruff
+      - build
+      - twine
+      - wheel
+      - dearpygui
