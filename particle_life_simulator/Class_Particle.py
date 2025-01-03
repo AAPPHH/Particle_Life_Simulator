@@ -19,13 +19,14 @@ except ImportError:
 
 class CreateParticle:
     def __init__(self, num_particles: int = 1000, x_max: int = 1920, y_max: int = 1080,
-                 speed_range: tuple = (-2, 2), radius: int = 5):
+                 speed_range: tuple = (-2, 2), radius: int = 5, num_colors: int = 5):
         self.num_particles = num_particles
         self.x_max = x_max
         self.y_max = y_max
         self.speed_range = speed_range
         self.particles = []
         self.radius = radius
+        self.num_colors = num_colors
         self.quadtree = Quadtree(0, 0, x_max, y_max)
         self.update_counter = 0
 
@@ -36,15 +37,16 @@ class CreateParticle:
             y = random.randint(self.radius, self.y_max - self.radius)
             vx = random.uniform(*self.speed_range)
             vy = random.uniform(*self.speed_range)
+            color = random.randint(0, self.num_colors - 1)  # Farbe auswählen
 
-            if all(self._distance(x, y, px, py) >= 2 * self.radius for px, py, _, _ in self.particles):
-                self.particles.append((x, y, vx, vy))
+            if all(self._distance(x, y, px, py) >= 2 * self.radius for px, py, _, _, _ in self.particles):
+                self.particles.append((x, y, vx, vy, color))
         self.update_quadtree()
 
     def update_positions(self) -> None:
         updated_particles = []
 
-        for i, (x1, y1, vx1, vy1) in enumerate(self.particles):
+        for i, (x1, y1, vx1, vy1, color1) in enumerate(self.particles):
             x1 += vx1
             y1 += vy1
 
@@ -55,7 +57,7 @@ class CreateParticle:
                 x1 + 2 * self.radius, y1 + 2 * self.radius
             )
 
-            for (x2, y2, vx2, vy2) in nearby_particles:
+            for (x2, y2, vx2, vy2, color2) in nearby_particles:
                 dist = self._distance(x1, y1, x2, y2)
                 if dist < 2 * self.radius:
                     vx1, vy1, vx2, vy2 = self._handle_collision(x1, y1, vx1, vy1, x2, y2, vx2, vy2)
@@ -71,7 +73,7 @@ class CreateParticle:
                         x2 -= separation_vector_x * overlap / 2
                         y2 -= separation_vector_y * overlap / 2
 
-            updated_particles.append((x1, y1, vx1, vy1))
+            updated_particles.append((x1, y1, vx1, vy1, color1))  # Farbwert bleibt unverändert
 
         self.particles = updated_particles
         self.update_quadtree()
@@ -126,5 +128,5 @@ class CreateParticle:
     def _distance(x1: float, y1: float, x2: float, y2: float) -> float:
         return math.hypot(x2 - x1, y2 - y1)
 
-    def get_positions(self) -> list:
-        return [(x, y) for x, y, _, _ in self.particles]
+    def get_positions_and_colors(self) -> list:
+        return [(x, y, color) for x, y, _, _, color in self.particles]
