@@ -56,16 +56,16 @@ class CreateParticle:
             )
 
             for (x2, y2, vx2, vy2) in nearby_particles:
-                if self._distance(x1, y1, x2, y2) < 2 * self.radius:
+                dist = self._distance(x1, y1, x2, y2)
+                if dist < 2 * self.radius:
                     vx1, vy1, vx2, vy2 = self._handle_collision(x1, y1, vx1, vy1, x2, y2, vx2, vy2)
 
-                    overlap = 2 * self.radius - self._distance(x1, y1, x2, y2)
+                    overlap = 2 * self.radius - dist
                     if overlap > 0:
-                        distance = self._distance(x1, y1, x2, y2)
-                        if distance == 0:
-                            distance = 0.1
-                        separation_vector_x = (x1 - x2) / distance
-                        separation_vector_y = (y1 - y2) / distance
+                        if dist == 0:
+                            dist = 0.1
+                        separation_vector_x = (x1 - x2) / dist
+                        separation_vector_y = (y1 - y2) / dist
                         x1 += separation_vector_x * overlap / 2
                         y1 += separation_vector_y * overlap / 2
                         x2 -= separation_vector_x * overlap / 2
@@ -75,6 +75,7 @@ class CreateParticle:
 
         self.particles = updated_particles
         self.update_quadtree()
+
 
     def update_quadtree(self):
         self.quadtree = Quadtree(0, 0, self.x_max, self.y_max)

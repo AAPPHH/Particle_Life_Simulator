@@ -8,7 +8,7 @@ cdef class Quadtree:
     cdef list particles
     cdef object subtrees  # Can be None or a list of Quadtrees
 
-    def __init__(self, double x_min, double y_min, double x_max, double y_max, int capacity=50):
+    def __init__(self, double x_min, double y_min, double x_max, double y_max, int capacity=10):
         self.x_min = x_min
         self.y_min = y_min
         self.x_max = x_max

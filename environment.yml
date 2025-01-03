@@ -2,7 +2,7 @@ name: particle_life_simulator
 channels:
   - conda-forge
 dependencies:
-  - python>=3.12
+  - python=3.12
   - setuptools
   - wheel
   - pip
@@ -19,3 +19,4 @@ dependencies:
       - dearpygui
       - numpy
       - cython
+      - numba

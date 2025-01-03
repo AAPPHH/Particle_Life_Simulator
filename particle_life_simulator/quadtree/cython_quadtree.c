@@ -5,7 +5,7 @@
     "distutils": {
         "name": "cython_quadtree",
         "sources": [
-            "c:\\Users\\jfham\\OneDrive\\Dokumente\\Workstation_Clones\\Particle_Life_Simulator\\particle_life_simulator\\quadtree\\cython_quadtree.pyx"
+            "c:\\Particle_Life_Simulator\\particle_life_simulator\\quadtree\\cython_quadtree.pyx"
         ]
     },
     "module_name": "cython_quadtree"
@@ -2732,7 +2732,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 /* "cython_quadtree.pyx":11
  *     cdef object subtrees  # Can be None or a list of Quadtrees
  * 
- *     def __init__(self, double x_min, double y_min, double x_max, double y_max, int capacity=50):             # <<<<<<<<<<<<<<
+ *     def __init__(self, double x_min, double y_min, double x_max, double y_max, int capacity=10):             # <<<<<<<<<<<<<<
  *         self.x_min = x_min
  *         self.y_min = y_min
  */
@@ -2848,7 +2848,7 @@ static int __pyx_pw_15cython_quadtree_8Quadtree_1__init__(PyObject *__pyx_v_self
     if (values[4]) {
       __pyx_v_capacity = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_capacity == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 11, __pyx_L3_error)
     } else {
-      __pyx_v_capacity = ((int)50);
+      __pyx_v_capacity = ((int)10);
     }
   }
   goto __pyx_L6_skip;
@@ -2891,7 +2891,7 @@ static int __pyx_pf_15cython_quadtree_8Quadtree___init__(struct __pyx_obj_15cyth
 
   /* "cython_quadtree.pyx":12
  * 
- *     def __init__(self, double x_min, double y_min, double x_max, double y_max, int capacity=50):
+ *     def __init__(self, double x_min, double y_min, double x_max, double y_max, int capacity=10):
  *         self.x_min = x_min             # <<<<<<<<<<<<<<
  *         self.y_min = y_min
  *         self.x_max = x_max
@@ -2899,7 +2899,7 @@ static int __pyx_pf_15cython_quadtree_8Quadtree___init__(struct __pyx_obj_15cyth
   __pyx_v_self->x_min = __pyx_v_x_min;
 
   /* "cython_quadtree.pyx":13
- *     def __init__(self, double x_min, double y_min, double x_max, double y_max, int capacity=50):
+ *     def __init__(self, double x_min, double y_min, double x_max, double y_max, int capacity=10):
  *         self.x_min = x_min
  *         self.y_min = y_min             # <<<<<<<<<<<<<<
  *         self.x_max = x_max
@@ -2965,7 +2965,7 @@ static int __pyx_pf_15cython_quadtree_8Quadtree___init__(struct __pyx_obj_15cyth
   /* "cython_quadtree.pyx":11
  *     cdef object subtrees  # Can be None or a list of Quadtrees
  * 
- *     def __init__(self, double x_min, double y_min, double x_max, double y_max, int capacity=50):             # <<<<<<<<<<<<<<
+ *     def __init__(self, double x_min, double y_min, double x_max, double y_max, int capacity=10):             # <<<<<<<<<<<<<<
  *         self.x_min = x_min
  *         self.y_min = y_min
  */
