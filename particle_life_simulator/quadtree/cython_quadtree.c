@@ -3158,7 +3158,7 @@ static int __pyx_f_15cython_quadtree_8Quadtree_insert(struct __pyx_obj_15cython_
  *         cdef double x = particle[0]
  *         cdef double y = particle[1]             # <<<<<<<<<<<<<<
  * 
- *         # berprfen, ob das Partikel innerhalb der aktuellen Region liegt
+ *         # Check if the particle lies within the current region
  */
   __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_particle, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 24, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -3168,7 +3168,7 @@ static int __pyx_f_15cython_quadtree_8Quadtree_insert(struct __pyx_obj_15cython_
 
   /* "cython_quadtree.pyx":27
  * 
- *         # berprfen, ob das Partikel innerhalb der aktuellen Region liegt
+ *         # Check if the particle lies within the current region
  *         if not (self.x_min <= x <= self.x_max and self.y_min <= y <= self.y_max):             # <<<<<<<<<<<<<<
  *             return False
  * 
@@ -3192,18 +3192,18 @@ static int __pyx_f_15cython_quadtree_8Quadtree_insert(struct __pyx_obj_15cython_
   if (__pyx_t_8) {
 
     /* "cython_quadtree.pyx":28
- *         # berprfen, ob das Partikel innerhalb der aktuellen Region liegt
+ *         # Check if the particle lies within the current region
  *         if not (self.x_min <= x <= self.x_max and self.y_min <= y <= self.y_max):
  *             return False             # <<<<<<<<<<<<<<
  * 
- *         # Wenn die Kapazitt nicht berschritten ist und keine Unterbume existieren, fge das Partikel hinzu
+ *         # If capacity is not exceeded and there are no subtrees, add the particle
  */
     __pyx_r = 0;
     goto __pyx_L0;
 
     /* "cython_quadtree.pyx":27
  * 
- *         # berprfen, ob das Partikel innerhalb der aktuellen Region liegt
+ *         # Check if the particle lies within the current region
  *         if not (self.x_min <= x <= self.x_max and self.y_min <= y <= self.y_max):             # <<<<<<<<<<<<<<
  *             return False
  * 
@@ -3212,7 +3212,7 @@ static int __pyx_f_15cython_quadtree_8Quadtree_insert(struct __pyx_obj_15cython_
 
   /* "cython_quadtree.pyx":31
  * 
- *         # Wenn die Kapazitt nicht berschritten ist und keine Unterbume existieren, fge das Partikel hinzu
+ *         # If capacity is not exceeded and there are no subtrees, add the particle
  *         if len(self.particles) < self.capacity and self.subtrees is None:             # <<<<<<<<<<<<<<
  *             self.particles.append(particle)
  *             return True
@@ -3237,7 +3237,7 @@ static int __pyx_f_15cython_quadtree_8Quadtree_insert(struct __pyx_obj_15cython_
   if (__pyx_t_8) {
 
     /* "cython_quadtree.pyx":32
- *         # Wenn die Kapazitt nicht berschritten ist und keine Unterbume existieren, fge das Partikel hinzu
+ *         # If capacity is not exceeded and there are no subtrees, add the particle
  *         if len(self.particles) < self.capacity and self.subtrees is None:
  *             self.particles.append(particle)             # <<<<<<<<<<<<<<
  *             return True
@@ -3254,14 +3254,14 @@ static int __pyx_f_15cython_quadtree_8Quadtree_insert(struct __pyx_obj_15cython_
  *             self.particles.append(particle)
  *             return True             # <<<<<<<<<<<<<<
  * 
- *         # Unterteile nur, wenn die maximale Tiefe nicht erreicht ist
+ *         # Subdivide only if the maximum depth is not reached
  */
     __pyx_r = 1;
     goto __pyx_L0;
 
     /* "cython_quadtree.pyx":31
  * 
- *         # Wenn die Kapazitt nicht berschritten ist und keine Unterbume existieren, fge das Partikel hinzu
+ *         # If capacity is not exceeded and there are no subtrees, add the particle
  *         if len(self.particles) < self.capacity and self.subtrees is None:             # <<<<<<<<<<<<<<
  *             self.particles.append(particle)
  *             return True
@@ -3270,7 +3270,7 @@ static int __pyx_f_15cython_quadtree_8Quadtree_insert(struct __pyx_obj_15cython_
 
   /* "cython_quadtree.pyx":36
  * 
- *         # Unterteile nur, wenn die maximale Tiefe nicht erreicht ist
+ *         # Subdivide only if the maximum depth is not reached
  *         if self.subtrees is None and self.depth < self.max_depth:             # <<<<<<<<<<<<<<
  *             self.subdivide()
  * 
@@ -3287,17 +3287,17 @@ static int __pyx_f_15cython_quadtree_8Quadtree_insert(struct __pyx_obj_15cython_
   if (__pyx_t_8) {
 
     /* "cython_quadtree.pyx":37
- *         # Unterteile nur, wenn die maximale Tiefe nicht erreicht ist
+ *         # Subdivide only if the maximum depth is not reached
  *         if self.subtrees is None and self.depth < self.max_depth:
  *             self.subdivide()             # <<<<<<<<<<<<<<
  * 
- *         # Fge das Partikel in den passenden Unterbaum ein
+ *         # Insert the particle into the appropriate subtree
  */
     ((struct __pyx_vtabstruct_15cython_quadtree_Quadtree *)__pyx_v_self->__pyx_vtab)->subdivide(__pyx_v_self, 0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 37, __pyx_L1_error)
 
     /* "cython_quadtree.pyx":36
  * 
- *         # Unterteile nur, wenn die maximale Tiefe nicht erreicht ist
+ *         # Subdivide only if the maximum depth is not reached
  *         if self.subtrees is None and self.depth < self.max_depth:             # <<<<<<<<<<<<<<
  *             self.subdivide()
  * 
@@ -3305,7 +3305,7 @@ static int __pyx_f_15cython_quadtree_8Quadtree_insert(struct __pyx_obj_15cython_
   }
 
   /* "cython_quadtree.pyx":41
- *         # Fge das Partikel in den passenden Unterbaum ein
+ *         # Insert the particle into the appropriate subtree
  *         cdef Quadtree subtree
  *         if self.subtrees is not None:             # <<<<<<<<<<<<<<
  *             for subtree in self.subtrees:
@@ -3392,7 +3392,7 @@ static int __pyx_f_15cython_quadtree_8Quadtree_insert(struct __pyx_obj_15cython_
  *                 if subtree.insert(particle):
  *                     return True             # <<<<<<<<<<<<<<
  * 
- *         # Wenn die maximale Tiefe erreicht ist, bleibt das Partikel in der aktuellen Region
+ *         # If the maximum depth is reached, keep the particle in the current region
  */
         __pyx_r = 1;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -3418,7 +3418,7 @@ static int __pyx_f_15cython_quadtree_8Quadtree_insert(struct __pyx_obj_15cython_
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
     /* "cython_quadtree.pyx":41
- *         # Fge das Partikel in den passenden Unterbaum ein
+ *         # Insert the particle into the appropriate subtree
  *         cdef Quadtree subtree
  *         if self.subtrees is not None:             # <<<<<<<<<<<<<<
  *             for subtree in self.subtrees:
@@ -3428,7 +3428,7 @@ static int __pyx_f_15cython_quadtree_8Quadtree_insert(struct __pyx_obj_15cython_
 
   /* "cython_quadtree.pyx":47
  * 
- *         # Wenn die maximale Tiefe erreicht ist, bleibt das Partikel in der aktuellen Region
+ *         # If the maximum depth is reached, keep the particle in the current region
  *         self.particles.append(particle)             # <<<<<<<<<<<<<<
  *         return True
  * 
@@ -3440,7 +3440,7 @@ static int __pyx_f_15cython_quadtree_8Quadtree_insert(struct __pyx_obj_15cython_
   __pyx_t_10 = __Pyx_PyList_Append(__pyx_v_self->particles, __pyx_v_particle); if (unlikely(__pyx_t_10 == ((int)-1))) __PYX_ERR(0, 47, __pyx_L1_error)
 
   /* "cython_quadtree.pyx":48
- *         # Wenn die maximale Tiefe erreicht ist, bleibt das Partikel in der aktuellen Region
+ *         # If the maximum depth is reached, keep the particle in the current region
  *         self.particles.append(particle)
  *         return True             # <<<<<<<<<<<<<<
  * 
@@ -3600,7 +3600,7 @@ static PyObject *__pyx_pf_15cython_quadtree_8Quadtree_2insert(struct __pyx_obj_1
  * 
  *     cpdef void subdivide(self):             # <<<<<<<<<<<<<<
  *         if self.depth >= self.max_depth:
- *             return  # Weitere Unterteilung nicht erlaubt, maximale Tiefe erreicht
+ *             return  # Further subdivision not allowed, maximum depth reached
  */
 
 static PyObject *__pyx_pw_15cython_quadtree_8Quadtree_5subdivide(PyObject *__pyx_v_self, 
@@ -3692,7 +3692,7 @@ static void __pyx_f_15cython_quadtree_8Quadtree_subdivide(struct __pyx_obj_15cyt
  * 
  *     cpdef void subdivide(self):
  *         if self.depth >= self.max_depth:             # <<<<<<<<<<<<<<
- *             return  # Weitere Unterteilung nicht erlaubt, maximale Tiefe erreicht
+ *             return  # Further subdivision not allowed, maximum depth reached
  * 
  */
   __pyx_t_6 = (__pyx_v_self->depth >= __pyx_v_self->max_depth);
@@ -3701,7 +3701,7 @@ static void __pyx_f_15cython_quadtree_8Quadtree_subdivide(struct __pyx_obj_15cyt
     /* "cython_quadtree.pyx":52
  *     cpdef void subdivide(self):
  *         if self.depth >= self.max_depth:
- *             return  # Weitere Unterteilung nicht erlaubt, maximale Tiefe erreicht             # <<<<<<<<<<<<<<
+ *             return  # Further subdivision not allowed, maximum depth reached             # <<<<<<<<<<<<<<
  * 
  *         cdef double mid_x = (self.x_min + self.x_max) / 2.0
  */
@@ -3711,13 +3711,13 @@ static void __pyx_f_15cython_quadtree_8Quadtree_subdivide(struct __pyx_obj_15cyt
  * 
  *     cpdef void subdivide(self):
  *         if self.depth >= self.max_depth:             # <<<<<<<<<<<<<<
- *             return  # Weitere Unterteilung nicht erlaubt, maximale Tiefe erreicht
+ *             return  # Further subdivision not allowed, maximum depth reached
  * 
  */
   }
 
   /* "cython_quadtree.pyx":54
- *             return  # Weitere Unterteilung nicht erlaubt, maximale Tiefe erreicht
+ *             return  # Further subdivision not allowed, maximum depth reached
  * 
  *         cdef double mid_x = (self.x_min + self.x_max) / 2.0             # <<<<<<<<<<<<<<
  *         cdef double mid_y = (self.y_min + self.y_max) / 2.0
@@ -3730,12 +3730,12 @@ static void __pyx_f_15cython_quadtree_8Quadtree_subdivide(struct __pyx_obj_15cyt
  *         cdef double mid_x = (self.x_min + self.x_max) / 2.0
  *         cdef double mid_y = (self.y_min + self.y_max) / 2.0             # <<<<<<<<<<<<<<
  * 
- *         # Erstelle die vier Unterbume mit einer um 1 erhhten Tiefe
+ *         # Create the four subtrees with an increased depth of 1
  */
   __pyx_v_mid_y = ((__pyx_v_self->y_min + __pyx_v_self->y_max) / 2.0);
 
   /* "cython_quadtree.pyx":59
- *         # Erstelle die vier Unterbume mit einer um 1 erhhten Tiefe
+ *         # Create the four subtrees with an increased depth of 1
  *         self.subtrees = [
  *             Quadtree(self.x_min, self.y_min, mid_x,      mid_y,      self.capacity, self.depth + 1, self.max_depth),             # <<<<<<<<<<<<<<
  *             Quadtree(mid_x,      self.y_min, self.x_max, mid_y,      self.capacity, self.depth + 1, self.max_depth),
@@ -3928,7 +3928,7 @@ static void __pyx_f_15cython_quadtree_8Quadtree_subdivide(struct __pyx_obj_15cyt
 
   /* "cython_quadtree.pyx":58
  * 
- *         # Erstelle die vier Unterbume mit einer um 1 erhhten Tiefe
+ *         # Create the four subtrees with an increased depth of 1
  *         self.subtrees = [             # <<<<<<<<<<<<<<
  *             Quadtree(self.x_min, self.y_min, mid_x,      mid_y,      self.capacity, self.depth + 1, self.max_depth),
  *             Quadtree(mid_x,      self.y_min, self.x_max, mid_y,      self.capacity, self.depth + 1, self.max_depth),
@@ -3955,7 +3955,7 @@ static void __pyx_f_15cython_quadtree_8Quadtree_subdivide(struct __pyx_obj_15cyt
 
   /* "cython_quadtree.pyx":66
  * 
- *         # Verschiebe vorhandene Partikel in die Unterbume
+ *         # Move existing particles into the subtrees
  *         for particle in self.particles:             # <<<<<<<<<<<<<<
  *             for subtree in self.subtrees:
  *                 if subtree.insert(particle):
@@ -3984,7 +3984,7 @@ static void __pyx_f_15cython_quadtree_8Quadtree_subdivide(struct __pyx_obj_15cyt
     __pyx_t_11 = 0;
 
     /* "cython_quadtree.pyx":67
- *         # Verschiebe vorhandene Partikel in die Unterbume
+ *         # Move existing particles into the subtrees
  *         for particle in self.particles:
  *             for subtree in self.subtrees:             # <<<<<<<<<<<<<<
  *                 if subtree.insert(particle):
@@ -4085,7 +4085,7 @@ static void __pyx_f_15cython_quadtree_8Quadtree_subdivide(struct __pyx_obj_15cyt
  *                 if subtree.insert(particle):
  *                     break             # <<<<<<<<<<<<<<
  * 
- *         # Leere die Partikelliste der aktuellen Region
+ *         # Clear the particle list of the current region
  */
         goto __pyx_L7_break;
 
@@ -4099,7 +4099,7 @@ static void __pyx_f_15cython_quadtree_8Quadtree_subdivide(struct __pyx_obj_15cyt
       }
 
       /* "cython_quadtree.pyx":67
- *         # Verschiebe vorhandene Partikel in die Unterbume
+ *         # Move existing particles into the subtrees
  *         for particle in self.particles:
  *             for subtree in self.subtrees:             # <<<<<<<<<<<<<<
  *                 if subtree.insert(particle):
@@ -4115,7 +4115,7 @@ static void __pyx_f_15cython_quadtree_8Quadtree_subdivide(struct __pyx_obj_15cyt
 
     /* "cython_quadtree.pyx":66
  * 
- *         # Verschiebe vorhandene Partikel in die Unterbume
+ *         # Move existing particles into the subtrees
  *         for particle in self.particles:             # <<<<<<<<<<<<<<
  *             for subtree in self.subtrees:
  *                 if subtree.insert(particle):
@@ -4125,7 +4125,7 @@ static void __pyx_f_15cython_quadtree_8Quadtree_subdivide(struct __pyx_obj_15cyt
 
   /* "cython_quadtree.pyx":72
  * 
- *         # Leere die Partikelliste der aktuellen Region
+ *         # Clear the particle list of the current region
  *         self.particles = []             # <<<<<<<<<<<<<<
  * 
  *     cpdef list query(self, double x_min, double y_min, double x_max, double y_max):
@@ -4143,7 +4143,7 @@ static void __pyx_f_15cython_quadtree_8Quadtree_subdivide(struct __pyx_obj_15cyt
  * 
  *     cpdef void subdivide(self):             # <<<<<<<<<<<<<<
  *         if self.depth >= self.max_depth:
- *             return  # Weitere Unterteilung nicht erlaubt, maximale Tiefe erreicht
+ *             return  # Further subdivision not allowed, maximum depth reached
  */
 
   /* function exit code */
@@ -7085,7 +7085,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  *     cpdef void subdivide(self):             # <<<<<<<<<<<<<<
  *         if self.depth >= self.max_depth:
- *             return  # Weitere Unterteilung nicht erlaubt, maximale Tiefe erreicht
+ *             return  # Further subdivision not allowed, maximum depth reached
  */
   __pyx_tuple__5 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 50, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__5);
@@ -7565,7 +7565,7 @@ if (!__Pyx_RefNanny) {
  * 
  *     cpdef void subdivide(self):             # <<<<<<<<<<<<<<
  *         if self.depth >= self.max_depth:
- *             return  # Weitere Unterteilung nicht erlaubt, maximale Tiefe erreicht
+ *             return  # Further subdivision not allowed, maximum depth reached
  */
   __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_15cython_quadtree_8Quadtree_5subdivide, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_Quadtree_subdivide, NULL, __pyx_n_s_cython_quadtree, __pyx_d, ((PyObject *)__pyx_codeobj__6)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 50, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);

@@ -31,7 +31,7 @@ tmp/
 /prof/
 coverage.xml
 
-# Build and release directories
+# Build and release directories 
 /build/
 /dist/
 *.spec

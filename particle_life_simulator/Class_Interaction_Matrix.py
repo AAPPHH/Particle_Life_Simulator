@@ -3,10 +3,10 @@ import random
 class InteractionMatrix:
     def __init__(self, num_colors: int, default_value: int = 0):
         """
-        Erstellt eine quadratische Interaktionsmatrix für Partikel-Farben.
+        Creates a square interaction matrix for particle colors.
 
-        :param num_colors: Anzahl der Farben (Matrix-Dimension).
-        :param default_value: Standardwert für Interaktionen (z. B. 0 für keine Interaktion).
+        :param num_colors: Number of colors (matrix dimension).
+        :param default_value: Default value for interactions (e.g., 0 for no interaction).
         """
         self.num_colors = num_colors
         self.matrix = [
@@ -16,40 +16,40 @@ class InteractionMatrix:
 
     def set_interaction(self, color1: int, color2: int, value: int):
         """
-        Setzt den Interaktionswert zwischen zwei Farben.
+        Sets the interaction value between two colors.
 
-        :param color1: Index der ersten Farbe.
-        :param color2: Index der zweiten Farbe.
-        :param value: Interaktionswert (z. B. -1 für Abstoßung, +1 für Anziehung).
+        :param color1: Index of the first color.
+        :param color2: Index of the second color.
+        :param value: Interaction value (e.g., -1 for repulsion, +1 for attraction).
         """
         self.matrix[color1][color2] = value
-        self.matrix[color2][color1] = value  # Symmetrische Interaktion
+        self.matrix[color2][color1] = value  # Symmetric interaction
 
     def set_full_matrix(self, matrix: list):
         """
-        Setzt die gesamte Interaktionsmatrix.
+        Sets the entire interaction matrix.
 
-        :param matrix: Eine Liste von Listen, die die Interaktionen darstellt.
+        :param matrix: A list of lists representing the interactions.
         """
         if len(matrix) != self.num_colors or any(len(row) != self.num_colors for row in matrix):
-            raise ValueError("Die Matrix muss quadratisch sein und der Anzahl der Farben entsprechen.")
+            raise ValueError("The matrix must be square and match the number of colors.")
         self.matrix = matrix
 
     def get_interaction(self, color1: int, color2: int) -> int:
         """
-        Gibt den Interaktionswert zwischen zwei Farben zurück.
+        Returns the interaction value between two colors.
 
-        :param color1: Index der ersten Farbe.
-        :param color2: Index der zweiten Farbe.
-        :return: Interaktionswert.
+        :param color1: Index of the first color.
+        :param color2: Index of the second color.
+        :return: Interaction value.
         """
         return self.matrix[color1][color2]
 
     def randomize_interactions(self, values: list):
         """
-        Initialisiert die Matrix mit zufälligen Werten aus einer Liste.
+        Initializes the matrix with random values from a given list.
 
-        :param values: Liste möglicher Interaktionswerte (z. B. [-1, 0, +1]).
+        :param values: List of possible interaction values (e.g., [-1, 0, +1]).
         """
         for i in range(self.num_colors):
             for j in range(i, self.num_colors):
@@ -57,7 +57,7 @@ class InteractionMatrix:
                 self.set_interaction(i, j, value)
 
     def display(self):
-        """Zeigt die Interaktionsmatrix auf der Konsole an."""
+        """Displays the interaction matrix on the console."""
         print("Interaction Matrix:")
         for row in self.matrix:
             print(" ".join(f"{val:+}" for val in row))

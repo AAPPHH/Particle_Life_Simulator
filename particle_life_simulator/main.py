@@ -4,10 +4,10 @@ from Class_Particle import CreateParticle
 
 def setup_simulation():
     """
-    Setzt die Simulation mit Partikelerzeugung und GUI auf.
+    Sets up the simulation with particle generation and GUI.
     """
     particle_creator = CreateParticle(
-        num_particles=4000,
+        num_particles=1000,
         x_max=1920,
         y_max=1080,
         speed_range=(-1, 1),
@@ -16,11 +16,8 @@ def setup_simulation():
     particle_creator.generate_particles()
 
     interaction_matrix = [
-        [0, +5, -5,  0, +5],
-        [+5, 0,  0, -5, -5],
-        [-5, 0,  0, +5,  0],
-        [0, -5, +5,  0, +5],
-        [+5, -5, 0, +5,  0]
+        [-25, 0],
+        [-25, 0],
     ]
     particle_creator.set_interaction_matrix(interaction_matrix)
 
@@ -30,7 +27,7 @@ def setup_simulation():
 
 def main():
     """
-    Hauptlogik der Simulation.
+    Main logic of the simulation.
     """
     simulation = setup_simulation()
     simulation.start()

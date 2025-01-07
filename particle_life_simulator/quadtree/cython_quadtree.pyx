@@ -23,38 +23,38 @@ cdef class Quadtree:
         cdef double x = particle[0]
         cdef double y = particle[1]
 
-        # Überprüfen, ob das Partikel innerhalb der aktuellen Region liegt
+        # Check if the particle lies within the current region
         if not (self.x_min <= x <= self.x_max and self.y_min <= y <= self.y_max):
             return False
 
-        # Wenn die Kapazität nicht überschritten ist und keine Unterbäume existieren, füge das Partikel hinzu
+        # If capacity is not exceeded and there are no subtrees, add the particle
         if len(self.particles) < self.capacity and self.subtrees is None:
             self.particles.append(particle)
             return True
 
-        # Unterteile nur, wenn die maximale Tiefe nicht erreicht ist
+        # Subdivide only if the maximum depth is not reached
         if self.subtrees is None and self.depth < self.max_depth:
             self.subdivide()
 
-        # Füge das Partikel in den passenden Unterbaum ein
+        # Insert the particle into the appropriate subtree
         cdef Quadtree subtree
         if self.subtrees is not None:
             for subtree in self.subtrees:
                 if subtree.insert(particle):
                     return True
 
-        # Wenn die maximale Tiefe erreicht ist, bleibt das Partikel in der aktuellen Region
+        # If the maximum depth is reached, keep the particle in the current region
         self.particles.append(particle)
         return True
 
     cpdef void subdivide(self):
         if self.depth >= self.max_depth:
-            return  # Weitere Unterteilung nicht erlaubt, maximale Tiefe erreicht
+            return  # Further subdivision not allowed, maximum depth reached
 
         cdef double mid_x = (self.x_min + self.x_max) / 2.0
         cdef double mid_y = (self.y_min + self.y_max) / 2.0
 
-        # Erstelle die vier Unterbäume mit einer um 1 erhöhten Tiefe
+        # Create the four subtrees with an increased depth of 1
         self.subtrees = [
             Quadtree(self.x_min, self.y_min, mid_x,      mid_y,      self.capacity, self.depth + 1, self.max_depth),
             Quadtree(mid_x,      self.y_min, self.x_max, mid_y,      self.capacity, self.depth + 1, self.max_depth),
@@ -62,13 +62,13 @@ cdef class Quadtree:
             Quadtree(mid_x,      mid_y,      self.x_max, self.y_max, self.capacity, self.depth + 1, self.max_depth)
         ]
 
-        # Verschiebe vorhandene Partikel in die Unterbäume
+        # Move existing particles into the subtrees
         for particle in self.particles:
             for subtree in self.subtrees:
                 if subtree.insert(particle):
                     break
 
-        # Leere die Partikelliste der aktuellen Region
+        # Clear the particle list of the current region
         self.particles = []
 
     cpdef list query(self, double x_min, double y_min, double x_max, double y_max):
