@@ -21,6 +21,7 @@ class CreateParticle:
     def __init__(self, num_particles: int = 1000, x_max: int = 1920, y_max: int = 1080,
                  speed_range: tuple = (-2, 2), max_speed: float = 1.0, radius: int = 5, 
                  num_colors: int = 2, interaction_strength: float = 0.1):
+
         self.num_particles = num_particles
         self.x_max = x_max
         self.y_max = y_max
@@ -54,8 +55,10 @@ class CreateParticle:
             y = random.randint(self.radius, self.y_max - self.radius)
             vx = random.uniform(*self.speed_range)
             vy = random.uniform(*self.speed_range)
+
             vx, vy = self._limit_speed(vx, vy)
             color = random.randint(0, self.num_colors - 1)
+
             if all(self._distance(x, y, px, py) >= 2 * self.radius for px, py, _, _, _ in self.particles):
                 self.particles.append((x, y, vx, vy, color))
         self.update_quadtree()
@@ -64,6 +67,7 @@ class CreateParticle:
         updated_particles = []
 
         for x1, y1, vx1, vy1, color1 in self.particles:
+
             x1 += vx1
             y1 += vy1
             x1, y1 = self._handle_boundaries(x1, y1)
@@ -91,6 +95,7 @@ class CreateParticle:
 
             vx1, vy1 = self._limit_speed(vx1, vy1)
             updated_particles.append((x1, y1, vx1, vy1, color1))
+
 
         self.particles = updated_particles
         self.update_quadtree()
