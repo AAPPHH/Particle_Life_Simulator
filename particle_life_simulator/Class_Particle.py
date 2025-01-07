@@ -75,9 +75,9 @@ class CreateParticle:
 
             for x2, y2, vx2, vy2, color2 in nearby_particles:
                 dist = self._distance(x1, y1, x2, y2)
-
                 if dist < 2 * self.radius:
                     vx1, vy1, vx2, vy2 = self._handle_collision(x1, y1, vx1, vy1, x2, y2, vx2, vy2)
+
                     overlap = 2 * self.radius - dist
                     if overlap > 0 and dist > 0:
                         separation_vector_x = (x1 - x2) / dist
@@ -87,18 +87,24 @@ class CreateParticle:
                         x2 -= separation_vector_x * overlap / 2
                         y2 -= separation_vector_y * overlap / 2
 
-                if dist > 0:
-                    interaction = self.color_interaction.get_interaction(color1, color2)
-                    if interaction != 0:
-                        force = interaction * self.interaction_strength / dist
-                        x1 += force * (x2 - x1)
-                        y1 += force * (y2 - y1)
+                x1, y1 = self._apply_interaction_forces(x1, y1, x2, y2, color1, color2)
 
             vx1, vy1 = self._limit_speed(vx1, vy1)
             updated_particles.append((x1, y1, vx1, vy1, color1))
 
         self.particles = updated_particles
         self.update_quadtree()
+
+    def _apply_interaction_forces(self, x1: float, y1: float, x2: float, y2: float, 
+                              color1: int, color2: int) -> tuple:
+        dist = self._distance(x1, y1, x2, y2)
+        if dist > 0:
+            interaction = self.color_interaction.get_interaction(color1, color2)
+            if interaction != 0:
+                force = interaction * self.interaction_strength / dist
+                x1 += force * (x2 - x1)
+                y1 += force * (y2 - y1)
+        return x1, y1
 
     def update_quadtree(self):
         self.quadtree = Quadtree(0, 0, self.x_max, self.y_max)
