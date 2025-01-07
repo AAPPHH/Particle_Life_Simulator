@@ -46,6 +46,6 @@ class Simulation:
         Updates the particle positions and redraws them.
         """
         self.particle_creator.update_positions()
-        positions = self.particle_creator.get_positions()
+        positions_and_colors = self.particle_creator.get_positions_and_colors()
         self.gui.clear_drawlist()
-        self.gui.draw_particles(positions)
+        self.gui.draw_particles(positions_and_colors)
