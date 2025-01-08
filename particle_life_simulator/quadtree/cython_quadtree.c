@@ -5,7 +5,7 @@
     "distutils": {
         "name": "cython_quadtree",
         "sources": [
-            "c:\\Particle_Life_Simulator\\particle_life_simulator\\quadtree\\cython_quadtree.pyx"
+            "C:\\Users\\zaydb\\Downloads\\hsd\\drittes_semster\\datascience\\project\\Particle_Life_Simulator\\particle_life_simulator\\quadtree\\cython_quadtree.pyx"
         ]
     },
     "module_name": "cython_quadtree"
