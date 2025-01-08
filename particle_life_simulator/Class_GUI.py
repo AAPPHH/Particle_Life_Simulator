@@ -16,8 +16,8 @@ class GUI:
         self.particle_size = particle_size
         self.color_lookup = color_lookup if color_lookup else {
             0: (255, 0, 0),   # Rot
-            1: (0, 255, 0),   # Grün
-            2: (0, 0, 255),   # Blau
+            1: (0, 0, 255),   # Blau
+            2: (0, 255, 0),   # Grün
             3: (255, 255, 0), # Gelb
             4: (255, 0, 255)  # Magenta
         }

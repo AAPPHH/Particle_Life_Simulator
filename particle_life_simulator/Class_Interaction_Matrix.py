@@ -1,44 +1,63 @@
-class Interaction_Matrix:
-    def __init__(self, particles_df, max_radius):
-        self.particles_df = particles_df
-        self.max_radius = max_radius
+import random
 
-    def calculate(self):
-        positions = self.particles_df[["x", "y"]].to_numpy()
-        deltas = positions[:, np.newaxis, :] - positions[np.newaxis, :, :]
-        distances = np.linalg.norm(deltas, axis=2)
+class InteractionMatrix:
+    def __init__(self, num_colors: int, default_value: int = 0):
+        """
+        Creates a square interaction matrix for particle colors.
 
-        # Interaction matrix logic
-        interaction_matrix = np.zeros((len(self.particles_df), len(self.particles_df)))
-        for i in range(len(self.particles_df)):
-            for j in range(len(self.particles_df)):
-                if i != j and distances[i, j] < self.max_radius:
-                    interaction_matrix[i, j] = 1 / distances[i, j]  # Example: Inverse distance
-        return interaction_matrix
+        :param num_colors: Number of colors (matrix dimension).
+        :param default_value: Default value for interactions (e.g., 0 for no interaction).
+        """
+        self.num_colors = num_colors
+        self.matrix = [
+            [default_value for _ in range(num_colors)]
+            for _ in range(num_colors)
+        ]
 
-    
-import pandas as pd
-import numpy as np
+    def set_interaction(self, color1: int, color2: int, value: int):
+        """
+        Sets the interaction value between two colors.
 
-# Example DataFrame with particle attributes
-num_particles = 5
-data = {
-    "ID": np.arange(num_particles),
-    "x": np.random.uniform(0, 800, num_particles),
-    "y": np.random.uniform(0, 600, num_particles),
-    "vx": np.random.uniform(-2, 2, num_particles),
-    "vy": np.random.uniform(-2, 2, num_particles),
-    "radius": np.random.uniform(10, 30, num_particles),
-    "mass": np.random.uniform(1, 5, num_particles),
-    "color": [tuple(np.random.randint(0, 256, 3)) for _ in range(num_particles)],
-}
-particles_df = pd.DataFrame(data)
+        :param color1: Index of the first color.
+        :param color2: Index of the second color.
+        :param value: Interaction value (e.g., -1 for repulsion, +1 for attraction).
+        """
+        self.matrix[color1][color2] = value
+        self.matrix[color2][color1] = value  # Symmetric interaction
 
-print(particles_df)
+    def set_full_matrix(self, matrix: list):
+        """
+        Sets the entire interaction matrix.
 
+        :param matrix: A list of lists representing the interactions.
+        """
+        if len(matrix) != self.num_colors or any(len(row) != self.num_colors for row in matrix):
+            raise ValueError("The matrix must be square and match the number of colors.")
+        self.matrix = matrix
 
+    def get_interaction(self, color1: int, color2: int) -> int:
+        """
+        Returns the interaction value between two colors.
 
+        :param color1: Index of the first color.
+        :param color2: Index of the second color.
+        :return: Interaction value.
+        """
+        return self.matrix[color1][color2]
 
-interaction = Interaction_Matrix(particles_df, max_radius=100)
-interaction_matrix = interaction.calculate()
-print(interaction_matrix)
+    def randomize_interactions(self, values: list):
+        """
+        Initializes the matrix with random values from a given list.
+
+        :param values: List of possible interaction values (e.g., [-1, 0, +1]).
+        """
+        for i in range(self.num_colors):
+            for j in range(i, self.num_colors):
+                value = random.choice(values)
+                self.set_interaction(i, j, value)
+
+    def display(self):
+        """Displays the interaction matrix on the console."""
+        print("Interaction Matrix:")
+        for row in self.matrix:
+            print(" ".join(f"{val:+}" for val in row))
