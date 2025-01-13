@@ -3,6 +3,7 @@ import math
 import os
 import sys
 import subprocess
+import secrets
 
 try:
     from particle_life_simulator.quadtree.cython_quadtree import Quadtree
@@ -37,7 +38,7 @@ class CreateParticle:
             y = random.randint(self.radius, self.y_max - self.radius)
             vx = random.uniform(*self.speed_range)
             vy = random.uniform(*self.speed_range)
-            color = random.randint(0, self.num_colors - 1)  # Farbe auswählen
+            color = secrets.randbelow(self.num_colors)
 
             if all(self._distance(x, y, px, py) >= 2 * self.radius for px, py, _, _, _ in self.particles):
                 self.particles.append((x, y, vx, vy, color))
