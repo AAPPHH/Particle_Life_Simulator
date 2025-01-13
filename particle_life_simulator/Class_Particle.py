@@ -5,7 +5,7 @@ import sys
 import subprocess
 
 try:
-    from quadtree.cython_quadtree import Quadtree
+    from particle_life_simulator.quadtree.cython_quadtree import Quadtree
 except ImportError:
     import os, sys, subprocess
     this_dir = os.path.dirname(__file__)
