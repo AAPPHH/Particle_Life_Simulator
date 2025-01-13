@@ -1,18 +1,7 @@
 import cProfile
 import pstats
 
-from Class_simulation import Simulation
-from Class_GUI import GUI
-from Class_Particle import CreateParticle
-
-def main():
-    particle_creator = CreateParticle(num_particles=5000, x_max=1920, y_max=1080, speed_range=(-2, 2), radius=3)
-    particle_creator.generate_particles()
-
-    gui = GUI(window_width=1920, window_height=1080, particle_size=5)
-
-    simulation = Simulation(particle_creator, gui)
-    simulation.start()
+from main import main
 
 if __name__ == "__main__":
     profiler = cProfile.Profile()
@@ -24,12 +13,13 @@ if __name__ == "__main__":
 
     with open("profiling_results.txt", "w") as text_file:
         stats = pstats.Stats(profiler, stream=text_file)
-        stats.strip_dirs()
-        stats.sort_stats("cumulative")
-        stats.print_stats()
+        stats.strip_dirs()  # Remove extraneous path information
+        stats.sort_stats("cumulative")  # Sort by cumulative time
+        stats.print_stats()  # Print statistics to the file
 
+    # Save profiling data in binary format for further analysis
     profiler.dump_stats("profiling_results.prof")
 
-    print("Profiling abgeschlossen. Ergebnisse:")
-    print("- Lesbare Textdatei: profiling_results.txt")
-    print("- Binäre Profildatei: profiling_results.prof (für SnakeViz oder andere Tools)")
+    print("Profiling completed. Results:")
+    print("- Readable text file: profiling_results.txt")
+    print("- Binary profile file: profiling_results.prof (for SnakeViz or other tools)")
