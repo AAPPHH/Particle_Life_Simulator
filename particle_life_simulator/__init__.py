@@ -1,4 +1,5 @@
 """Documentation about particle_life_simulator"""
+
 import logging
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())

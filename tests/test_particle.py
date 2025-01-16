@@ -2,6 +2,7 @@ import pytest
 import numpy as np
 from particle_life_simulator.Class_Particle import CreateParticle
 
+
 def test_particle_initialization():
     """Test if a CreateParticle object initializes without errors."""
     num_particles = 100
@@ -57,24 +58,22 @@ def test_handle_boundaries():
     particle_simulator = CreateParticle(x_max=100, y_max=100, radius=5)
 
     # Check particles wrapping at boundaries
-    x, y = particle_simulator._handle_boundaries(-1, 50)   # Left 
+    x, y = particle_simulator._handle_boundaries(-1, 50)  # Left
     assert (x, y) == (95, 50)
 
-    x, y = particle_simulator._handle_boundaries(101, 50)  # Right 
+    x, y = particle_simulator._handle_boundaries(101, 50)  # Right
     assert (x, y) == (5, 50)
 
-    x, y = particle_simulator._handle_boundaries(50, -1)   # Top 
+    x, y = particle_simulator._handle_boundaries(50, -1)  # Top
     assert (x, y) == (50, 95)
 
-    x, y = particle_simulator._handle_boundaries(50, 101)  # Bottom 
+    x, y = particle_simulator._handle_boundaries(50, 101)  # Bottom
     assert (x, y) == (50, 5)
 
 
 def test_handle_collision():
     """Test the collision handling logic."""
     particle_simulator = CreateParticle()
-    vx1, vy1, vx2, vy2 = particle_simulator._handle_collision(
-        x1=0, y1=0, vx1=1, vy1=0, x2=2, y2=0, vx2=-1, vy2=0
-    )
+    vx1, vy1, vx2, vy2 = particle_simulator._handle_collision(x1=0, y1=0, vx1=1, vy1=0, x2=2, y2=0, vx2=-1, vy2=0)
     # Verify velocities after an elastic collision
     assert (vx1, vy1, vx2, vy2) == (-1, 0, 1, 0)

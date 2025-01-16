@@ -3,6 +3,7 @@ import dearpygui.dearpygui as dpg
 from Class_Particle import CreateParticle
 from Class_GUI import GUI
 
+
 class Simulation:
     def __init__(self, particle_creator: CreateParticle, gui: GUI):
         """
@@ -23,7 +24,7 @@ class Simulation:
         self.gui.setup_window()
 
         last_time = time.time()  # Start time for FPS calculation
-        frame_count = 0          # Counter for rendered frames
+        frame_count = 0  # Counter for rendered frames
 
         while dpg.is_dearpygui_running() and self.running:
             current_time = time.time()
