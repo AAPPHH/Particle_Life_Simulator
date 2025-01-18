@@ -1,5 +1,6 @@
 import dearpygui.dearpygui as dpg
 
+
 class GUI:
     def __init__(self, window_width: int = 1920, window_height: int = 1080,
                  particle_size: int = 10, color_lookup: dict = None):

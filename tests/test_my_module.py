@@ -1,6 +1,7 @@
 """Tests for the particle_life_simulator.my_module module.
 """
 import pytest
+
 from particle_life_simulator.my_module import hello
 
 

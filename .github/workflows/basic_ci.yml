@@ -46,14 +46,18 @@ jobs:
       - name: Run Black (format code)
         run: black .
 
-      # Step 7: Check import sorting with isort
+      # Step 7: Automatically format imports with isort
+      - name: Run isort (format imports)
+        run: isort .
+
+      # Step 8: Check import sorting with isort
       - name: Verify import sorting with isort
         run: isort --check-only .
 
-      # Step 8: Run linter with Ruff
+      # Step 9: Run linter with Ruff
       - name: Run code linting with Ruff
         run: ruff check .
 
-      # Step 9: Run tests with pytest
+      # Step 10: Run tests with pytest
       - name: Execute tests with pytest
         run: pytest tests/

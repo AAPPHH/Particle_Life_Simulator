@@ -1,6 +1,8 @@
-import pytest
 import numpy as np
+import pytest
+
 from particle_life_simulator.Class_Particle import CreateParticle
+
 
 def test_particle_initialization():
     """Test if a CreateParticle object initializes without errors."""

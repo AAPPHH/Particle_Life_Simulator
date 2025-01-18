@@ -1,14 +1,17 @@
-import random
 import math
 import os
-import sys
+import random
 import subprocess
+import sys
+
 from Class_Interaction_Matrix import InteractionMatrix
 
 try:
     from quadtree.cython_quadtree import Quadtree
 except ImportError:
-    import os, sys, subprocess
+    import os
+    import subprocess
+    import sys
     this_dir = os.path.dirname(__file__)
     setup_path = os.path.join(this_dir, "quadtree", "setup.py")
     ret = subprocess.call([
