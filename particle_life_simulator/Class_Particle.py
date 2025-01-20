@@ -9,21 +9,25 @@ from Class_Interaction_Matrix import InteractionMatrix
 try:
     from quadtree.cython_quadtree import Quadtree
 except ImportError:
-    import os
-    import subprocess
-    import sys
     this_dir = os.path.dirname(__file__)
     setup_path = os.path.join(this_dir, "quadtree", "setup.py")
-    ret = subprocess.call([
-        sys.executable, setup_path,
-        "build_ext", "--inplace"
-    ], cwd=os.path.join(this_dir, "quadtree"))
+    ret = subprocess.call(
+        [sys.executable, setup_path, "build_ext", "--inplace"], cwd=os.path.join(this_dir, "quadtree")
+    )
     from quadtree.cython_quadtree import Quadtree
 
 class CreateParticle:
-    def __init__(self, num_particles: int = 1000, x_max: int = 1920, y_max: int = 1080,
-                 speed_range: tuple = (-2, 2), max_speed: float = 1.0, radius: int = 5, 
-                 num_colors: int = 2, interaction_strength: float = 0.1):
+    def __init__(
+        self,
+        num_particles: int = 1000,
+        x_max: int = 1920,
+        y_max: int = 1080,
+        speed_range: tuple = (-2, 2),
+        max_speed: float = 1.0,
+        radius: int = 5,
+        num_colors: int = 2,
+        interaction_strength: float = 0.1,
+    ):
 
         self.num_particles = num_particles
         self.x_max = x_max
@@ -76,8 +80,7 @@ class CreateParticle:
             x1, y1 = self._handle_boundaries(x1, y1)
 
             nearby_particles = self.quadtree.query(
-                x1 - 2 * self.radius, y1 - 2 * self.radius,
-                x1 + 2 * self.radius, y1 + 2 * self.radius
+                x1 - 2 * self.radius, y1 - 2 * self.radius, x1 + 2 * self.radius, y1 + 2 * self.radius
             )
 
             for x2, y2, vx2, vy2, color2 in nearby_particles:
@@ -99,12 +102,10 @@ class CreateParticle:
             vx1, vy1 = self._limit_speed(vx1, vy1)
             updated_particles.append((x1, y1, vx1, vy1, color1))
 
-
         self.particles = updated_particles
         self.update_quadtree()
 
-    def _apply_interaction_forces(self, x1: float, y1: float, x2: float, y2: float, 
-                              color1: int, color2: int) -> tuple:
+    def _apply_interaction_forces(self, x1: float, y1: float, x2: float, y2: float, color1: int, color2: int) -> tuple:
         dist = self._distance(x1, y1, x2, y2)
         if dist > 0:
             interaction = self.color_interaction.get_interaction(color1, color2)
@@ -132,8 +133,9 @@ class CreateParticle:
 
         return x, y
 
-    def _handle_collision(self, x1: float, y1: float, vx1: float, vy1: float,
-                        x2: float, y2: float, vx2: float, vy2: float) -> tuple:
+    def _handle_collision(
+        self, x1: float, y1: float, vx1: float, vy1: float, x2: float, y2: float, vx2: float, vy2: float
+    ) -> tuple:
         dx = x2 - x1
         dy = y2 - y1
         distance = math.hypot(dx, dy)
