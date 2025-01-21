@@ -1,6 +1,7 @@
-from Class_simulation import Simulation
 from Class_GUI import GUI
 from Class_Particle import CreateParticle
+from Class_simulation import Simulation
+
 
 
 def setup_simulation():

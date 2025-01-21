@@ -2,6 +2,7 @@
 """
 
 import pytest
+
 from particle_life_simulator.my_module import hello
 
 
