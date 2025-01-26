@@ -1,4 +1,14 @@
 import dearpygui.dearpygui as dpg
+from tkinter import *
+import vispy
+
+win= Tk()
+
+win.geometry("650x250")
+
+screen_width = win.winfo_screenwidth()
+screen_height = win.winfo_screenheight()
+
 
 
 class GUI:
