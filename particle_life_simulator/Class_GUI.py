@@ -58,7 +58,6 @@ class GUI:
             print("No particles to draw.")
             return
 
-        # Erstelle Positions- und Farbarrays
         positions = np.array([[x, y] for x, y, _ in particles], dtype=np.float32)
         colors = np.array(
             [self.color_lookup.get(color_index, (1.0, 1.0, 1.0)) for _, _, color_index in particles], dtype=np.float32
