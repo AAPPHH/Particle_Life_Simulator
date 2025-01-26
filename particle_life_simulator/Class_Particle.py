@@ -44,7 +44,10 @@ class CreateParticle:
 
     def set_interaction_matrix(self, matrix: list):
         """Sets a custom interaction matrix."""
-        self.color_interaction.set_full_matrix(matrix)
+        for color1, row in enumerate(matrix):
+            for color2, value in enumerate(row):
+                self.color_interaction.set_interaction(color1, color2, value)
+
 
     def _limit_speed(self, vx: float, vy: float) -> tuple:
         """Limits the speed to the maximum speed."""
