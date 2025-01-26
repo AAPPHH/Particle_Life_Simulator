@@ -1,3 +1,8 @@
+## Particle Life Simulator
+# Group D
+
+![Image](https://github.com/user-attachments/assets/bd502132-4499-44f7-88a7-f0d26747268a)
+
 ## How to use particle_life_simulator
 
 A dynamic particle simulation demonstrating emergent behavior through biology-inspired interaction rules.\"
