@@ -1,9 +1,18 @@
 import dearpygui.dearpygui as dpg
+from tkinter import *
+
+win= Tk()
+
+win.geometry("650x250")
+
+screen_width = win.winfo_screenwidth()
+screen_height = win.winfo_screenheight()
+
 
 
 class GUI:
     def __init__(
-        self, window_width: int = 1920, window_height: int = 1080, particle_size: int = 10, color_lookup: dict = None
+        self, window_width: screen_width, window_height: screen_height, particle_size: int = 10, color_lookup: dict = None
     ):
         """
         Initializes the GUI with specified window dimensions and particle size.
@@ -46,6 +55,7 @@ class GUI:
         dpg.create_viewport(title="Particle Simulator", width=self.window_width, height=self.window_height)
         dpg.setup_dearpygui()
         dpg.show_viewport()
+        dpg.maximize_viewport()
 
     def update_fps(self, fps: float) -> None:
         """
