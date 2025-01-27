@@ -48,7 +48,7 @@ class GUI:
     def add_buttons(self):
 
         self.stop_button = scene.visuals.Rectangle(
-            center=(200, self.window_height - 50),
+            center=(200, self.window_height - 75),
             width=150,
             height=50,
             color=(0.4, 0.0, 0.0, 0.4),
@@ -71,7 +71,7 @@ class GUI:
             font_size=15,
             bold=True,
             parent=self.view.scene,
-            pos=(200, self.window_height - 50),
+            pos=(200, self.window_height - 75),
             anchor_x="center",
             anchor_y="center",
         )
