@@ -65,7 +65,7 @@ class GUI:
 
        
         #Button Text
-        self.pause_label = scene.Text(
+        self.stop_label = scene.Text(
             "STOP",
             color="white",
             font_size=15,
