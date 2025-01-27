@@ -2,18 +2,20 @@ from vispy import app, scene
 from vispy.visuals import transforms
 import numpy as np
 from numba import njit
+from tkinter import *
+
+
+win= Tk()
+
+win.geometry("650x250")
+
+screen_width = win.winfo_screenwidth()
+screen_height = win.winfo_screenheight()
 
 
 class GUI:
-    def __init__(self, window_width: int = 1920, window_height: int = 1080, particle_size: int = 10, color_lookup: dict = None):
-        """
-        Initializes the GUI with specified window dimensions and particle size.
+    def __init__(self, window_width: screen_width, window_height: screen_height, particle_size: int = 10, color_lookup: dict = None):
 
-        Args:
-            window_width (int): Width of the window.
-            window_height (int): Height of the window.
-            particle_size (int): Visual size of the particles.
-        """
         self.window_width = window_width
         self.window_height = window_height
         self.particle_size = particle_size
@@ -29,8 +31,9 @@ class GUI:
             }
         )
 
+
         # VisPy canvas and visuals
-        self.canvas = scene.SceneCanvas(keys='interactive', show=True, size=(window_width, window_height))
+        self.canvas = scene.SceneCanvas(keys='interactive', show=True, fullscreen=True, size=(window_width, window_height))
         self.view = self.canvas.central_widget.add_view()
         self.view.camera = scene.cameras.PanZoomCamera(aspect=1)
         self.view.camera.set_range(x=(0, self.window_width), y=(0, self.window_height))
@@ -38,15 +41,48 @@ class GUI:
         self.fps_label = scene.Label("FPS: 0", color='white', font_size=14, anchor_x='right', anchor_y='top')
         self.fps_label.transform = transforms.STTransform(translate=(self.window_width - 10, 10))
         self.view.add(self.fps_label)
+        self.add_buttons()
+
+
+
+    def add_buttons(self):
+
+        self.stop_button = scene.visuals.Rectangle(
+            center=(200, self.window_height - 50),
+            width=150,
+            height=50,
+            color=(0.4, 0.0, 0.0, 0.4),
+            parent=self.view.scene,
+        )
+
+        self.interaction_box = scene.visuals.Rectangle(
+            center=(200, self.window_height - 450),
+            width=350,
+            height=600,
+            color=(0.07, 0.07, 0.07, 0.4),
+            parent=self.view.scene,
+        )
+
+       
+        #Button Text
+        self.pause_label = scene.Text(
+            "STOP",
+            color="white",
+            font_size=15,
+            bold=True,
+            parent=self.view.scene,
+            pos=(200, self.window_height - 50),
+            anchor_x="center",
+            anchor_y="center",
+        )
+
+     
 
     def update_fps(self, fps: float) -> None:
-        """
-        Updates the FPS label in the GUI.
 
-        Args:
-            fps (float): The current frames per second to display.
-        """
         self.fps_label.text = f"FPS: {fps:.2f}"
+        #Position
+        self.fps_label.transform = transforms.STTransform(translate=(130, self.window_height - 200))
 
     def draw_particles(self, particles: list) -> None:
         """

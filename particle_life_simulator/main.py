@@ -20,11 +20,11 @@ def main():
     particle_creator.generate_particles()
 
     interaction_matrix = [
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0], # Red interactions
+        [0, 0, 0, 0, 0], # Blue interactions
+        [0, 0, 0, 0, 0], # Green interactions
+        [0, 0, 0, 0, 0], # Yellow interactions
+        [0, 0, 0, 0, 0], # Magenta interactions
     ]
     particle_creator.set_interaction_matrix(interaction_matrix)
 
