@@ -1,7 +1,7 @@
 # Particle Life Simulator
 # Group D
 
-![Image](https://github.com/user-attachments/assets/bd502132-4499-44f7-88a7-f0d26747268a)
+![Image](https://github.com/user-attachments/assets/429ad1ea-9f57-467b-b22a-29f664bc4027)
 
 
 ## How to use particle_life_simulator
