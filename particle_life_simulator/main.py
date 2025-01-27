@@ -2,6 +2,7 @@ from Class_GUI import GUI
 from Class_Particle import CreateParticle
 from Class_simulation import Simulation
 from vispy import app
+
 def main():
     gui = GUI(window_width=1920, window_height=1080, particle_size=3)
 
