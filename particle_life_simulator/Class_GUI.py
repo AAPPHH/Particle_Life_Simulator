@@ -1,6 +1,7 @@
 from vispy import app, scene
 from vispy.visuals import transforms
 import numpy as np
+from numba import njit
 
 
 class GUI:
@@ -58,9 +59,45 @@ class GUI:
             print("No particles to draw.")
             return
 
-        positions = np.array([[x, y] for x, y, _ in particles], dtype=np.float32)
-        colors = np.array(
-            [self.color_lookup.get(color_index, (1.0, 1.0, 1.0)) for _, _, color_index in particles], dtype=np.float32
-        )
+        dtype = [('x', np.float32), ('y', np.float32), ('color_index', np.int32)]
+        particles_array = np.array(particles, dtype=dtype)
+
+        color_lookup_keys = np.array(list(self.color_lookup.keys()), dtype=np.int32)
+        color_lookup_values = np.array(list(self.color_lookup.values()), dtype=np.float32)
+
+        positions, colors = process_positions_and_colors(particles_array, color_lookup_keys, color_lookup_values)
 
         self.scatter.set_data(positions, face_color=colors, size=self.particle_size)
+
+@njit
+def process_positions_and_colors(particles, color_lookup_keys, color_lookup_values):
+    """
+    Processes particle positions and colors using Numba for faster performance.
+
+    Args:
+        particles (array): Structured NumPy array with fields 'x', 'y', and 'color_index'.
+        color_lookup_keys (array): Array of keys representing the color indices.
+        color_lookup_values (array): Array of corresponding RGB color values.
+
+    Returns:
+        tuple: Two numpy arrays - positions and colors.
+    """
+    positions = np.empty((len(particles), 2), dtype=np.float32)
+    colors = np.empty((len(particles), 3), dtype=np.float32)
+
+    for i in range(len(particles)):
+        x = particles[i]['x']
+        y = particles[i]['y']
+        color_index = particles[i]['color_index']
+
+        positions[i, 0] = x
+        positions[i, 1] = y
+
+        idx = np.where(color_lookup_keys == color_index)[0]
+        if len(idx) > 0:
+            colors[i, :] = color_lookup_values[idx[0]]
+        else:
+            colors[i, :] = (1.0, 1.0, 1.0)
+
+    return positions, colors
+
