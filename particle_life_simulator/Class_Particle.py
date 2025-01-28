@@ -2,12 +2,11 @@ import math
 import os
 import random
 import subprocess
-import sys
-
+import secrets
 from Class_Interaction_Matrix import InteractionMatrix
 
 try:
-    from quadtree.cython_quadtree import Quadtree
+    from particle_life_simulator.quadtree.cython_quadtree import Quadtree
 except ImportError:
     this_dir = os.path.dirname(__file__)
     setup_path = os.path.join(this_dir, "quadtree", "setup.py")
@@ -62,9 +61,9 @@ class CreateParticle:
             y = random.randint(self.radius, self.y_max - self.radius)
             vx = random.uniform(*self.speed_range)
             vy = random.uniform(*self.speed_range)
+            vx, vy = self._limit_speed(vx, vy)  
+            color = secrets.randbelow(self.num_colors)  
 
-            vx, vy = self._limit_speed(vx, vy)
-            color = random.randint(0, self.num_colors - 1)
 
             if all(self._distance(x, y, px, py) >= 2 * self.radius for px, py, _, _, _ in self.particles):
                 self.particles.append((x, y, vx, vy, color))

@@ -1,11 +1,8 @@
 import time
 
 import dearpygui.dearpygui as dpg
-
-from Class_GUI import GUI
-from Class_Particle import CreateParticle
-
-
+from particle_life_simulator.Class_Particle import CreateParticle
+from particle_life_simulator.Class_GUI import GUI
 
 class Simulation:
     def __init__(self, particle_creator: CreateParticle, gui: GUI):
