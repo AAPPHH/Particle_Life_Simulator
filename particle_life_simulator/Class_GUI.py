@@ -4,7 +4,6 @@ import numpy as np
 from numba import njit
 from tkinter import *
 
-
 win= Tk()
 
 win.geometry("650x250")
@@ -12,10 +11,8 @@ win.geometry("650x250")
 screen_width = win.winfo_screenwidth()
 screen_height = win.winfo_screenheight()
 
-
 class GUI:
     def __init__(self, window_width: screen_width, window_height: screen_height, particle_size: int = 10, color_lookup: dict = None):
-
         self.window_width = window_width
         self.window_height = window_height
         self.particle_size = particle_size
@@ -31,7 +28,6 @@ class GUI:
             }
         )
 
-
         # VisPy canvas and visuals
         self.canvas = scene.SceneCanvas(keys='interactive', show=True, fullscreen=True, size=(window_width, window_height))
         self.view = self.canvas.central_widget.add_view()
@@ -42,8 +38,6 @@ class GUI:
         self.fps_label.transform = transforms.STTransform(translate=(self.window_width - 10, 10))
         self.view.add(self.fps_label)
         self.add_buttons()
-
-
 
     def add_buttons(self):
 
