@@ -7,7 +7,7 @@ def main():
     gui = GUI(window_width=1920, window_height=1080, particle_size=3)
 
     particle_creator = CreateParticle(
-    num_particles=5000,
+    num_particles=100,
     x_max=1920,
     y_max=1080,
     speed_range=(-1, 1),

@@ -76,7 +76,29 @@ class GUI:
             anchor_y="center",
         )
 
+
+        self.canvas.events.mouse_release.connect(self.on_mouse_release)
+
+    def on_mouse_release(self, event):
+        if event.pos is not None:
+            x, y = event.pos
+            #Map mouse click coordinates
+            canvas_x, canvas_y = self.canvas.size[0], self.canvas.size[1]
+            button_x_min = 200 - 75
+            button_x_max = 200 + 125
+            button_y_min = canvas_y - (self.window_height - 75 + 25)
+            button_y_max = canvas_y - (self.window_height - 75 - 75)
+
+            # Check if button clicked
+            if button_x_min <= x <= button_x_max and button_y_min <= y <= button_y_max:
+                self.stop_simulation()
+
+    def stop_simulation(self):
+        print("Simulation stopped.")
+        self.canvas.close()
+        app.quit()
      
+
 
     def update_fps(self, fps: float) -> None:
 
