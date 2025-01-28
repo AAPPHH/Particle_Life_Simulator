@@ -1,18 +1,14 @@
-from Class_simulation import Simulation
 from Class_GUI import GUI
 from Class_Particle import CreateParticle
+from Class_simulation import Simulation
+
+
 
 def setup_simulation():
     """
     Sets up the simulation with particle generation and GUI.
     """
-    particle_creator = CreateParticle(
-        num_particles=1000,
-        x_max=1920,
-        y_max=1080,
-        speed_range=(-1, 1),
-        radius=8
-    )
+    particle_creator = CreateParticle(num_particles=1000, x_max=1920, y_max=1080, speed_range=(-1, 1), radius=8)
     particle_creator.generate_particles()
 
     interaction_matrix = [
@@ -25,12 +21,14 @@ def setup_simulation():
 
     return Simulation(particle_creator, gui)
 
+
 def main():
     """
     Main logic of the simulation.
     """
     simulation = setup_simulation()
     simulation.start()
+
 
 if __name__ == "__main__":
     main()

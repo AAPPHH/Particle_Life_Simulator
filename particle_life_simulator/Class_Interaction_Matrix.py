@@ -1,5 +1,6 @@
 import random
 
+
 class InteractionMatrix:
     def __init__(self, num_colors: int, default_value: int = 0):
         """
@@ -9,10 +10,7 @@ class InteractionMatrix:
         :param default_value: Default value for interactions (e.g., 0 for no interaction).
         """
         self.num_colors = num_colors
-        self.matrix = [
-            [default_value for _ in range(num_colors)]
-            for _ in range(num_colors)
-        ]
+        self.matrix = [[default_value for _ in range(num_colors)] for _ in range(num_colors)]
 
     def set_interaction(self, color1: int, color2: int, value: int):
         """

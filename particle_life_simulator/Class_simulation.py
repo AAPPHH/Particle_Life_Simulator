@@ -1,4 +1,5 @@
 import time
+
 import dearpygui.dearpygui as dpg
 from particle_life_simulator.Class_Particle import CreateParticle
 from particle_life_simulator.Class_GUI import GUI
@@ -23,7 +24,7 @@ class Simulation:
         self.gui.setup_window()
 
         last_time = time.time()  # Start time for FPS calculation
-        frame_count = 0          # Counter for rendered frames
+        frame_count = 0  # Counter for rendered frames
 
         while dpg.is_dearpygui_running() and self.running:
             current_time = time.time()

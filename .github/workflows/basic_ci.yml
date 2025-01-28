@@ -2,13 +2,13 @@ name: Continuous Integration
 
 on:
   push:
-    branches: [ main ]
+    branches: [master]
   pull_request:
-    branches: [ main ]
+    branches: [master]
 
 jobs:
   build:
-    name: Build on ${{ matrix.os }} with Python ${{ matrix.python-version }}
+    name: Build and Test on ${{ matrix.os }} with Python ${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -16,45 +16,48 @@ jobs:
         python-version: ["3.9", "3.10", "3.11"]
 
     steps:
-      # Check out the repository
-      - uses: actions/checkout@v3
+      # Step 1: Check out the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      # Set up Python environment
+      # Step 2: Set up Python environment
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
 
-      # Display Python info
-      - name: Python info
+      # Step 3: Display Python version and location
+      - name: Display Python version
         run: |
-          which python
+          echo "Python executable: $(which python)"
           python --version
 
-      # Install dependencies
+      # Step 4: Install project dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -e .[dev]
 
-      # Show installed Python packages
-      - name: Show pip list
-        run: |
-          pip list
+      # Step 5: Show installed Python packages
+      - name: Show installed Python packages
+        run: pip list
 
-      # Check code formatting with Black
-      - name: Run Black (check formatting)
-        run: black --diff --check --color .
+      # Step 6: Check and reformat code with Black
+      - name: Run Black (format code)
+        run: black .
 
-      # Check import sorting with isort
-      - name: Run isort (check import sorting)
+      # Step 7: Automatically format imports with isort
+      - name: Run isort (format imports)
+        run: isort .
+
+      # Step 8: Check import sorting with isort
+      - name: Verify import sorting with isort
         run: isort --check-only .
 
-      # Run linter (ruff)
-      - name: Run linter (ruff)
-        run: |
-          ruff check .
+      # Step 9: Run linter with Ruff
+      - name: Run code linting with Ruff
+        run: ruff check .
 
-      # Run pytest for test_particle.py
-      - name: Run tests (test_particle.py)
+      # Step 10: Run tests with pytest
+      - name: Execute tests with pytest
         run: pytest tests/
