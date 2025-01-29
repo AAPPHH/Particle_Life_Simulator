@@ -27,7 +27,9 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
 ]
-dependencies = []
+dependencies = [
+    "numpy>=1.21"
+]
 description = "A dynamic particle simulation demonstrating emergent behavior through biology-inspired interaction rules.\""
 license = {file = "LICENSE"}
 name = "particle_life_simulator"
