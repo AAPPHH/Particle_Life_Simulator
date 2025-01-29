@@ -40,65 +40,68 @@ class GUI:
         self.add_buttons()
 
     def add_buttons(self):
+        # Dynamische Positionen basierend auf Bildschirmgröße
+        self.button_width = self.window_width * 0.078
+        self.button_height = self.window_height * 0.046
+        self.button_x = self.window_width * 0.104
+        self.button_y = self.window_height * 0.93
 
         self.stop_button = scene.visuals.Rectangle(
-            center=(200, self.window_height - 75),
-            width=150,
-            height=50,
+            center=(self.button_x, self.button_y),
+            width=self.button_width,
+            height=self.button_height,
             color=(0.4, 0.0, 0.0, 0.4),
             parent=self.view.scene,
         )
 
         self.interaction_box = scene.visuals.Rectangle(
-            center=(200, self.window_height - 450),
-            width=350,
-            height=600,
+            center=(self.window_width * 0.104, self.window_height * 0.58),
+            width=self.window_width * 0.182,
+            height=self.window_height * 0.556,
             color=(0.07, 0.07, 0.07, 0.4),
             parent=self.view.scene,
         )
 
-       
-        #Button Text
+        # Button Text
         self.stop_label = scene.Text(
             "STOP",
             color="white",
-            font_size=15,
+            font_size=int(self.window_width * 0.008),
             bold=True,
             parent=self.view.scene,
-            pos=(200, self.window_height - 75),
+            pos=(self.button_x, self.button_y),
             anchor_x="center",
             anchor_y="center",
         )
-
 
         self.canvas.events.mouse_release.connect(self.on_mouse_release)
 
     def on_mouse_release(self, event):
         if event.pos is not None:
             x, y = event.pos
-            #Map mouse click coordinates
-            canvas_x, canvas_y = self.canvas.size[0], self.canvas.size[1]
-            button_x_min = 200 - 75
-            button_x_max = 200 + 125
-            button_y_min = canvas_y - (self.window_height - 75 + 25)
-            button_y_max = canvas_y - (self.window_height - 75 - 75)
+            # Mauskoordinaten in Szenen-Koordinatensystem umwandeln
+            mouse_x, mouse_y = self.view.camera.transform.imap((x, y))[:2]
+            
+            # Map mouse click coordinates zur Button-Hitbox
+            button_x_min = self.button_x - (self.button_width / 2)
+            button_x_max = self.button_x + (self.button_width / 2)
+            button_y_min = self.button_y - (self.button_height / 2)
+            button_y_max = self.button_y + (self.button_height / 2)
 
             # Check if button clicked
-            if button_x_min <= x <= button_x_max and button_y_min <= y <= button_y_max:
+            if button_x_min <= mouse_x <= button_x_max and button_y_min <= mouse_y <= button_y_max:
                 self.stop_simulation()
 
     def stop_simulation(self):
         print("Simulation stopped.")
         self.canvas.close()
         app.quit()
-     
-
 
     def update_fps(self, fps: float) -> None:
-
         self.fps_label.text = f"FPS: {fps:.2f}"
-        #Position
-        self.fps_label.transform = transforms.STTransform(translate=(130, self.window_height - 200))
+        # Position
+        self.fps_label.transform = transforms.STTransform(translate=(self.window_width * 0.068, self.window_height * 0.815))
+
 
     def draw_particles(self, particles: list) -> None:
         """
