@@ -1,5 +1,5 @@
 import dearpygui.dearpygui as dpg
-from tkinter import *
+from tkinter import Tk
 
 win= Tk()
 
