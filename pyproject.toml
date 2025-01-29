@@ -28,7 +28,8 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-    "numpy>=1.21"
+    "numpy>=1.21",
+    "cython"
 ]
 description = "A dynamic particle simulation demonstrating emergent behavior through biology-inspired interaction rules.\""
 license = {file = "LICENSE"}
