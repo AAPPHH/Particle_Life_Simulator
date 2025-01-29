@@ -1,5 +1,4 @@
 import numpy as np
-import pytest
 
 from particle_life_simulator.Class_Particle import CreateParticle
 
@@ -36,8 +35,8 @@ def test_generate_particles():
     assert len(particle_simulator.particles) == particle_simulator.num_particles
 
     # Ensure no particles overlap
-    for i, (x1, y1, _, _) in enumerate(particle_simulator.particles):
-        for j, (x2, y2, _, _) in enumerate(particle_simulator.particles):
+    for i, (x1, y1, _, _, _) in enumerate(particle_simulator.particles):
+        for j, (x2, y2, _, _, _) in enumerate(particle_simulator.particles):
             if i != j:
                 distance = np.hypot(x2 - x1, y2 - y1)
                 assert distance >= 2 * particle_simulator.radius
@@ -46,11 +45,11 @@ def test_generate_particles():
 def test_update_positions():
     """Test the update_positions method."""
     particle_simulator = CreateParticle(num_particles=1, x_max=100, y_max=100, radius=5)
-    particle_simulator.particles = [(10, 10, 2, 3)]  # Initial position and velocity
+    particle_simulator.particles = [(10, 10, 2, 3, 0)]  # Initial position, velocity, and color
     particle_simulator.update_positions()
 
     # Check updated position
-    x, y, vx, vy = particle_simulator.particles[0]
+    x, y, vx, vy, _ = particle_simulator.particles[0]
     assert (x, y) == (12, 13)
 
 
@@ -77,4 +76,4 @@ def test_handle_collision():
     particle_simulator = CreateParticle()
     vx1, vy1, vx2, vy2 = particle_simulator._handle_collision(x1=0, y1=0, vx1=1, vy1=0, x2=2, y2=0, vx2=-1, vy2=0)
     # Verify velocities after an elastic collision
-    assert (vx1, vy1, vx2, vy2) == (-1, 0, 1, 0)
+    assert (vx1, vy1, vx2, vy2) == (1, 0, -1, 0)

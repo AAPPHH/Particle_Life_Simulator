@@ -1,8 +1,10 @@
+import dearpygui.dearpygui as dpg
+from tkinter import Tk
 from vispy import app, scene
 from vispy.visuals import transforms
 import numpy as np
 from numba import njit
-from tkinter import *
+
 
 win= Tk()
 

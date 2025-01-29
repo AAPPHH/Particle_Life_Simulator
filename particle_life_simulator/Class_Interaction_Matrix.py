@@ -1,6 +1,5 @@
 import random
 
-
 class InteractionMatrix:
     def __init__(self, num_colors: int, default_value: int = 0):
         """

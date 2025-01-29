@@ -4,17 +4,17 @@ import random
 import subprocess
 import sys
 
-from Class_Interaction_Matrix import InteractionMatrix
+from particle_life_simulator.Class_Interaction_Matrix import InteractionMatrix
 
 try:
-    from quadtree.cython_quadtree import Quadtree
+    from particle_life_simulator.quadtree.cython_quadtree import Quadtree
 except ImportError:
     this_dir = os.path.dirname(__file__)
     setup_path = os.path.join(this_dir, "quadtree", "setup.py")
     ret = subprocess.call(
         [sys.executable, setup_path, "build_ext", "--inplace"], cwd=os.path.join(this_dir, "quadtree")
     )
-    from quadtree.cython_quadtree import Quadtree
+    from particle_life_simulator.quadtree.cython_quadtree import Quadtree
 
 class CreateParticle:
     def __init__(
