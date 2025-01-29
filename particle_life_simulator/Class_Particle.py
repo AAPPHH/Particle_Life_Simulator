@@ -44,7 +44,10 @@ class CreateParticle:
 
     def set_interaction_matrix(self, matrix: list):
         """Sets a custom interaction matrix."""
-        self.color_interaction.set_full_matrix(matrix)
+        for color1, row in enumerate(matrix):
+            for color2, value in enumerate(row):
+                self.color_interaction.set_interaction(color1, color2, value)
+
 
     def _limit_speed(self, vx: float, vy: float) -> tuple:
         """Limits the speed to the maximum speed."""
@@ -86,7 +89,7 @@ class CreateParticle:
             for x2, y2, vx2, vy2, color2 in nearby_particles:
                 dist = self._distance(x1, y1, x2, y2)
                 if dist < 2 * self.radius:
-                    vx1, vy1, vx2, vy2 = self._handle_collision(x1, y1, vx1, vy1, x2, y2, vx2, vy2)
+                    vx1, vy1, vx2, vy2 = self._handle_collision(x1, y1, vx1, vy1, x2, y2, vx2, vy2, dist)
 
                     overlap = 2 * self.radius - dist
                     if overlap > 0 and dist > 0:
@@ -97,7 +100,7 @@ class CreateParticle:
                         x2 -= separation_vector_x * overlap / 2
                         y2 -= separation_vector_y * overlap / 2
 
-                x1, y1 = self._apply_interaction_forces(x1, y1, x2, y2, color1, color2)
+                x1, y1 = self._apply_interaction_forces(x1, y1, x2, y2, color1, color2, dist)
 
             vx1, vy1 = self._limit_speed(vx1, vy1)
             updated_particles.append((x1, y1, vx1, vy1, color1))
@@ -105,8 +108,7 @@ class CreateParticle:
         self.particles = updated_particles
         self.update_quadtree()
 
-    def _apply_interaction_forces(self, x1: float, y1: float, x2: float, y2: float, color1: int, color2: int) -> tuple:
-        dist = self._distance(x1, y1, x2, y2)
+    def _apply_interaction_forces(self, x1: float, y1: float, x2: float, y2: float, color1: int, color2: int, dist : float) -> tuple:
         if dist > 0:
             interaction = self.color_interaction.get_interaction(color1, color2)
             if interaction != 0:
@@ -134,17 +136,16 @@ class CreateParticle:
         return x, y
 
     def _handle_collision(
-        self, x1: float, y1: float, vx1: float, vy1: float, x2: float, y2: float, vx2: float, vy2: float
+        self, x1: float, y1: float, vx1: float, vy1: float, x2: float, y2: float, vx2: float, vy2: float, dist: float
     ) -> tuple:
         dx = x2 - x1
         dy = y2 - y1
-        distance = math.hypot(dx, dy)
 
-        if distance == 0:
+        if dist == 0:
             return vx1, vy1, vx2, vy2
 
-        nx = dx / distance
-        ny = dy / distance
+        nx = dx / dist
+        ny = dy / dist
         dvx = vx1 - vx2
         dvy = vy1 - vy2
         dot_product = dvx * nx + dvy * ny

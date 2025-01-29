@@ -16,7 +16,8 @@ dependencies:
       - build
       - twine
       - wheel
-      - dearpygui
+      - vispy
+      - pyqt5
       - numpy
       - cython
       - numba
