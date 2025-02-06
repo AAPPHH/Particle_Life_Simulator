@@ -3,6 +3,7 @@ from Class_Particle import CreateParticle
 from Class_simulation import Simulation
 from vispy import app
 from tkinter import *
+import numpy as np
 
 win= Tk()
 
@@ -15,7 +16,7 @@ def main():
     gui = GUI(window_width=screen_width, window_height=screen_height, particle_size=3)
 
     particle_creator = CreateParticle(
-    num_particles=1000,
+    num_particles=5000,
     x_max=1920,
     y_max=1080,
     speed_range=(-1, 1),
@@ -27,13 +28,14 @@ def main():
 
     particle_creator.generate_particles()
 
-    interaction_matrix = [
-        [0, 0, 0, 0, 0], # Red interactions
-        [0, 0, 0, 0, 0], # Blue interactions
-        [0, 0, 0, 0, 0], # Green interactions
-        [0, 0, 0, 0, 0], # Yellow interactions
-        [0, 0, 0, 0, 0], # Magenta interactions
-    ]
+    interaction_matrix = np.array([
+        [0, 0, 0, 0, 0],  # Red interactions
+        [0, 0, 0, 0, 0],  # Blue interactions
+        [0, 0, 0, 0, 0],  # Green interactions
+        [0, 0, 0, 0, 0],  # Yellow interactions
+        [0, 0, 0, 0, 0],  # Magenta interactions
+    ], dtype=np.float32)
+
     particle_creator.set_interaction_matrix(interaction_matrix)
 
     simulation = Simulation(particle_creator=particle_creator, gui=gui)
@@ -43,4 +45,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    

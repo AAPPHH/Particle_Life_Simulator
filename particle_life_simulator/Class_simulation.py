@@ -23,24 +23,21 @@ class Simulation(app.Timer):
         Updates the particle positions, redraws them on the GUI, and updates the FPS counter.
         If benchmark mode is active, it calculates the average FPS over 60 seconds.
         """
-        # Update particle positions
         self.particle_creator.update_positions()
-        particles = self.particle_creator.get_positions_and_colors()
-        self.gui.draw_particles(particles)
+        self.gui.draw_particles(self.particle_creator.get_positions_and_colors())
 
-        # Calculate and update FPS
+
         self.frame_count += 1
         current_time = time.perf_counter()
         elapsed_time = current_time - self.last_time
 
-        if elapsed_time > 1.0:  # Update FPS once per second
+        if elapsed_time > 1.0:
             fps = self.frame_count / elapsed_time
             self.gui.update_fps(fps)
             self.fps_list.append(fps)
             self.frame_count = 0
             self.last_time = current_time
 
-        # Benchmark mode: Stop after 60 seconds and show average FPS
         if self.benchmark_mode:
             total_elapsed = current_time - self.start_time
             if total_elapsed >= self.benchmark_duration:

@@ -1,21 +1,22 @@
 from vispy import app, scene
 from vispy.visuals import transforms
 import numpy as np
-from numba import njit
+from numba import prange
+from numba import njit, typed, types
 from tkinter import *
 
-win= Tk()
-
+win = Tk()
 win.geometry("650x250")
 
 screen_width = win.winfo_screenwidth()
 screen_height = win.winfo_screenheight()
 
 class GUI:
-    def __init__(self, window_width: screen_width, window_height: screen_height, particle_size: int = 10, color_lookup: dict = None):
+    def __init__(self, window_width: int = screen_width, window_height: int = screen_height, particle_size: int = 10, color_lookup: dict = None):
         self.window_width = window_width
         self.window_height = window_height
         self.particle_size = particle_size
+
         self.color_lookup = (
             color_lookup
             if color_lookup
@@ -26,17 +27,23 @@ class GUI:
                 3: (1.0, 1.0, 0.0),  # Yellow
                 4: (1.0, 0.0, 1.0),  # Magenta
             }
+        
         )
 
-        # VisPy canvas and visuals
+        self.numba_color_lookup = create_numba_dict(self.color_lookup)
+
+        # VisPy Setup
         self.canvas = scene.SceneCanvas(keys='interactive', show=True, fullscreen=True, size=(window_width, window_height))
         self.view = self.canvas.central_widget.add_view()
         self.view.camera = scene.cameras.PanZoomCamera(aspect=1)
         self.view.camera.set_range(x=(0, self.window_width), y=(0, self.window_height))
         self.scatter = scene.visuals.Markers(parent=self.view.scene)
+
+        # FPS Label
         self.fps_label = scene.Label("FPS: 0", color='white', font_size=14, anchor_x='right', anchor_y='top')
         self.fps_label.transform = transforms.STTransform(translate=(self.window_width - 10, 10))
         self.view.add(self.fps_label)
+
         self.add_buttons()
 
     def add_buttons(self):
@@ -54,41 +61,18 @@ class GUI:
             parent=self.view.scene,
         )
 
-        self.interaction_box = scene.visuals.Rectangle(
-            center=(self.window_width * 0.104, self.window_height * 0.58),
-            width=self.window_width * 0.182,
-            height=self.window_height * 0.556,
-            color=(0.07, 0.07, 0.07, 0.4),
-            parent=self.view.scene,
-        )
-
-        # Button Text
-        self.stop_label = scene.Text(
-            "STOP",
-            color="white",
-            font_size=int(self.window_width * 0.008),
-            bold=True,
-            parent=self.view.scene,
-            pos=(self.button_x, self.button_y),
-            anchor_x="center",
-            anchor_y="center",
-        )
-
         self.canvas.events.mouse_release.connect(self.on_mouse_release)
 
     def on_mouse_release(self, event):
         if event.pos is not None:
             x, y = event.pos
-            # Mauskoordinaten in Szenen-Koordinatensystem umwandeln
             mouse_x, mouse_y = self.view.camera.transform.imap((x, y))[:2]
-            
-            # Map mouse click coordinates zur Button-Hitbox
+
             button_x_min = self.button_x - (self.button_width / 2)
             button_x_max = self.button_x + (self.button_width / 2)
             button_y_min = self.button_y - (self.button_height / 2)
             button_y_max = self.button_y + (self.button_height / 2)
 
-            # Check if button clicked
             if button_x_min <= mouse_x <= button_x_max and button_y_min <= mouse_y <= button_y_max:
                 self.stop_simulation()
 
@@ -99,60 +83,57 @@ class GUI:
 
     def update_fps(self, fps: float) -> None:
         self.fps_label.text = f"FPS: {fps:.2f}"
-        # Position
         self.fps_label.transform = transforms.STTransform(translate=(self.window_width * 0.068, self.window_height * 0.815))
 
-
-    def draw_particles(self, particles: list) -> None:
+    def draw_particles(self, particles: np.ndarray) -> None:
         """
         Draws the particles in the drawing area.
 
         Args:
-            particles (list): A list of tuples containing the x and y positions of each particle and their color index.
+            particles (np.ndarray): Structured NumPy array with 'x', 'y', and 'color' fields.
         """
-        if not particles:
+        if particles is None or len(particles) == 0:
             print("No particles to draw.")
             return
 
-        dtype = [('x', np.float32), ('y', np.float32), ('color_index', np.int32)]
-        particles_array = np.array(particles, dtype=dtype)
-
-        color_lookup_keys = np.array(list(self.color_lookup.keys()), dtype=np.int32)
-        color_lookup_values = np.array(list(self.color_lookup.values()), dtype=np.float32)
-
-        positions, colors = process_positions_and_colors(particles_array, color_lookup_keys, color_lookup_values)
+        positions, colors = process_positions_and_colors(particles, self.numba_color_lookup)
 
         self.scatter.set_data(positions, face_color=colors, size=self.particle_size)
 
-@njit
-def process_positions_and_colors(particles, color_lookup_keys, color_lookup_values):
+def create_numba_dict(color_lookup):
     """
-    Processes particle positions and colors using Numba for faster performance.
+    Converts a Python dictionary to a numba.typed.Dict for fast lookup.
 
     Args:
-        particles (array): Structured NumPy array with fields 'x', 'y', and 'color_index'.
-        color_lookup_keys (array): Array of keys representing the color indices.
-        color_lookup_values (array): Array of corresponding RGB color values.
+        color_lookup (dict): Dictionary mapping color indices to RGB colors.
 
     Returns:
-        tuple: Two numpy arrays - positions and colors.
+        numba.typed.Dict: Numba-optimized dictionary.
     """
-    positions = np.empty((len(particles), 2), dtype=np.float32)
-    colors = np.empty((len(particles), 3), dtype=np.float32)
+    color_dict = typed.Dict.empty(
+        key_type=types.int32,
+        value_type=types.float32[:]
+    )
 
-    for i in range(len(particles)):
-        x = particles[i]['x']
-        y = particles[i]['y']
-        color_index = particles[i]['color_index']
+    for key, value in color_lookup.items():
+        color_dict[key] = np.array(value, dtype=np.float32)
+
+    return color_dict
+
+@njit(parallel=True)
+def process_positions_and_colors(particles, color_lookup_dict):
+    num_particles = len(particles)
+    positions = np.empty((num_particles, 2), dtype=np.float32)
+    colors = np.empty((num_particles, 3), dtype=np.float32)
+
+    for i in prange(num_particles):
+        x = particles[i][0]
+        y = particles[i][1]
+        color_index = int(particles[i][2])
 
         positions[i, 0] = x
         positions[i, 1] = y
 
-        idx = np.where(color_lookup_keys == color_index)[0]
-        if len(idx) > 0:
-            colors[i, :] = color_lookup_values[idx[0]]
-        else:
-            colors[i, :] = (1.0, 1.0, 1.0)
+        colors[i] = color_lookup_dict.get(color_index, np.array([1.0, 1.0, 1.0], dtype=np.float32))
 
     return positions, colors
-
