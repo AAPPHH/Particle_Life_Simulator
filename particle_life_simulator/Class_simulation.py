@@ -24,8 +24,8 @@ class Simulation(app.Timer):
         If benchmark mode is active, it calculates the average FPS over 60 seconds.
         """
         self.particle_creator.update_positions()
-        particles = self.particle_creator.get_positions_and_colors()
-        self.gui.draw_particles(particles)
+        self.gui.draw_particles(self.particle_creator.get_positions_and_colors())
+
 
         self.frame_count += 1
         current_time = time.perf_counter()

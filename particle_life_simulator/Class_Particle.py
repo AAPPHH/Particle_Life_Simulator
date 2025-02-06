@@ -73,11 +73,14 @@ class CreateParticle:
             neighbor_lists
         )
 
-    def get_positions_and_colors(self) -> list:
-        return [(self.particles[i, 0], self.particles[i, 1], int(self.particles[i, 4])) for i in range(self.num_particles)]
+    def get_positions_and_colors(self) -> np.ndarray:
+        """
+        Returns the positions (x, y) and color index of particles as a NumPy array.
+        Shape: (num_particles, 3) -> [[x1, y1, color1], [x2, y2, color2], ...]
+        """
+        return np.column_stack((self.particles[:, 0], self.particles[:, 1], self.particles[:, 4]))
 
-
-@njit(parallel=True)
+@njit(parallel=True, fastmath=True)
 def update_positions_numba(
     old_particles,
     new_particles,
@@ -90,30 +93,19 @@ def update_positions_numba(
     neighbor_lists
 ):
     num_particles = len(old_particles)
+    radius_sq = (2 * radius) * (2 * radius)
 
     for i in prange(num_particles):
-        x = old_particles[i, 0]
-        y = old_particles[i, 1]
-        vx = old_particles[i, 2]
-        vy = old_particles[i, 3]
+        x, y, vx, vy, color = old_particles[i]
 
-        x_new = x + vx
-        y_new = y + vy
-
-        x_new = x_new % x_max
-        y_new = y_new % y_max
+        x_new = (x + vx) % x_max
+        y_new = (y + vy) % y_max
 
         speed_sq = vx * vx + vy * vy
         if speed_sq > max_speed * max_speed:
             scale = max_speed * fast_inv_sqrt(speed_sq)
             vx *= scale
             vy *= scale
-
-        new_particles[i, 0] = x_new
-        new_particles[i, 1] = y_new
-        new_particles[i, 2] = vx
-        new_particles[i, 3] = vy
-        new_particles[i, 4] = old_particles[i, 4]
 
         for j in neighbor_lists[i]:
             if j == -1:
@@ -123,16 +115,20 @@ def update_positions_numba(
             dy = new_particles[j, 1] - y_new
             dist_sq = dx * dx + dy * dy
 
-            if dist_sq < (2 * radius) * (2 * radius):
+            if dist_sq < radius_sq:
                 dist = max(math.sqrt(dist_sq), 1e-8)
                 overlap = 2 * radius - dist
                 nx = dx / dist
                 ny = dy / dist
 
-                new_particles[i, 0] -= 0.5 * overlap * nx
-                new_particles[i, 1] -= 0.5 * overlap * ny
-                new_particles[j, 0] += 0.5 * overlap * nx
-                new_particles[j, 1] += 0.5 * overlap * ny
+                x_new -= 0.5 * overlap * nx
+                y_new -= 0.5 * overlap * ny
+
+        new_particles[i, 0] = x_new
+        new_particles[i, 1] = y_new
+        new_particles[i, 2] = vx
+        new_particles[i, 3] = vy
+        new_particles[i, 4] = color
 
     return new_particles
 
@@ -140,7 +136,6 @@ def update_positions_numba(
 @njit(fastmath=True)
 def fast_inv_sqrt(x):
     return 1.0 / math.sqrt(x)
-
 
 @njit(parallel=True)
 def compute_neighbors_quadtree(particles, x_max, y_max, radius):

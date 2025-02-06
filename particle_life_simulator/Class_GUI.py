@@ -1,6 +1,7 @@
 from vispy import app, scene
 from vispy.visuals import transforms
 import numpy as np
+from numba import prange
 from numba import njit, typed, types
 from tkinter import *
 
@@ -95,14 +96,9 @@ class GUI:
             print("No particles to draw.")
             return
 
-        # ✅ Pass the structured array directly
         positions, colors = process_positions_and_colors(particles, self.numba_color_lookup)
 
         self.scatter.set_data(positions, face_color=colors, size=self.particle_size)
-
-
-
-
 
 def create_numba_dict(color_lookup):
     """
@@ -120,43 +116,24 @@ def create_numba_dict(color_lookup):
     )
 
     for key, value in color_lookup.items():
-        color_dict[key] = np.array(value, dtype=np.float32)  # ✅ No need for int casting
+        color_dict[key] = np.array(value, dtype=np.float32)
 
     return color_dict
 
-
-
-@njit
+@njit(parallel=True)
 def process_positions_and_colors(particles, color_lookup_dict):
-    """
-    Processes particle positions and colors using Numba for maximum performance.
-
-    Args:
-        particles (array): Structured NumPy array with fields 'x', 'y', and 'color_index'.
-        color_lookup_dict (numba.typed.Dict): Numba dictionary with color mappings.
-
-    Returns:
-        tuple: Two numpy arrays - positions and colors.
-    """
     num_particles = len(particles)
     positions = np.empty((num_particles, 2), dtype=np.float32)
     colors = np.empty((num_particles, 3), dtype=np.float32)
 
-    for i in range(num_particles):
-        # Statt particles[i]["x"], ...["y"], ...["color_index"]
-        # greifen wir über die Indexpositionen zu:
-        x = particles[i][0]         # entspricht 'x'
-        y = particles[i][1]         # entspricht 'y'
-        color_index = particles[i][2]  # entspricht 'color_index'
+    for i in prange(num_particles):
+        x = particles[i][0]
+        y = particles[i][1]
+        color_index = int(particles[i][2])
 
         positions[i, 0] = x
         positions[i, 1] = y
 
-        # Schneller Dictionary-Zugriff ohne np.where()
-        if color_index in color_lookup_dict:
-            colors[i] = color_lookup_dict[color_index]
-        else:
-            colors[i] = np.array([1.0, 1.0, 1.0], dtype=np.float32)  # Standardfarbe Weiß
+        colors[i] = color_lookup_dict.get(color_index, np.array([1.0, 1.0, 1.0], dtype=np.float32))
 
     return positions, colors
-
