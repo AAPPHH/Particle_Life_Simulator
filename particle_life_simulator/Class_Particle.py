@@ -1,10 +1,9 @@
 import random
 import math
 import numpy as np
-from numba import njit, prange
 from numba.experimental import jitclass
 from numba import int32, float32
-
+from numba import njit, prange, typed, types
 spec = [
     ("num_particles", int32),
     ("x_max", int32),
@@ -59,7 +58,7 @@ class CreateParticle:
     def update_positions(self):
         old_particles = self.particles.copy()
 
-        neighbor_lists = compute_neighbors_quadtree(self.particles, self.x_max, self.y_max, self.radius)
+        neighbor_lists = compute_neighbors_grid(self.particles, self.x_max, self.y_max, self.radius)
 
         self.particles = update_positions_numba(
             old_particles,
@@ -132,38 +131,53 @@ def update_positions_numba(
 
     return new_particles
 
-
 @njit(fastmath=True)
 def fast_inv_sqrt(x):
     return 1.0 / math.sqrt(x)
 
 @njit(parallel=True)
-def compute_neighbors_quadtree(particles, x_max, y_max, radius):
+def compute_neighbors_grid(particles, x_max, y_max, radius):
     num_particles = len(particles)
     MAX_NEIGHBORS = 25
     neighbor_lists = np.full((num_particles, MAX_NEIGHBORS), -1, dtype=np.int32)
 
-    quadtree = np.zeros((num_particles, 5), dtype=np.float32)
+    cell_size = 2 * radius
+    grid_x = x_max // cell_size + 1
+    grid_y = y_max // cell_size + 1
 
-    def insert_into_quadtree(i, x, y, depth=0):
-        if depth > 20:
-            return
-        quad_id = int((x // (x_max / 2)) + 2 * (y // (y_max / 2)))
-        quadtree[i] = [x, y, quad_id, depth, 1]
-
-    for i in prange(num_particles):
-        insert_into_quadtree(i, particles[i, 0], particles[i, 1])
+    MAX_PARTICLES_PER_CELL = 50
+    grid = np.full((grid_x, grid_y, MAX_PARTICLES_PER_CELL), -1, dtype=np.int32)
+    grid_counts = np.zeros((grid_x, grid_y), dtype=np.int32)
 
     for i in prange(num_particles):
+        x, y = particles[i, 0], particles[i, 1]
+        cell_x, cell_y = int(x // cell_size), int(y // cell_size)
+
+        count = grid_counts[cell_x, cell_y]
+        if count < MAX_PARTICLES_PER_CELL:
+            grid[cell_x, cell_y, count] = i
+            grid_counts[cell_x, cell_y] += 1
+
+    for i in prange(num_particles):
+        x, y = particles[i, 0], particles[i, 1]
+        cell_x, cell_y = int(x // cell_size), int(y // cell_size)
+
         count = 0
-        for j in range(num_particles):
-            if i != j:
-                dx = particles[i, 0] - particles[j, 0]
-                dy = particles[i, 1] - particles[j, 1]
-                dist_sq = dx * dx + dy * dy
-                if dist_sq < (2 * radius) ** 2:
-                    if count < MAX_NEIGHBORS:
-                        neighbor_lists[i, count] = j
-                        count += 1
+        for dx in [-1, 0, 1]:
+            for dy in [-1, 0, 1]:
+                nx, ny = int(cell_x + dx), int(cell_y + dy)
+                if 0 <= nx < grid_x and 0 <= ny < grid_y:
+                    for j in range(int(grid_counts[nx, ny])):
+                        neighbor_index = grid[nx, ny, j]
+                        if neighbor_index == -1 or neighbor_index == i:
+                            continue
+
+                        dx = particles[i, 0] - particles[neighbor_index, 0]
+                        dy = particles[i, 1] - particles[neighbor_index, 1]
+                        dist_sq = dx * dx + dy * dy
+                        if dist_sq < (2 * radius) ** 2:
+                            if count < MAX_NEIGHBORS:
+                                neighbor_lists[i, count] = neighbor_index
+                                count += 1
 
     return neighbor_lists

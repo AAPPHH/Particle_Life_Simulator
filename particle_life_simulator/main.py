@@ -13,15 +13,15 @@ screen_width = win.winfo_screenwidth()
 screen_height = win.winfo_screenheight()
 
 def main():
-    gui = GUI(window_width=screen_width, window_height=screen_height, particle_size=3)
+    gui = GUI(window_width=screen_width, window_height=screen_height, particle_size=1)
 
     particle_creator = CreateParticle(
-    num_particles=10000,
+    num_particles=50000,
     x_max=1920,
     y_max=1080,
     speed_range=(-1, 1),
     max_speed=1.0,
-    radius=3,
+    radius=1,
     num_colors=5,
     interaction_strength=0.2,
 )
