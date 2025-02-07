@@ -1,6 +1,5 @@
 import random
-
-
+import numpy as np
 class InteractionMatrix:
     def __init__(self, num_colors: int, default_value: int = 0):
         """
@@ -48,3 +47,11 @@ class InteractionMatrix:
             for j in range(i, self.num_colors):
                 value = random.choice(values)
                 self.set_interaction(i, j, value)
+
+    def get_matrix(self):
+        """Returns the full interaction matrix as a NumPy array."""
+        return np.array(self.matrix, dtype=np.float32)
+
+    
+    
+    

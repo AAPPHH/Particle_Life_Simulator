@@ -1,169 +1,183 @@
-import math
-import os
 import random
-import subprocess
-import sys
+import math
+import numpy as np
+from numba.experimental import jitclass
+from numba import int32, float32
+from numba import njit, prange, typed, types
+spec = [
+    ("num_particles", int32),
+    ("x_max", int32),
+    ("y_max", int32),
+    ("speed_range", float32[:]),
+    ("max_speed", float32),
+    ("radius", int32),
+    ("num_colors", int32),
+    ("interaction_strength", float32),
+    ("color_interaction", float32[:, :]),
+    ("particles", float32[:, :]),
+]
 
-from Class_Interaction_Matrix import InteractionMatrix
-
-try:
-    from quadtree.cython_quadtree import Quadtree
-except ImportError:
-    this_dir = os.path.dirname(__file__)
-    setup_path = os.path.join(this_dir, "quadtree", "setup.py")
-    ret = subprocess.call(
-        [sys.executable, setup_path, "build_ext", "--inplace"], cwd=os.path.join(this_dir, "quadtree")
-    )
-    from quadtree.cython_quadtree import Quadtree
-
+@jitclass(spec)
 class CreateParticle:
     def __init__(
         self,
         num_particles: int = 1000,
         x_max: int = 1920,
         y_max: int = 1080,
-        speed_range: tuple = (-2, 2),
-        max_speed: float = 1.0,
+        speed_range: tuple = (-2.0, 2.0),
+        max_speed: float = 2.0,
         radius: int = 5,
         num_colors: int = 2,
         interaction_strength: float = 0.1,
     ):
-
         self.num_particles = num_particles
         self.x_max = x_max
         self.y_max = y_max
-        self.speed_range = speed_range
+        self.speed_range = np.array(speed_range, dtype=np.float32)
         self.max_speed = max_speed
-        self.particles = []
         self.radius = radius
         self.num_colors = num_colors
         self.interaction_strength = interaction_strength
-        self.quadtree = Quadtree(0, 0, x_max, y_max)
-        self.color_interaction = InteractionMatrix(num_colors)
-        self.update_counter = 0
 
-    def set_interaction_matrix(self, matrix: list):
+        self.color_interaction = np.zeros((num_colors, num_colors), dtype=np.float32)
+
+        self.particles = np.zeros((self.num_particles, 5), dtype=np.float32)
+
+    def set_interaction_matrix(self, matrix: np.ndarray):
         """Sets a custom interaction matrix."""
-        for color1, row in enumerate(matrix):
-            for color2, value in enumerate(row):
-                self.color_interaction.set_interaction(color1, color2, value)
-
-
-    def _limit_speed(self, vx: float, vy: float) -> tuple:
-        """Limits the speed to the maximum speed."""
-        speed = math.hypot(vx, vy)
-        if speed > self.max_speed:
-            scaling_factor = self.max_speed / speed
-            vx *= scaling_factor
-            vy *= scaling_factor
-        return vx, vy
+        self.color_interaction[:, :] = matrix
 
     def generate_particles(self) -> None:
-        self.particles = []
-        while len(self.particles) < self.num_particles:
-            x = random.randint(self.radius, self.x_max - self.radius)
-            y = random.randint(self.radius, self.y_max - self.radius)
-            vx = random.uniform(*self.speed_range)
-            vy = random.uniform(*self.speed_range)
+        self.particles[:, 0] = np.random.randint(self.radius, self.x_max - self.radius, self.num_particles).astype(np.float32)
+        self.particles[:, 1] = np.random.randint(self.radius, self.y_max - self.radius, self.num_particles).astype(np.float32)
+        self.particles[:, 2] = np.random.uniform(self.speed_range[0], self.speed_range[1], self.num_particles).astype(np.float32)
+        self.particles[:, 3] = np.random.uniform(self.speed_range[0], self.speed_range[1], self.num_particles).astype(np.float32)
+        self.particles[:, 4] = np.random.randint(0, self.num_colors, self.num_particles).astype(np.float32)
 
-            vx, vy = self._limit_speed(vx, vy)
-            color = random.randint(0, self.num_colors - 1)
 
-            if all(self._distance(x, y, px, py) >= 2 * self.radius for px, py, _, _, _ in self.particles):
-                self.particles.append((x, y, vx, vy, color))
-        self.update_quadtree()
+    def update_positions(self):
+        old_particles = self.particles.copy()
 
-    def update_positions(self) -> None:
-        updated_particles = []
+        neighbor_lists = compute_neighbors_grid(self.particles, self.x_max, self.y_max, self.radius)
 
-        for x1, y1, vx1, vy1, color1 in self.particles:
+        self.particles = update_positions_numba(
+            old_particles,
+            self.particles,
+            self.x_max,
+            self.y_max,
+            self.radius,
+            self.color_interaction,
+            self.interaction_strength,
+            self.max_speed,
+            neighbor_lists
+        )
 
-            x1 += vx1
-            y1 += vy1
-            x1, y1 = self._handle_boundaries(x1, y1)
+    def get_positions_and_colors(self) -> np.ndarray:
+        """
+        Returns the positions (x, y) and color index of particles as a NumPy array.
+        Shape: (num_particles, 3) -> [[x1, y1, color1], [x2, y2, color2], ...]
+        """
+        return np.column_stack((self.particles[:, 0], self.particles[:, 1], self.particles[:, 4]))
 
-            nearby_particles = self.quadtree.query(
-                x1 - 2 * self.radius, y1 - 2 * self.radius, x1 + 2 * self.radius, y1 + 2 * self.radius
-            )
+@njit(parallel=True, fastmath=True)
+def update_positions_numba(
+    old_particles,
+    new_particles,
+    x_max,
+    y_max,
+    radius,
+    interaction_matrix,
+    interaction_strength,
+    max_speed,
+    neighbor_lists
+):
+    num_particles = len(old_particles)
+    radius_sq = (2 * radius) * (2 * radius)
 
-            for x2, y2, vx2, vy2, color2 in nearby_particles:
-                dist = self._distance(x1, y1, x2, y2)
-                if dist < 2 * self.radius:
-                    vx1, vy1, vx2, vy2 = self._handle_collision(x1, y1, vx1, vy1, x2, y2, vx2, vy2, dist)
+    for i in prange(num_particles):
+        x, y, vx, vy, color = old_particles[i]
 
-                    overlap = 2 * self.radius - dist
-                    if overlap > 0 and dist > 0:
-                        separation_vector_x = (x1 - x2) / dist
-                        separation_vector_y = (y1 - y2) / dist
-                        x1 += separation_vector_x * overlap / 2
-                        y1 += separation_vector_y * overlap / 2
-                        x2 -= separation_vector_x * overlap / 2
-                        y2 -= separation_vector_y * overlap / 2
+        x_new = (x + vx) % x_max
+        y_new = (y + vy) % y_max
 
-                x1, y1 = self._apply_interaction_forces(x1, y1, x2, y2, color1, color2, dist)
+        speed_sq = vx * vx + vy * vy
+        if speed_sq > max_speed * max_speed:
+            scale = max_speed * fast_inv_sqrt(speed_sq)
+            vx *= scale
+            vy *= scale
 
-            vx1, vy1 = self._limit_speed(vx1, vy1)
-            updated_particles.append((x1, y1, vx1, vy1, color1))
+        for j in neighbor_lists[i]:
+            if j == -1:
+                break
 
-        self.particles = updated_particles
-        self.update_quadtree()
+            dx = new_particles[j, 0] - x_new
+            dy = new_particles[j, 1] - y_new
+            dist_sq = dx * dx + dy * dy
 
-    def _apply_interaction_forces(self, x1: float, y1: float, x2: float, y2: float, color1: int, color2: int, dist : float) -> tuple:
-        if dist > 0:
-            interaction = self.color_interaction.get_interaction(color1, color2)
-            if interaction != 0:
-                force = interaction * self.interaction_strength / dist
-                x1 += force * (x2 - x1)
-                y1 += force * (y2 - y1)
-        return x1, y1
+            if dist_sq < radius_sq:
+                dist = max(math.sqrt(dist_sq), 1e-8)
+                overlap = 2 * radius - dist
+                nx = dx / dist
+                ny = dy / dist
 
-    def update_quadtree(self):
-        self.quadtree = Quadtree(0, 0, self.x_max, self.y_max)
-        for particle in self.particles:
-            self.quadtree.insert(particle)
+                x_new -= 0.5 * overlap * nx
+                y_new -= 0.5 * overlap * ny
 
-    def _handle_boundaries(self, x: float, y: float) -> tuple:
-        if x - self.radius < 0:
-            x = self.x_max - self.radius
-        elif x + self.radius > self.x_max:
-            x = self.radius
+        new_particles[i, 0] = x_new
+        new_particles[i, 1] = y_new
+        new_particles[i, 2] = vx
+        new_particles[i, 3] = vy
+        new_particles[i, 4] = color
 
-        if y - self.radius < 0:
-            y = self.y_max - self.radius
-        elif y + self.radius > self.y_max:
-            y = self.radius
+    return new_particles
 
-        return x, y
+@njit(fastmath=True)
+def fast_inv_sqrt(x):
+    return 1.0 / math.sqrt(x)
 
-    def _handle_collision(
-        self, x1: float, y1: float, vx1: float, vy1: float, x2: float, y2: float, vx2: float, vy2: float, dist: float
-    ) -> tuple:
-        dx = x2 - x1
-        dy = y2 - y1
+@njit(parallel=True)
+def compute_neighbors_grid(particles, x_max, y_max, radius):
+    num_particles = len(particles)
+    MAX_NEIGHBORS = 25
+    neighbor_lists = np.full((num_particles, MAX_NEIGHBORS), -1, dtype=np.int32)
 
-        if dist == 0:
-            return vx1, vy1, vx2, vy2
+    cell_size = 2 * radius
+    grid_x = x_max // cell_size + 1
+    grid_y = y_max // cell_size + 1
 
-        nx = dx / dist
-        ny = dy / dist
-        dvx = vx1 - vx2
-        dvy = vy1 - vy2
-        dot_product = dvx * nx + dvy * ny
+    MAX_PARTICLES_PER_CELL = 50
+    grid = np.full((grid_x, grid_y, MAX_PARTICLES_PER_CELL), -1, dtype=np.int32)
+    grid_counts = np.zeros((grid_x, grid_y), dtype=np.int32)
 
-        if dot_product > 0:
-            return vx1, vy1, vx2, vy2
+    for i in prange(num_particles):
+        x, y = particles[i, 0], particles[i, 1]
+        cell_x, cell_y = int(x // cell_size), int(y // cell_size)
 
-        damping_factor = 0.5
-        vx1 -= damping_factor * dot_product * nx
-        vy1 -= damping_factor * dot_product * ny
-        vx2 += damping_factor * dot_product * nx
-        vy2 += damping_factor * dot_product * ny
+        count = grid_counts[cell_x, cell_y]
+        if count < MAX_PARTICLES_PER_CELL:
+            grid[cell_x, cell_y, count] = i
+            grid_counts[cell_x, cell_y] += 1
 
-        return vx1, vy1, vx2, vy2
+    for i in prange(num_particles):
+        x, y = particles[i, 0], particles[i, 1]
+        cell_x, cell_y = int(x // cell_size), int(y // cell_size)
 
-    @staticmethod
-    def _distance(x1: float, y1: float, x2: float, y2: float) -> float:
-        return math.hypot(x2 - x1, y2 - y1)
+        count = 0
+        for dx in [-1, 0, 1]:
+            for dy in [-1, 0, 1]:
+                nx, ny = int(cell_x + dx), int(cell_y + dy)
+                if 0 <= nx < grid_x and 0 <= ny < grid_y:
+                    for j in range(int(grid_counts[nx, ny])):
+                        neighbor_index = grid[nx, ny, j]
+                        if neighbor_index == -1 or neighbor_index == i:
+                            continue
 
-    def get_positions_and_colors(self) -> list:
-        return [(x, y, color) for x, y, _, _, color in self.particles]
+                        dx = particles[i, 0] - particles[neighbor_index, 0]
+                        dy = particles[i, 1] - particles[neighbor_index, 1]
+                        dist_sq = dx * dx + dy * dy
+                        if dist_sq < (2 * radius) ** 2:
+                            if count < MAX_NEIGHBORS:
+                                neighbor_lists[i, count] = neighbor_index
+                                count += 1
+
+    return neighbor_lists
