@@ -16,6 +16,7 @@ def test_create_particle_initialization():
         y_max=100,
         speed_range=(-1.0, 1.0),
         max_speed=1.5,
+        min_speed=0.1,
         radius=10,
         num_colors=3,
         interaction_strength=0.2,
