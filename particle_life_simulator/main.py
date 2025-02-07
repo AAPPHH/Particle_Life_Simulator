@@ -31,11 +31,11 @@ def main():
 
     interaction_matrix = np.array(
         [
-            [0, 0, 0, 0, 0],  # Red interactions
-            [0, 0, 0, 0, 0],  # Blue interactions
-            [0, 0, 0, 0, 0],  # Green interactions
-            [0, 0, 0, 0, 0],  # Yellow interactions
-            [0, 0, 0, 0, 0],  # Magenta interactions
+            [1, 0, 0, 0, 0],  # Red interactions
+            [0, 1, 0, 0, 0],  # Blue interactions
+            [0, 0, 1, 0, 0],  # Green interactions
+            [0, 0, 0, 1, 0],  # Yellow interactions
+            [0, 0, 0, 0, 1],  # Magenta interactions
         ],
         dtype=np.float32,
     )

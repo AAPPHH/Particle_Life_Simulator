@@ -106,31 +106,14 @@ def update_positions_numba(
     for i in prange(num_particles):
         x, y, vx, vy, color = old_particles[i]
 
-        x_new = (x + vx) % x_max
-        y_new = (y + vy) % y_max
+        fx, fy = compute_forces(i, old_particles, interaction_matrix, interaction_strength, radius_sq)
 
-        speed_sq = vx * vx + vy * vy
-        if speed_sq > max_speed * max_speed:
-            scale = max_speed * fast_inv_sqrt(speed_sq)
-            vx *= scale
-            vy *= scale
+        vx += fx
+        vy += fy
+        vx, vy = limit_speed(vx, vy, max_speed)
 
-        for j in neighbor_lists[i]:
-            if j == -1:
-                break
-
-            dx = new_particles[j, 0] - x_new
-            dy = new_particles[j, 1] - y_new
-            dist_sq = dx * dx + dy * dy
-
-            if dist_sq < radius_sq:
-                dist = max(math.sqrt(dist_sq), 1e-8)
-                overlap = 2 * radius - dist
-                nx = dx / dist
-                ny = dy / dist
-
-                x_new -= 0.5 * overlap * nx
-                y_new -= 0.5 * overlap * ny
+        x_new, y_new = update_position(x, y, vx, vy, x_max, y_max)
+        x_new, y_new = handle_collisions(i, x_new, y_new, radius, radius_sq, new_particles, neighbor_lists)
 
         new_particles[i, 0] = x_new
         new_particles[i, 1] = y_new
@@ -139,6 +122,67 @@ def update_positions_numba(
         new_particles[i, 4] = color
 
     return new_particles
+
+
+@njit(fastmath=True)
+def compute_forces(idx, particles, interaction_matrix, interaction_strength, radius_sq):
+    fx, fy = 0.0, 0.0
+    x, y, _, _, color = particles[idx]
+
+    for j in range(len(particles)):
+        if j == idx:
+            continue
+        x2, y2, _, _, color2 = particles[j]
+        dx = x2 - x
+        dy = y2 - y
+        dist_sq = dx * dx + dy * dy
+
+        if dist_sq < radius_sq:
+            force = interaction_matrix[int(color), int(color2)] * interaction_strength
+            if dist_sq > 0.0:
+                fx += force * dx / np.sqrt(dist_sq)
+                fy += force * dy / np.sqrt(dist_sq)
+
+    return fx, fy
+
+
+@njit(fastmath=True)
+def update_position(x, y, vx, vy, x_max, y_max):
+    x_new = (x + vx) % x_max
+    y_new = (y + vy) % y_max
+    return x_new, y_new
+
+
+@njit(fastmath=True)
+def limit_speed(vx, vy, max_speed):
+    speed = np.sqrt(vx * vx + vy * vy)
+    if speed > max_speed:
+        vx = (vx / speed) * max_speed
+        vy = (vy / speed) * max_speed
+    return vx, vy
+
+
+@njit(fastmath=True)
+def handle_collisions(i, x_new, y_new, radius, radius_sq, new_particles, neighbor_lists):
+    """Berechnet Kollisionen mit Nachbarn und aktualisiert die Position."""
+    for j in neighbor_lists[i]:
+        if j == -1:
+            break
+
+        dx = new_particles[j, 0] - x_new
+        dy = new_particles[j, 1] - y_new
+        dist_sq = dx * dx + dy * dy
+
+        if dist_sq < radius_sq:
+            dist = max(math.sqrt(dist_sq), 1e-8)
+            overlap = 2 * radius - dist
+            nx = dx / dist
+            ny = dy / dist
+
+            x_new -= 0.5 * overlap * nx
+            y_new -= 0.5 * overlap * ny
+
+    return x_new, y_new
 
 
 @njit(fastmath=True)
