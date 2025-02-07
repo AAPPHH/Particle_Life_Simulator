@@ -14,7 +14,7 @@ screen_height = win.winfo_screenheight()
 
 
 def main():
-    gui = GUI(window_width=screen_width, window_height=screen_height, particle_size=3)
+    gui = GUI(window_width=screen_width, window_height=screen_height, particle_size=4)
 
     particle_creator = CreateParticle(
         num_particles=5000,
@@ -31,11 +31,11 @@ def main():
 
     interaction_matrix = np.array(
         [
-            [1, 0, 0, 0, 0],  # Red interactions
-            [0, 1, 0, 0, 0],  # Blue interactions
-            [0, 0, 1, 0, 0],  # Green interactions
-            [0, 0, 0, 1, 0],  # Yellow interactions
-            [0, 0, 0, 0, 1],  # Magenta interactions
+            [2, 2, 2, 2, 2],  # Red interactions
+            [0, 0, 0, 0, 0],  # Blue interactions
+            [0, 0, 0, 0, 0],  # Green interactions
+            [0, 0, 0, 0, 0],  # Yellow interactions
+            [0, 0, 0, 0, 0],  # Magenta interactions
         ],
         dtype=np.float32,
     )

@@ -10,6 +10,7 @@ spec = [
     ("y_max", int32),
     ("speed_range", float32[:]),
     ("max_speed", float32),
+    ("min_speed", float32),
     ("radius", int32),
     ("num_colors", int32),
     ("interaction_strength", float32),
@@ -27,6 +28,7 @@ class CreateParticle:
         y_max: int = 1080,
         speed_range: tuple = (-2.0, 2.0),
         max_speed: float = 2.0,
+        min_speed: float = 0.1,
         radius: int = 5,
         num_colors: int = 2,
         interaction_strength: float = 0.1,
@@ -36,6 +38,7 @@ class CreateParticle:
         self.y_max = y_max
         self.speed_range = np.array(speed_range, dtype=np.float32)
         self.max_speed = max_speed
+        self.min_speed = min_speed
         self.radius = radius
         self.num_colors = num_colors
         self.interaction_strength = interaction_strength
@@ -77,6 +80,7 @@ class CreateParticle:
             self.color_interaction,
             self.interaction_strength,
             self.max_speed,
+            self.min_speed,
             neighbor_lists,
         )
 
@@ -98,6 +102,7 @@ def update_positions_numba(
     interaction_matrix,
     interaction_strength,
     max_speed,
+    min_speed,
     neighbor_lists,
 ):
     num_particles = len(old_particles)
@@ -107,10 +112,10 @@ def update_positions_numba(
         x, y, vx, vy, color = old_particles[i]
 
         fx, fy = compute_forces(i, old_particles, interaction_matrix, interaction_strength, radius_sq)
-
+        
         vx += fx
         vy += fy
-        vx, vy = limit_speed(vx, vy, max_speed)
+        vx, vy = limit_speed(vx, vy, max_speed, min_speed)
 
         x_new, y_new = update_position(x, y, vx, vy, x_max, y_max)
         x_new, y_new = handle_collisions(i, x_new, y_new, radius, radius_sq, new_particles, neighbor_lists)
@@ -154,11 +159,14 @@ def update_position(x, y, vx, vy, x_max, y_max):
 
 
 @njit(fastmath=True)
-def limit_speed(vx, vy, max_speed):
+def limit_speed(vx, vy, max_speed, min_speed):
     speed = np.sqrt(vx * vx + vy * vy)
     if speed > max_speed:
         vx = (vx / speed) * max_speed
         vy = (vy / speed) * max_speed
+    elif speed < min_speed and speed > 0.0:
+        vx = (vx / speed) * min_speed
+        vy = (vy / speed) * min_speed
     return vx, vy
 
 
