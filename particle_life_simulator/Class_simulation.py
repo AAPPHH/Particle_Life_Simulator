@@ -1,6 +1,7 @@
 import time
 from vispy import app
 
+
 class Simulation(app.Timer):
     def __init__(self, particle_creator, gui, benchmark_mode=True):
         super().__init__(interval=1 / 60, start=False)
@@ -25,7 +26,6 @@ class Simulation(app.Timer):
         """
         self.particle_creator.update_positions()
         self.gui.draw_particles(self.particle_creator.get_positions_and_colors())
-
 
         self.frame_count += 1
         current_time = time.perf_counter()

@@ -3,18 +3,25 @@ from vispy.visuals import transforms
 import numpy as np
 from numba import prange
 from numba import njit, typed, types
-from tkinter import *
+import tkinter as tk
 
-win = Tk()
-win.geometry("650x250")
-
-screen_width = win.winfo_screenwidth()
-screen_height = win.winfo_screenheight()
 
 class GUI:
-    def __init__(self, window_width: int = screen_width, window_height: int = screen_height, particle_size: int = 10, color_lookup: dict = None):
-        self.window_width = window_width
-        self.window_height = window_height
+    def __init__(
+        self,
+        window_width: int = None,
+        window_height: int = None,
+        particle_size: int = 10,
+        color_lookup: dict = None,
+    ):
+        self.win = tk.Tk()
+        self.win.geometry("650x250")
+
+        screen_width = self.win.winfo_screenwidth()
+        screen_height = self.win.winfo_screenheight()
+
+        self.window_width = window_width if window_width else screen_width
+        self.window_height = window_height if window_height else screen_height
         self.particle_size = particle_size
 
         self.color_lookup = (
@@ -27,20 +34,21 @@ class GUI:
                 3: (1.0, 1.0, 0.0),  # Yellow
                 4: (1.0, 0.0, 1.0),  # Magenta
             }
-        
         )
 
         self.numba_color_lookup = create_numba_dict(self.color_lookup)
 
         # VisPy Setup
-        self.canvas = scene.SceneCanvas(keys='interactive', show=True, fullscreen=True, size=(window_width, window_height))
+        self.canvas = scene.SceneCanvas(
+            keys="interactive", show=True, fullscreen=True, size=(window_width, window_height)
+        )
         self.view = self.canvas.central_widget.add_view()
         self.view.camera = scene.cameras.PanZoomCamera(aspect=1)
         self.view.camera.set_range(x=(0, self.window_width), y=(0, self.window_height))
         self.scatter = scene.visuals.Markers(parent=self.view.scene)
 
         # FPS Label
-        self.fps_label = scene.Label("FPS: 0", color='white', font_size=14, anchor_x='right', anchor_y='top')
+        self.fps_label = scene.Label("FPS: 0", color="white", font_size=14, anchor_x="right", anchor_y="top")
         self.fps_label.transform = transforms.STTransform(translate=(self.window_width - 10, 10))
         self.view.add(self.fps_label)
 
@@ -83,7 +91,9 @@ class GUI:
 
     def update_fps(self, fps: float) -> None:
         self.fps_label.text = f"FPS: {fps:.2f}"
-        self.fps_label.transform = transforms.STTransform(translate=(self.window_width * 0.068, self.window_height * 0.815))
+        self.fps_label.transform = transforms.STTransform(
+            translate=(self.window_width * 0.068, self.window_height * 0.815)
+        )
 
     def draw_particles(self, particles: np.ndarray) -> None:
         """
@@ -100,6 +110,7 @@ class GUI:
 
         self.scatter.set_data(positions, face_color=colors, size=self.particle_size)
 
+
 def create_numba_dict(color_lookup):
     """
     Converts a Python dictionary to a numba.typed.Dict for fast lookup.
@@ -110,15 +121,13 @@ def create_numba_dict(color_lookup):
     Returns:
         numba.typed.Dict: Numba-optimized dictionary.
     """
-    color_dict = typed.Dict.empty(
-        key_type=types.int32,
-        value_type=types.float32[:]
-    )
+    color_dict = typed.Dict.empty(key_type=types.int32, value_type=types.float32[:])
 
     for key, value in color_lookup.items():
         color_dict[key] = np.array(value, dtype=np.float32)
 
     return color_dict
+
 
 @njit(parallel=True)
 def process_positions_and_colors(particles, color_lookup_dict):
