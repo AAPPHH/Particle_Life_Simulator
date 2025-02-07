@@ -85,6 +85,7 @@ def test_update_positions_numba():
     interaction_matrix = np.zeros((2, 2), dtype=np.float32)
     interaction_strength = 0.1
     max_speed = 2.0
+    min_speed = 0.1
     neighbor_lists = np.array(
         [[1, -1, -1, -1, -1], [0, -1, -1, -1, -1], [-1, -1, -1, -1, -1], [-1, -1, -1, -1, -1], [-1, -1, -1, -1, -1]],
         dtype=np.int32,
@@ -99,6 +100,7 @@ def test_update_positions_numba():
         interaction_matrix,
         interaction_strength,
         max_speed,
+        min_speed,
         neighbor_lists,
     )
 
