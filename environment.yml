@@ -19,5 +19,4 @@ dependencies:
       - vispy
       - pyqt5
       - numpy
-      - cython
       - numba

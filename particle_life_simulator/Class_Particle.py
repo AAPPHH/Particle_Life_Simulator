@@ -1,9 +1,9 @@
-import random
 import math
 import numpy as np
 from numba.experimental import jitclass
 from numba import int32, float32
-from numba import njit, prange, typed, types
+from numba import njit, prange
+
 spec = [
     ("num_particles", int32),
     ("x_max", int32),
@@ -16,6 +16,7 @@ spec = [
     ("color_interaction", float32[:, :]),
     ("particles", float32[:, :]),
 ]
+
 
 @jitclass(spec)
 class CreateParticle:
@@ -48,12 +49,19 @@ class CreateParticle:
         self.color_interaction[:, :] = matrix
 
     def generate_particles(self) -> None:
-        self.particles[:, 0] = np.random.randint(self.radius, self.x_max - self.radius, self.num_particles).astype(np.float32)
-        self.particles[:, 1] = np.random.randint(self.radius, self.y_max - self.radius, self.num_particles).astype(np.float32)
-        self.particles[:, 2] = np.random.uniform(self.speed_range[0], self.speed_range[1], self.num_particles).astype(np.float32)
-        self.particles[:, 3] = np.random.uniform(self.speed_range[0], self.speed_range[1], self.num_particles).astype(np.float32)
+        self.particles[:, 0] = np.random.randint(self.radius, self.x_max - self.radius, self.num_particles).astype(
+            np.float32
+        )
+        self.particles[:, 1] = np.random.randint(self.radius, self.y_max - self.radius, self.num_particles).astype(
+            np.float32
+        )
+        self.particles[:, 2] = np.random.uniform(self.speed_range[0], self.speed_range[1], self.num_particles).astype(
+            np.float32
+        )
+        self.particles[:, 3] = np.random.uniform(self.speed_range[0], self.speed_range[1], self.num_particles).astype(
+            np.float32
+        )
         self.particles[:, 4] = np.random.randint(0, self.num_colors, self.num_particles).astype(np.float32)
-
 
     def update_positions(self):
         old_particles = self.particles.copy()
@@ -69,7 +77,7 @@ class CreateParticle:
             self.color_interaction,
             self.interaction_strength,
             self.max_speed,
-            neighbor_lists
+            neighbor_lists,
         )
 
     def get_positions_and_colors(self) -> np.ndarray:
@@ -78,6 +86,7 @@ class CreateParticle:
         Shape: (num_particles, 3) -> [[x1, y1, color1], [x2, y2, color2], ...]
         """
         return np.column_stack((self.particles[:, 0], self.particles[:, 1], self.particles[:, 4]))
+
 
 @njit(parallel=True, fastmath=True)
 def update_positions_numba(
@@ -89,7 +98,7 @@ def update_positions_numba(
     interaction_matrix,
     interaction_strength,
     max_speed,
-    neighbor_lists
+    neighbor_lists,
 ):
     num_particles = len(old_particles)
     radius_sq = (2 * radius) * (2 * radius)
@@ -131,9 +140,11 @@ def update_positions_numba(
 
     return new_particles
 
+
 @njit(fastmath=True)
 def fast_inv_sqrt(x):
     return 1.0 / math.sqrt(x)
+
 
 @njit(parallel=True)
 def compute_neighbors_grid(particles, x_max, y_max, radius):
