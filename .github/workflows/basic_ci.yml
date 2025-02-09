@@ -61,3 +61,27 @@ jobs:
       # Step 10: Run tests with pytest
       - name: Execute tests with pytest
         run: pytest tests/
+
+  generate-diagrams:
+    name: Generate Profiling Diagrams
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install matplotlib pandas
+
+      - name: Generate profiling diagrams
+        run: python profiling/visualize_profiling.py
+
+      - name: Upload profiling diagrams
+        uses: actions/upload-artifact@v3
+        with:
+          name: profiling-diagrams
+          path: profiling/profiling_visualization.png
