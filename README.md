@@ -95,11 +95,23 @@ Modify this in `main.py` to adjust particle behavior.
 ## Profiling
 To analyze the performance of the simulation, run:
 
-    python profiler.py
+    python profiling/profiler.py
 
 This will generate:
-- `profiling_results.txt` (human-readable performance statistics)
-- `profiling_results.prof` (binary file for visualization tools like **SnakeViz**)
+- `profiling/profiling_results.txt` (human-readable performance statistics)
+- `profiling/profiling_results.prof` (binary file for visualization tools like **SnakeViz**)
+
+### Profiling Visualization
+To better understand the performance bottlenecks, a visualization of the profiling data is available:
+
+![Profiling Diagram](profiling/profiling_visualization.png)
+
+Run the following command to generate the visualization:
+
+    python profiling/visualize_profiling.py
+
+This will create:
+- `profiling/profiling_visualization.png` (graphical representation of profiling results)
 
 ---
 
