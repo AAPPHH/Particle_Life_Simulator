@@ -69,6 +69,26 @@ class GUI:
             parent=self.view.scene,
         )
 
+        self.stop_label = scene.Text(
+            "STOP",
+            color="white",
+            font_size=int(self.window_width * 0.008),
+            bold=True,
+            parent=self.view.scene,
+            pos=(self.button_x, self.button_y),
+            anchor_x="center",
+            anchor_y="center",
+        )
+
+        
+        self.interaction_box = scene.visuals.Rectangle(
+            center=(self.window_width * 0.104, self.window_height * 0.58),
+            width=self.window_width * 0.182,
+            height=self.window_height * 0.556,
+            color=(0.07, 0.07, 0.07, 0.4),
+            parent=self.view.scene,
+        )
+
         self.canvas.events.mouse_release.connect(self.on_mouse_release)
 
     def on_mouse_release(self, event):
