@@ -24,7 +24,7 @@ def main():
         max_speed=1.0,
         radius=3,
         num_colors=5,
-        interaction_strength=0.2,
+        interaction_strength=0.5,
     )
 
     particle_creator.generate_particles()

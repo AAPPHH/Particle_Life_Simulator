@@ -201,14 +201,14 @@ def fast_inv_sqrt(x):
 @njit(parallel=True)
 def compute_neighbors_grid(particles, x_max, y_max, radius):
     num_particles = len(particles)
-    MAX_NEIGHBORS = 25
+    MAX_NEIGHBORS = 100
     neighbor_lists = np.full((num_particles, MAX_NEIGHBORS), -1, dtype=np.int32)
 
     cell_size = 2 * radius
     grid_x = x_max // cell_size + 1
     grid_y = y_max // cell_size + 1
 
-    MAX_PARTICLES_PER_CELL = 50
+    MAX_PARTICLES_PER_CELL = 100
     grid = np.full((grid_x, grid_y, MAX_PARTICLES_PER_CELL), -1, dtype=np.int32)
     grid_counts = np.zeros((grid_x, grid_y), dtype=np.int32)
 
