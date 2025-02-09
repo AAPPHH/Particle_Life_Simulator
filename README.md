@@ -75,20 +75,26 @@ Modify this in `main.py` to adjust particle behavior.
     particle_life_simulator/
     ├── particle_life/
     │   ├── __init__.py
-    │   ├── Class_GUI.py        # GUI implementation using VisPy
-    │   ├── Class_Particle.py   # Particle class with movement rules
-    │   ├── Class_simulation.py # Simulation logic and FPS benchmarking
-    ├── main.py                 # Entry point for the simulation
-    ├── profiler.py             # Performance profiling script
+    │   ├── Class_GUI.py                # GUI implementation using VisPy
+    │   ├── Class_Particle.py           # Particle class with movement rules
+    │   ├── Class_simulation.py         # Simulation logic and FPS benchmarking
+    ├── main.py                         # Entry point for the simulation
+    ├── profiler.py                     # Performance profiling script
     ├── config/
-    │   └── default_config.yaml # Configuration file (if used)
+    │   └── default_config.yaml         # Configuration file (if used)
+    ├── profiling/                      # Profiling scripts and results
+    │   ├── profiler.py                 # Performance profiling script
+    │   ├── profiling_results.txt       # Human-readable profiling data
+    │   ├── profiling_results.prof      # Binary profiling data (for SnakeViz)
+    │   ├── visualize_profiling.py      # Generates performance analysis diagrams
+    │   ├── profiling_visualization.png # Profiling results visualization
     ├── tests/
-    │   ├── test_simulation.py  # Unit tests (if applicable)
+    │   ├── test_simulation.py          # Unit tests (if applicable)
     │   ├── test_utils.py
-    ├── environment.yml         # Conda environment setup
-    ├── setup.py                # Package setup
-    ├── README.md               # Project documentation
-    ├── LICENSE                 # License file
+    ├── environment.yml                 # Conda environment setup
+    ├── setup.py                        # Package setup
+    ├── README.md                       # Project documentation
+    ├── LICENSE                         # License file
 
 ---
 
