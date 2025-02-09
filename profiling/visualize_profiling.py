@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 plt.style.use("dark_background")
 
-profiling_file = "profiling_results.txt"
+profiling_file = "profiling/profiling_results.txt"
 
 with open(profiling_file, "r") as file:
     lines = file.readlines()
@@ -61,4 +61,4 @@ axes[2].invert_yaxis()
 axes[2].grid(axis='x', linestyle='--', alpha=0.7, color="gray")
 
 plt.tight_layout()
-plt.savefig("profiling_visualization.png")
+plt.savefig("profiling/profiling_visualization.png")
