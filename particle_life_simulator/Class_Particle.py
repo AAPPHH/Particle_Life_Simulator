@@ -12,6 +12,7 @@ spec = [
     ("max_speed", float32),
     ("min_speed", float32),
     ("radius", int32),
+    ("radius_sq", int32),
     ("num_colors", int32),
     ("interaction_strength", float32),
     ("color_interaction", float32[:, :]),
@@ -40,6 +41,7 @@ class CreateParticle:
         self.max_speed = max_speed
         self.min_speed = min_speed
         self.radius = radius
+        self.radius_sq = (2 * radius) * (2 * radius)
         self.num_colors = num_colors
         self.interaction_strength = interaction_strength
 
@@ -74,9 +76,11 @@ class CreateParticle:
         self.particles = update_positions_numba(
             old_particles,
             self.particles,
+            self.num_particles,
             self.x_max,
             self.y_max,
             self.radius,
+            self.radius_sq,
             self.color_interaction,
             self.interaction_strength,
             self.max_speed,
@@ -96,16 +100,18 @@ class CreateParticle:
 def update_positions_numba(
     old_particles,
     new_particles,
+    num_particles,
     x_max,
     y_max,
     radius,
+    radius_sq,
     interaction_matrix,
     interaction_strength,
     max_speed,
     min_speed,
     neighbor_lists,
 ):
-    num_particles = len(old_particles)
+
     radius_sq = (2 * radius) * (2 * radius)
 
     for i in prange(num_particles):

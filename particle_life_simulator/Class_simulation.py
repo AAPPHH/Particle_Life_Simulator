@@ -3,7 +3,7 @@ from vispy import app
 
 
 class Simulation(app.Timer):
-    def __init__(self, particle_creator, gui, benchmark_mode=False):
+    def __init__(self, particle_creator, gui, benchmark_mode=True):
         super().__init__(interval=1 / 60, start=False)
         self.particle_creator = particle_creator
         self.gui = gui
