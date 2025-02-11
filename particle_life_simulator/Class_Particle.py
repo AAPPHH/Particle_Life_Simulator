@@ -112,8 +112,6 @@ def update_positions_numba(
     neighbor_lists,
 ):
 
-    radius_sq = (2 * radius) * (2 * radius)
-
     for i in prange(num_particles):
         x, y, vx, vy, color = old_particles[i]
 
