@@ -16,6 +16,7 @@ def test_create_particle_initialization():
         y_max=100,
         speed_range=(-1.0, 1.0),
         max_speed=1.5,
+        min_speed=0.1,
         radius=10,
         num_colors=3,
         interaction_strength=0.2,
@@ -84,6 +85,7 @@ def test_update_positions_numba():
     interaction_matrix = np.zeros((2, 2), dtype=np.float32)
     interaction_strength = 0.1
     max_speed = 2.0
+    min_speed = 0.1
     neighbor_lists = np.array(
         [[1, -1, -1, -1, -1], [0, -1, -1, -1, -1], [-1, -1, -1, -1, -1], [-1, -1, -1, -1, -1], [-1, -1, -1, -1, -1]],
         dtype=np.int32,
@@ -98,6 +100,7 @@ def test_update_positions_numba():
         interaction_matrix,
         interaction_strength,
         max_speed,
+        min_speed,
         neighbor_lists,
     )
 
