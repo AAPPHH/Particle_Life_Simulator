@@ -1,9 +1,8 @@
 import pytest
 import time
 import numpy as np
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 from particle_life_simulator.Class_simulation import Simulation
-
 
 @pytest.fixture
 def mock_simulation():
@@ -16,13 +15,12 @@ def mock_simulation():
     mock_particle_creator.get_positions_and_colors.return_value = np.array([[0, 0, 1]])
     mock_particle_creator.update_positions = MagicMock()
 
-    sim = Simulation(particle_creator=mock_particle_creator, gui=mock_gui, benchmark_mode=False)
+    with patch('vispy.app.application.Application'):
+        sim = Simulation(particle_creator=mock_particle_creator, gui=mock_gui, benchmark_mode=False)
 
     sim.stop()  
 
     return sim
-
-
 
 def test_simulation_start_stop(mock_simulation):
     """Tests if the simulation starts and stops correctly"""
@@ -31,7 +29,6 @@ def test_simulation_start_stop(mock_simulation):
 
     mock_simulation.stop()
     assert not mock_simulation.running  # Should be stopped
-
 
 def test_simulation_on_timer(mock_simulation):
     """Tests if the timer updates particles and GUI properly"""
@@ -43,7 +40,6 @@ def test_simulation_on_timer(mock_simulation):
     mock_simulation.particle_creator.update_positions.assert_called_once()
     mock_simulation.gui.draw_particles.assert_called_once()
     mock_simulation.gui.update_fps.assert_called_once()
-
 
 def test_simulation_benchmark_mode(mock_simulation):
     """Tests if the benchmark mode stops after 60 seconds"""
