@@ -4,6 +4,8 @@ from Class_simulation import Simulation
 from vispy import app
 from tkinter import Tk
 import numpy as np
+import vispy
+vispy.use('PyQt5')
 
 win = Tk()
 
