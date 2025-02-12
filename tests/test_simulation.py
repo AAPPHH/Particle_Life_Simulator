@@ -17,9 +17,11 @@ def mock_simulation():
     mock_particle_creator.update_positions = MagicMock()
 
     sim = Simulation(particle_creator=mock_particle_creator, gui=mock_gui, benchmark_mode=False)
-    sim.running = False  
-    
+
+    sim.stop()  
+
     return sim
+
 
 
 def test_simulation_start_stop(mock_simulation):
@@ -46,7 +48,8 @@ def test_simulation_on_timer(mock_simulation):
 def test_simulation_benchmark_mode(mock_simulation):
     """Tests if the benchmark mode stops after 60 seconds"""
     mock_simulation.benchmark_mode = True
-    mock_simulation.start_time = time.perf_counter() - 61  # Simulate 61 seconds runtime
+    mock_simulation.start_time = time.perf_counter() - 61 
+    mock_simulation.last_time = time.perf_counter() - 2  
 
     mock_simulation.on_timer(MagicMock())  # Trigger timer event
     assert len(mock_simulation.fps_list) > 0  # FPS data should be stored
