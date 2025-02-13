@@ -26,7 +26,8 @@ dependencies = [
     "numpy",
     "numba",
     "vispy",
-    "snakeviz"
+    "snakeviz",
+      "PyQt5"
 ]
 description = "A dynamic particle simulation demonstrating emergent behavior through biology-inspired interaction rules.\""
 license = {file = "LICENSE"}
