@@ -2,6 +2,8 @@ import os
 import pytest
 import time
 import numpy as np
+import vispy
+vispy.use('PyQt5')
 from unittest.mock import MagicMock, patch
 from particle_life_simulator.Class_simulation import Simulation
 
