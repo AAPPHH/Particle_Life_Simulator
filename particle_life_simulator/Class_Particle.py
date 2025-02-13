@@ -11,8 +11,8 @@ spec = [
     ("speed_range", float32[:]),
     ("max_speed", float32),
     ("min_speed", float32),
-    ("radius", float32),      # Hier float32 statt int32
-    ("radius_sq", float32),   # Hier float32 statt int32
+    ("radius", float32),
+    ("radius_sq", float32),
     ("num_colors", int32),
     ("interaction_strength", float32),
     ("color_interaction", float32[:, :]),
@@ -33,10 +33,10 @@ class CreateParticle:
         speed_range: tuple = (-2.0, 2.0),
         max_speed: float = 2.0,
         min_speed: float = 0.1,
-        radius: float = 5.0,               
+        radius: float = 5.0,
         num_colors: int = 5,
         interaction_strength: float = 0.1,
-        radius_factor: float = 1.0,
+        radius_factor: float = 0.75,
     ):
         self.num_particles = num_particles
         self.x_max = x_max
@@ -137,12 +137,14 @@ class CreateParticle:
             self.particles[:, 4]
         ))
 
+
 @njit(parallel=True)
 def compute_neighbors_grid(particles, x_max, y_max, radius):
     """
     Creates neighbor lists based on grid cells.
     """
-    num_particles = len(particles)
+    num_particles = particles.shape[0]  # store particle count once
+
     MAX_NEIGHBORS = 200
     neighbor_lists = np.full((num_particles, MAX_NEIGHBORS), -1, dtype=np.int32)
 
@@ -151,38 +153,52 @@ def compute_neighbors_grid(particles, x_max, y_max, radius):
         cell_size = 1
     grid_x = x_max // cell_size + 1
     grid_y = y_max // cell_size + 1
+
     MAX_PARTICLES_PER_CELL = 200
     grid = np.full((grid_x, grid_y, MAX_PARTICLES_PER_CELL), -1, dtype=np.int32)
     grid_counts = np.zeros((grid_x, grid_y), dtype=np.int32)
 
+    # 1) Assign particles to their respective grid cells
     for i in prange(num_particles):
         x = particles[i, 0]
         y = particles[i, 1]
         cx = int(x // cell_size)
         cy = int(y // cell_size)
-        if cx < 0: cx = 0
-        if cy < 0: cy = 0
-        if cx >= grid_x: cx = grid_x - 1
-        if cy >= grid_y: cy = grid_y - 1
+        if cx < 0:
+            cx = 0
+        if cy < 0:
+            cy = 0
+        if cx >= grid_x:
+            cx = grid_x - 1
+        if cy >= grid_y:
+            cy = grid_y - 1
+
         count = grid_counts[cx, cy]
         if count < MAX_PARTICLES_PER_CELL:
             grid[cx, cy, count] = i
             grid_counts[cx, cy] += 1
 
+    # 2) Identify neighbors within adjacent cells
     for i in prange(num_particles):
         x = particles[i, 0]
         y = particles[i, 1]
         cx = int(x // cell_size)
         cy = int(y // cell_size)
-        if cx < 0: cx = 0
-        if cy < 0: cy = 0
-        if cx >= grid_x: cx = grid_x - 1
-        if cy >= grid_y: cy = grid_y - 1
+        if cx < 0:
+            cx = 0
+        if cy < 0:
+            cy = 0
+        if cx >= grid_x:
+            cx = grid_x - 1
+        if cy >= grid_y:
+            cy = grid_y - 1
+
         count = 0
         for gx in range(cx - 1, cx + 2):
             for gy in range(cy - 1, cy + 2):
                 if 0 <= gx < grid_x and 0 <= gy < grid_y:
-                    for cidx in range(grid_counts[gx, gy]):
+                    limit_count = grid_counts[gx, gy]
+                    for cidx in range(limit_count):
                         j = grid[gx, gy, cidx]
                         if j == -1 or j == i:
                             continue
@@ -201,31 +217,39 @@ def compute_influence_map(particles, interaction_matrix, neighbor_lists,
     """
     Builds a 2D influence map of shape (grid_size, grid_size, 2).
     """
+    num_particles = particles.shape[0]  # store particle count once
     influence_map = np.zeros((grid_size, grid_size, 2), dtype=np.float32)
 
-    for i in prange(len(particles)):
+    for i in prange(num_particles):
         x, y, _, _, color = particles[i]
         gx = int(x // influence_scale)
         gy = int(y // influence_scale)
+        # Skip if outside the influence map grid
         if gx < 0 or gx >= grid_size or gy < 0 or gy >= grid_size:
             continue
+
+        # Iterate over neighbors from neighbor_lists
         for k in range(len(neighbor_lists[i])):
             j = neighbor_lists[i][k]
             if j == -1:
                 break
-            if j == i:
-                continue
             x2, y2, _, _, color2 = particles[j]
             dx = x2 - x
             dy = y2 - y
             dist_sq = dx * dx + dy * dy
-            if dist_sq < influence_scale**2 and dist_sq > 1e-5:
+            # Only consider neighbors within the influence scale
+            if dist_sq < (influence_scale * influence_scale) and dist_sq > 1e-5:
+                dist = math.sqrt(dist_sq)  # only one sqrt
+                inv_dist = 1.0 / dist
+
+                # Example influence based on color interaction
                 influence = 0.0
                 ncols = interaction_matrix.shape[0]
                 for col in range(ncols):
                     influence += (interaction_matrix[int(color), col] *
                                   interaction_matrix[col, int(color2)])
-                inv_dist = 1.0 / math.sqrt(dist_sq)
+
+                # Accumulate influence in the influence map
                 influence_map[gx, gy, 0] += influence * dx * inv_dist
                 influence_map[gx, gy, 1] += influence * dy * inv_dist
 
@@ -236,10 +260,14 @@ def apply_influence(particles, influence_map, influence_scale, max_speed):
     """
     Adjusts each particle's velocity based on the local influence map cell.
     """
-    for i in prange(len(particles)):
-        x, y, vx, vy, color = particles[i]
+    num_particles = particles.shape[0]  # store particle count once
+
+    for i in prange(num_particles):
+        x, y, vx, vy, _ = particles[i]
         gx = int(x // influence_scale)
         gy = int(y // influence_scale)
+
+        # Ensure the indices are within bounds
         if gx < 0:
             gx = 0
         elif gx >= influence_map.shape[0]:
@@ -248,12 +276,16 @@ def apply_influence(particles, influence_map, influence_scale, max_speed):
             gy = 0
         elif gy >= influence_map.shape[1]:
             gy = influence_map.shape[1] - 1
+
         fx, fy = influence_map[gx, gy]
+        # Limit influence to max_speed/2
         vx += min(max(fx * 0.1, -max_speed / 2), max_speed / 2)
         vy += min(max(fy * 0.1, -max_speed / 2), max_speed / 2)
         vx, vy = limit_speed(vx, vy, max_speed, 0.1)
+
         particles[i, 2] = vx
         particles[i, 3] = vy
+
     return particles
 
 @njit(parallel=True, fastmath=True)
@@ -276,44 +308,70 @@ def update_positions_numba(
     """
     for i in prange(num_particles):
         x, y, vx, vy, color = particles[i]
-        fx, fy = compute_forces(
-            i, particles, interaction_matrix, interaction_strength, radius_sq
+
+        # Compute forces only with neighbors
+        fx, fy = compute_forces_with_neighbors(
+            i, particles, neighbor_lists, interaction_matrix,
+            interaction_strength, radius_sq
         )
+
         vx += fx
         vy += fy
         vx, vy = limit_speed(vx, vy, max_speed, min_speed)
-        x_new = (x + vx) % x_max
-        y_new = (y + vy) % y_max
-        x_new, y_new = handle_collisions(i, x_new, y_new, radius, radius_sq, particles, neighbor_lists)
+
+        x_new = x + vx
+        y_new = y + vy
+
+        # Wrap-around
         x_new %= x_max
         y_new %= y_max
+
+        # Handle collisions
+        x_new, y_new = handle_collisions(
+            i, x_new, y_new, radius, radius_sq, particles, neighbor_lists
+        )
+
+        # Wrap-around again if pushed outside
+        x_new %= x_max
+        y_new %= y_max
+
         particles[i, 0] = x_new
         particles[i, 1] = y_new
         particles[i, 2] = vx
         particles[i, 3] = vy
         particles[i, 4] = color
+
     return particles
 
 @njit(fastmath=True)
-def compute_forces(idx, particles, interaction_matrix, interaction_strength, radius_sq):
+def compute_forces_with_neighbors(idx, particles, neighbor_lists,
+                                  interaction_matrix, interaction_strength, radius_sq):
     """
-    Computes color-based forces for a particle by scanning through all particles.
+    Same logic as compute_forces, but only over neighbor_lists.
+    This saves iterating again over all particles and redundant distance computations.
     """
     fx, fy = 0.0, 0.0
     x, y, _, _, color = particles[idx]
-    for j in range(len(particles)):
+
+    for j in neighbor_lists[idx]:
+        if j == -1:
+            break
         if j == idx:
             continue
+
         x2, y2, _, _, color2 = particles[j]
         dx = x2 - x
         dy = y2 - y
         dist_sq = dx * dx + dy * dy
+
         if 0.0 < dist_sq < radius_sq:
+            dist = math.sqrt(dist_sq)  # only one sqrt
             force = interaction_matrix[int(color), int(color2)] * interaction_strength
-            distance = math.sqrt(dist_sq)
-            damping_factor = min(1.0, (distance / (math.sqrt(radius_sq) * 0.6)) ** 1.5)
-            fx += force * (dx / distance) * damping_factor
-            fy += force * (dy / distance) * damping_factor
+            # Damping factor depending on distance
+            damping_factor = min(1.0, (dist / (math.sqrt(radius_sq) * 0.6)) ** 1.5)
+            fx += force * (dx / dist) * damping_factor
+            fy += force * (dy / dist) * damping_factor
+
     return fx, fy
 
 @njit(fastmath=True)
@@ -335,6 +393,7 @@ def handle_collisions(i, x_new, y_new, radius, radius_sq, particles, neighbor_li
     """
     Resolves collisions by shifting particle i away from overlapping neighbors.
     """
+    # Only iterate over neighbors
     for j in neighbor_lists[i]:
         if j == -1:
             break
@@ -342,10 +401,11 @@ def handle_collisions(i, x_new, y_new, radius, radius_sq, particles, neighbor_li
         dy = particles[j, 1] - y_new
         dist_sq = dx * dx + dy * dy
         if dist_sq < radius_sq:
-            dist = max(math.sqrt(dist_sq), 1e-8)
+            dist = max(math.sqrt(dist_sq), 1e-8)  # only one sqrt
             overlap = (2.0 * radius) - dist
             nx = dx / dist
             ny = dy / dist
             x_new -= overlap * nx
             y_new -= overlap * ny
+
     return x_new, y_new

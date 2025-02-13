@@ -26,10 +26,8 @@ class Simulation(app.Timer):
         """
         self.particle_creator.update_positions()
         
-        # Direktes Abrufen des Arrays ohne Tupel
         particles = self.particle_creator.get_positions_and_colors()
         
-        # Hier verwenden wir direkt self.particle_creator.num_particles
         self.gui.draw_particles(particles, self.particle_creator.num_particles)
 
         self.frame_count += 1
