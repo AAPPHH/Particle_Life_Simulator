@@ -1,19 +1,18 @@
 import os
+
+
+os.environ["VISPY_USE_APP"] = "egl"
+
 import pytest
 import time
 import numpy as np
 from unittest.mock import MagicMock, patch
-
-# Setze das Backend für VisPy
 import vispy
 
 from particle_life_simulator.Class_simulation import Simulation
 
-# Ensure headless mode for VisPy
-os.environ["VISPY_USE_APP"] = "egl"
-
-# Jetzt erst das Backend aktivieren
 vispy.use("PyQt5")
+
 
 
 @pytest.fixture
