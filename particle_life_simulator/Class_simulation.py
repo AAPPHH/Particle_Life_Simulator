@@ -41,6 +41,6 @@ class Simulation(app.Timer):
         if self.benchmark_mode:
             total_elapsed = current_time - self.start_time
             if total_elapsed >= self.benchmark_duration:
-                avg_fps = sum(self.fps_list) / len(self.fps_list)
+                avg_fps = sum(self.fps_list) / len(self.fps_list) if self.fps_list else 0
                 print(f"Benchmark completed! Average FPS: {avg_fps:.2f}")
                 self.stop()
