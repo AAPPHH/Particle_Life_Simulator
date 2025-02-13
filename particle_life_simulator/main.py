@@ -4,12 +4,6 @@ from Class_simulation import Simulation
 from vispy import app
 from tkinter import Tk
 import numpy as np
-import os
-import vispy
-if os.getenv("CI"):  
-    os.environ["VISPY_USE_APP"] = "egl"  
-    os.environ["PYVISTA_OFF_SCREEN"] = "true"  
-vispy.use(app="egl")  
 
 
 win = Tk()
