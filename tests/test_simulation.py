@@ -1,3 +1,6 @@
+import os
+os.environ["VISPY_USE_APP"] = "pyqt5"
+
 import time
 import pytest
 import numpy as np
