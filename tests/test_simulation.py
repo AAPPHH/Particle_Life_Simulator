@@ -2,7 +2,6 @@ import time
 import pytest
 import numpy as np
 from unittest.mock import MagicMock, patch
-from vispy import app
 from particle_life_simulator.Class_simulation import Simulation
 
 
