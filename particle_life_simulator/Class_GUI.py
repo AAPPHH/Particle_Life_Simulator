@@ -95,20 +95,17 @@ class GUI:
             translate=(self.window_width * 0.068, self.window_height * 0.815)
         )
 
-    def draw_particles(self, particles: np.ndarray) -> None:
+    def draw_particles(self, particles: np.ndarray, num_particles: int) -> None:
         """
         Draws the particles in the drawing area.
 
         Args:
             particles (np.ndarray): Structured NumPy array with 'x', 'y', and 'color' fields.
         """
-        if particles is None or len(particles) == 0:
-            print("No particles to draw.")
-            return
-
-        positions, colors = process_positions_and_colors(particles, self.numba_color_lookup)
+        positions, colors = process_positions_and_colors(particles, self.numba_color_lookup, num_particles)
 
         self.scatter.set_data(positions, face_color=colors, size=self.particle_size)
+
 
 
 def create_numba_dict(color_lookup):
@@ -130,8 +127,7 @@ def create_numba_dict(color_lookup):
 
 
 @njit(parallel=True)
-def process_positions_and_colors(particles, color_lookup_dict):
-    num_particles = len(particles)
+def process_positions_and_colors(particles, color_lookup_dict, num_particles):
     positions = np.empty((num_particles, 2), dtype=np.float32)
     colors = np.empty((num_particles, 3), dtype=np.float32)
 
