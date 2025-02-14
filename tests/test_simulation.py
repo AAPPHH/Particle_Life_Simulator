@@ -11,7 +11,7 @@ import vispy
 
 from particle_life_simulator.Class_simulation import Simulation
 
-vispy.use("PyQt5")
+vispy.use("PyQt6")
 
 
 
