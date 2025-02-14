@@ -57,6 +57,16 @@ jobs:
       # Step 9: Run linter with Ruff
       - name: Run code linting with Ruff
         run: ruff check .
+        
+     # Step 9.1: Set up virtual display for GUI-based tests on Linux
+      - name: Set up virtual display (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb
+          Xvfb :99 -screen 0 1280x1024x24 & echo "Virtual display started"
+          echo "DISPLAY=:99" >> $GITHUB_ENV
+
 
       # Step 10: Run tests with pytest
       - name: Execute tests with pytest
