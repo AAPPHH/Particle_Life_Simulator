@@ -27,7 +27,8 @@ dependencies = [
     "numba",
     "vispy",
     "snakeviz",
-      "PyQt5"
+      "PyQt5",
+       "PyOpenGL"
 ]
 description = "A dynamic particle simulation demonstrating emergent behavior through biology-inspired interaction rules.\""
 license = {file = "LICENSE"}
@@ -44,6 +45,7 @@ dev = [
     "pytest",
     "pytest-cov",
     "ruff",
+    "pytest-qt",
 ]
 publishing = [
     "build",
