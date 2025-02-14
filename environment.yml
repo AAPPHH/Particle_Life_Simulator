@@ -17,6 +17,6 @@ dependencies:
       - twine
       - wheel
       - vispy
-      - pyqt5
+      - pyQt5
       - numpy
       - numba
