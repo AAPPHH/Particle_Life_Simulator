@@ -37,7 +37,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e .[dev]
-          pip install PyQt5
+          pip install PyQt5 pytest-qt
 
       # Step 5: Show installed Python packages
       - name: Show installed Python packages
@@ -59,16 +59,18 @@ jobs:
       - name: Run code linting with Ruff
         run: ruff check .
         
-     # Step 9.1: Set up virtual display for GUI-based tests on Linux
+      # Step 9.1: Set up virtual display for GUI-based tests on Linux
       - name: Set up virtual display (Linux)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y xvfb
-          Xvfb :99 -screen 0 1280x1024x24 & echo "Virtual display started"
+          Xvfb :99 -screen 0 1280x1024x24 &
           echo "DISPLAY=:99" >> $GITHUB_ENV
+          export DISPLAY=:99
 
-
-      # Step 10: Run tests with pytest
+      # Step 10: Run tests with pytest (mit Logging für Fehleranalyse)
       - name: Execute tests with pytest
-        run: pytest tests/
+        run: |
+          echo "Running Pytest with logging..."
+          pytest tests/ --capture=sys --tb=short -v
