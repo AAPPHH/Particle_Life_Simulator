@@ -6,12 +6,11 @@ import pytest
 import numpy as np
 from unittest.mock import MagicMock, patch
 from particle_life_simulator.Class_simulation import Simulation
-py
+
 
 @pytest.fixture
 def create_mocked_simulation():
-    """
-    Creates a simulation instance with mocked GUI and particle generator.
+    """Creates a simulation instance with mocked GUI and particle generator.
     The Timer object is also mocked to prevent GUI-related issues in CI environments.
     """
     particle_gen_mock = MagicMock()
