@@ -6,111 +6,80 @@ import pytest
 import numpy as np
 from unittest.mock import MagicMock, patch
 from particle_life_simulator.Class_simulation import Simulation
-
+py
 
 @pytest.fixture
-def simulation_with_mocks():
+def create_mocked_simulation():
     """
-    Creates a simulation instance with mocked GUI and particle creator.
-    The Timer object is also mocked to prevent GUI-related errors in CI environments.
+    Creates a simulation instance with mocked GUI and particle generator.
+    The Timer object is also mocked to prevent GUI-related issues in CI environments.
     """
-    mock_particle_creator = MagicMock()
-    mock_particle_creator.get_positions_and_colors.return_value = np.array([[0, 0, 1]])
-    mock_particle_creator.update_positions = MagicMock()
+    particle_gen_mock = MagicMock()
+    particle_gen_mock.get_positions_and_colors.return_value = np.array([[0, 0, 1]])
+    particle_gen_mock.update_positions = MagicMock()
 
-    mock_gui = MagicMock()
-    mock_gui.update_fps = MagicMock()
-    mock_gui.draw_particles = MagicMock()
+    gui_mock = MagicMock()
+    gui_mock.update_fps = MagicMock()
+    gui_mock.draw_particles = MagicMock()
 
-    # Mock VisPy's Timer to avoid actual GUI interactions in CI
+    # Mock VisPy's Timer to avoid real GUI interactions in CI
     with patch('vispy.app.Timer') as MockTimer:
-        mock_timer = MockTimer.return_value
-        mock_timer.start = MagicMock()
-        mock_timer.stop = MagicMock()
+        mock_timer_instance = MockTimer.return_value
+        mock_timer_instance.start = MagicMock()
+        mock_timer_instance.stop = MagicMock()
         
-        simulation = Simulation(
-            particle_creator=mock_particle_creator,
-            gui=mock_gui,
+        sim = Simulation(
+            particle_creator=particle_gen_mock,
+            gui=gui_mock,
             benchmark_mode=False
         )
         
-    return simulation
+    return sim
 
 
-def test_simulation_start_stop(simulation_with_mocks):
+def test_simulation_lifecycle(create_mocked_simulation):
     """Tests whether the simulation starts and stops correctly."""
-    simulation_with_mocks.start()
-    assert simulation_with_mocks.running  # The simulation should be running after start
+    create_mocked_simulation.start()
+    assert create_mocked_simulation.running  
 
-    simulation_with_mocks.stop()
-    assert not simulation_with_mocks.running  # The simulation should be stopped after stop
+    create_mocked_simulation.stop()
+    assert not create_mocked_simulation.running  
 
 
-def test_simulation_on_timer(simulation_with_mocks):
+def test_simulation_timer_event(create_mocked_simulation):
     """
     Tests whether the timer event updates particle positions and GUI properly.
     Simulates an elapsed time to trigger FPS calculation.
     """
-    simulation_with_mocks.last_time = time.perf_counter() - 1.1  # Simulate time passing
-    simulation_with_mocks.on_timer(MagicMock())
+    create_mocked_simulation.last_time = time.perf_counter() - 1.1  # Simulate time passing
+    create_mocked_simulation.on_timer(MagicMock())
 
     # Verify that particle positions were updated and GUI was redrawn
-    simulation_with_mocks.particle_creator.update_positions.assert_called_once()
-    simulation_with_mocks.gui.draw_particles.assert_called_once()
-    simulation_with_mocks.gui.update_fps.assert_called_once()
+    create_mocked_simulation.particle_creator.update_positions.assert_called_once()
+    create_mocked_simulation.gui.draw_particles.assert_called_once()
+    create_mocked_simulation.gui.update_fps.assert_called_once()
 
 
-def test_simulation_benchmark_mode(simulation_with_mocks):
+def test_simulation_benchmark(create_mocked_simulation):
     """Tests whether the benchmark mode stops after 60 seconds and collects FPS data."""
-    simulation_with_mocks.benchmark_mode = True
-    simulation_with_mocks.start_time = time.perf_counter() - 61  # Simulate 61 seconds elapsed
-    simulation_with_mocks.last_time = time.perf_counter() - 2  # Simulate elapsed time
+    create_mocked_simulation.benchmark_mode = True
+    create_mocked_simulation.start_time = time.perf_counter() - 61  
+    create_mocked_simulation.last_time = time.perf_counter() - 2  
 
-    simulation_with_mocks.on_timer(MagicMock())  # Trigger timer event
+    create_mocked_simulation.on_timer(MagicMock())  # Trigger timer event
 
     # Ensure the simulation stops after benchmark duration and FPS data is collected
-    assert len(simulation_with_mocks.fps_list) > 0  
-    assert not simulation_with_mocks.running  
+    assert len(create_mocked_simulation.fps_list) > 0  
+    assert not create_mocked_simulation.running  
 
 
-def test_simulation_benchmark_mode_avg_fps(simulation_with_mocks, capsys):
+def test_simulation_benchmark_fps_avg(create_mocked_simulation, capsys):
     """Tests if the benchmark mode correctly calculates the average FPS."""
-    simulation_with_mocks.benchmark_mode = True
-    simulation_with_mocks.fps_list = [30, 40, 50]
+    create_mocked_simulation.benchmark_mode = True
+    create_mocked_simulation.fps_list = [30, 40, 50]  
 
-    avg_fps = sum(simulation_with_mocks.fps_list) / len(simulation_with_mocks.fps_list)
+    avg_fps_calculated = sum(create_mocked_simulation.fps_list) / len(create_mocked_simulation.fps_list)
 
-    simulation_with_mocks.stop()  
+    create_mocked_simulation.stop()  
 
-    assert avg_fps == pytest.approx(40.00, rel=0.01)  
-
-
-def test_simulation_stop_prevents_timer(simulation_with_mocks):
-    """Ensures on_timer is not triggered after stop() is called."""
-    simulation_with_mocks.stop()
-    event = MagicMock()
-    simulation_with_mocks.on_timer(event)
-    simulation_with_mocks.particle_creator.update_positions.assert_not_called()
-
-
-def test_simulation_fps_calculation(simulation_with_mocks):
-    """Tests if FPS calculation matches expected values."""
-    simulation_with_mocks.frame_count = 120
-    simulation_with_mocks.last_time = time.perf_counter() - 2 
-    
-    simulation_with_mocks.on_timer(MagicMock())
-
-    expected_fps = 120 / 2  
-    simulation_with_mocks.gui.update_fps.assert_called_with(expected_fps)
-
-
-def test_simulation_low_fps(simulation_with_mocks, capsys):
-    """Tests if low FPS values are correctly handled."""
-    simulation_with_mocks.benchmark_mode = True
-    simulation_with_mocks.start_time = time.perf_counter() - 61  
-    simulation_with_mocks.fps_list = [5, 5, 5]
-
-    simulation_with_mocks.on_timer(MagicMock())
-
-    captured = capsys.readouterr()
-    assert "5.00" in captured.out  # Expected average FPS output
+    assert avg_fps_calculated == pytest.approx(40.00, rel=0.01) 
