@@ -38,6 +38,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e .[dev]
 
+      # Step 4.1: Install GUI dependencies for VisPy
+      - name: Install GUI dependencies
+        run: |
+          pip install PyQt5
+
+      # Step 4.2: Set VisPy backend
+      - name: Set VisPy backend
+        run: echo "VISPY_USE_APP=pyqt5" >> $GITHUB_ENV
+
       # Step 5: Show installed Python packages
       - name: Show installed Python packages
         run: pip list
@@ -58,7 +67,7 @@ jobs:
       - name: Run code linting with Ruff
         run: ruff check .
         
-     # Step 9.1: Set up virtual display for GUI-based tests on Linux
+      # Step 9.1: Set up virtual display for GUI-based tests on Linux
       - name: Set up virtual display (Linux)
         if: runner.os == 'Linux'
         run: |
@@ -66,6 +75,10 @@ jobs:
           sudo apt-get install -y xvfb
           Xvfb :99 -screen 0 1280x1024x24 & echo "Virtual display started"
           echo "DISPLAY=:99" >> $GITHUB_ENV
+      
+      # Step 9.2: Set Qt backend explicitly
+      - name: Set Qt Backend
+        run: echo "QT_QPA_PLATFORM=offscreen" >> $GITHUB_ENV
 
 
       # Step 10: Run tests with pytest
