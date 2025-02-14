@@ -69,17 +69,48 @@ def test_simulation_benchmark_mode(simulation_with_mocks):
     simulation_with_mocks.on_timer(MagicMock())  # Trigger timer event
 
     # Ensure the simulation stops after benchmark duration and FPS data is collected
-    assert len(simulation_with_mocks.fps_list) > 0  # FPS data should be stored
-    assert not simulation_with_mocks.running  # Simulation should stop after 60 seconds
+    assert len(simulation_with_mocks.fps_list) > 0  
+    assert not simulation_with_mocks.running  
 
 
 def test_simulation_benchmark_mode_avg_fps(simulation_with_mocks, capsys):
     """Tests if the benchmark mode correctly calculates the average FPS."""
     simulation_with_mocks.benchmark_mode = True
-    simulation_with_mocks.fps_list = [30, 40, 50]  # Sample FPS values
+    simulation_with_mocks.fps_list = [30, 40, 50]
 
     avg_fps = sum(simulation_with_mocks.fps_list) / len(simulation_with_mocks.fps_list)
 
-    simulation_with_mocks.stop()  # Ensure the benchmark mode stops
+    simulation_with_mocks.stop()  
 
-    assert avg_fps == pytest.approx(40.00, rel=0.01)  # Verify the average FPS calculation
+    assert avg_fps == pytest.approx(40.00, rel=0.01)  
+
+
+def test_simulation_stop_prevents_timer(simulation_with_mocks):
+    """Ensures on_timer is not triggered after stop() is called."""
+    simulation_with_mocks.stop()
+    event = MagicMock()
+    simulation_with_mocks.on_timer(event)
+    simulation_with_mocks.particle_creator.update_positions.assert_not_called()
+
+
+def test_simulation_fps_calculation(simulation_with_mocks):
+    """Tests if FPS calculation matches expected values."""
+    simulation_with_mocks.frame_count = 120
+    simulation_with_mocks.last_time = time.perf_counter() - 2 
+    
+    simulation_with_mocks.on_timer(MagicMock())
+
+    expected_fps = 120 / 2  
+    simulation_with_mocks.gui.update_fps.assert_called_with(expected_fps)
+
+
+def test_simulation_low_fps(simulation_with_mocks, capsys):
+    """Tests if low FPS values are correctly handled."""
+    simulation_with_mocks.benchmark_mode = True
+    simulation_with_mocks.start_time = time.perf_counter() - 61  
+    simulation_with_mocks.fps_list = [5, 5, 5]
+
+    simulation_with_mocks.on_timer(MagicMock())
+
+    captured = capsys.readouterr()
+    assert "5.00" in captured.out  # Expected average FPS output
