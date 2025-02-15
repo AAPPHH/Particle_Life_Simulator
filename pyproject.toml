@@ -11,9 +11,9 @@ build-backend = "setuptools.build_meta"
 authors = [
     { name = "John Hamelmann", email = "john.hamelmann@study.hs-duesseldorf.de" },
     { name = "Aleem Hussain", email = "aleem.hussain@study.hs-duesseldorf.de" },
-     {name="Zayd Badla ",email="zayd.badla@study.hs-duesseldorf.de"},
-     {name="Fouad Ghazal ",email="fouad.ghazal@study.hs-duesseldorf.de"},
-     {name="Abdelali Oumachi", email = "abdelali.oumachi@study.hs-duesseldorf.de"},
+    { name = "Zayd Badla ", email = "zayd.badla@study.hs-duesseldorf.de" },
+    { name = "Fouad Ghazal ", email = "fouad.ghazal@study.hs-duesseldorf.de" },
+    { name = "Abdelali Oumachi", email = "abdelali.oumachi@study.hs-duesseldorf.de" },
 ]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
@@ -34,6 +34,7 @@ name = "particle_life_simulator"
 readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.12"
 version = "0.1.0"
+packages = ["particle_life_simulator", "profiling"]
 
 [project.optional-dependencies]
 dev = [
@@ -67,5 +68,3 @@ line_length = "120"
 
 [tool.pylint]  # If you opt to use pylint
 # Pylint configuration options
-
-
