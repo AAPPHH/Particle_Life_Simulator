@@ -11,9 +11,9 @@ build-backend = "setuptools.build_meta"
 authors = [
     { name = "John Hamelmann", email = "john.hamelmann@study.hs-duesseldorf.de" },
     { name = "Aleem Hussain", email = "aleem.hussain@study.hs-duesseldorf.de" },
-     {name="Zayd Badla ",email="zayd.badla@study.hs-duesseldorf.de"},
-     {name="Fouad Ghazal ",email="fouad.ghazal@study.hs-duesseldorf.de"},
-     {name="Abdelali Oumachi", email = "abdelali.oumachi@study.hs-duesseldorf.de"},
+    { name = "Zayd Badla ", email = "zayd.badla@study.hs-duesseldorf.de" },
+    { name = "Fouad Ghazal ", email = "fouad.ghazal@study.hs-duesseldorf.de" },
+    { name = "Abdelali Oumachi", email = "abdelali.oumachi@study.hs-duesseldorf.de" },
 ]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
@@ -28,7 +28,7 @@ dependencies = [
     "vispy",
     "snakeviz"
 ]
-description = "A dynamic particle simulation demonstrating emergent behavior through biology-inspired interaction rules.\""
+description = "A dynamic particle simulation demonstrating emergent behavior through biology-inspired interaction rules."
 license = {file = "LICENSE"}
 name = "particle_life_simulator"
 readme = {file = "README.md", content-type = "text/markdown"}
@@ -50,6 +50,9 @@ publishing = [
     "wheel",
 ]
 
+[tool.setuptools]  
+packages = ["particle_life_simulator", "profiling"]
+
 [tool.black]
 line-length = 120
 include = '\.pyi?$'
@@ -67,5 +70,3 @@ line_length = "120"
 
 [tool.pylint]  # If you opt to use pylint
 # Pylint configuration options
-
-
