@@ -28,13 +28,12 @@ dependencies = [
     "vispy",
     "snakeviz"
 ]
-description = "A dynamic particle simulation demonstrating emergent behavior through biology-inspired interaction rules.\""
+description = "A dynamic particle simulation demonstrating emergent behavior through biology-inspired interaction rules."
 license = {file = "LICENSE"}
 name = "particle_life_simulator"
 readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.12"
 version = "0.1.0"
-packages = ["particle_life_simulator", "profiling"]
 
 [project.optional-dependencies]
 dev = [
@@ -50,6 +49,9 @@ publishing = [
     "twine",
     "wheel",
 ]
+
+[tool.setuptools]  
+packages = ["particle_life_simulator", "profiling"]
 
 [tool.black]
 line-length = 120
