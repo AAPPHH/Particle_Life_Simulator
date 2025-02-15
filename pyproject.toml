@@ -55,7 +55,7 @@ packages = ["particle_life_simulator", "profiling"]
 
 [tool.black]
 line-length = 120
-include = '\.pyi?$'
+include = '\\.pyi?$'
 exclude = '''
 /(
     \.eggs
@@ -70,3 +70,9 @@ line_length = "120"
 
 [tool.pylint]  # If you opt to use pylint
 # Pylint configuration options
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::numba.core.errors.NumbaTypeSafetyWarning"
+]
+
