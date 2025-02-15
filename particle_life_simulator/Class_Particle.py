@@ -9,6 +9,7 @@ spec = [
     ("x_max", int32),
     ("y_max", int32),
     ("speed_range", float32[:]),
+    ("friction", float32),
     ("max_speed", float32),
     ("min_speed", float32),
     ("radius", float32),
@@ -31,6 +32,7 @@ class CreateParticle:
         x_max: int = 1920,
         y_max: int = 1080,
         speed_range: tuple = (-2.0, 2.0),
+        friction: float = 0.9999,
         max_speed: float = 2.0,
         min_speed: float = 0.1,
         radius: float = 5.0,
@@ -42,6 +44,7 @@ class CreateParticle:
         self.x_max = x_max
         self.y_max = y_max
         self.speed_range = np.array(speed_range, dtype=np.float32)
+        self.friction = friction
         self.max_speed = max_speed
         self.min_speed = min_speed
 
@@ -128,6 +131,7 @@ class CreateParticle:
             self.interaction_strength,
             self.max_speed,
             self.min_speed,
+            self.friction,
             neighbor_lists
         )
 
@@ -295,6 +299,7 @@ def update_positions_numba(
     interaction_strength,
     max_speed,
     min_speed,
+    friction,
     neighbor_lists,
 ):
     """
@@ -311,6 +316,13 @@ def update_positions_numba(
 
         vx += fx
         vy += fy
+
+        vx *= friction 
+        vy *= friction
+
+        vx = int(vx * 10000) / 10000.0
+        vy = int(vy * 10000) / 10000.0
+
         vx, vy = limit_speed(vx, vy, max_speed, min_speed)
 
         x_new = x + vx
