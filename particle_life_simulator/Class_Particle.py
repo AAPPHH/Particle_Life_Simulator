@@ -98,20 +98,24 @@ class CreateParticle:
         neighbor_lists = compute_neighbors_grid(
             self.particles, self.x_max, self.y_max, self.radius
         )
+
         influence_map = compute_influence_map(
             self.particles,
             self.color_interaction,
             neighbor_lists,
-            self.radius,
+            self.radius,    
             self.x_max,
             self.y_max,
             grid_size=100
         )
+
         apply_influence(
             self.particles,
             influence_map,
-            self.radius,
-            self.max_speed
+            self.x_max,
+            self.y_max,
+            self.max_speed,
+            self.min_speed
         )
         self.particles = update_positions_numba(
             self.particles,
@@ -126,6 +130,8 @@ class CreateParticle:
             self.min_speed,
             neighbor_lists
         )
+
+
 
     def get_positions_and_colors(self) -> np.ndarray:
         """
@@ -145,8 +151,8 @@ def compute_neighbors_grid(particles, x_max, y_max, radius):
     """
     num_particles = particles.shape[0]
 
-    MAX_NEIGHBORS = 20
-    MAX_PARTICLES_PER_CELL = 20
+    MAX_NEIGHBORS = 100
+    MAX_PARTICLES_PER_CELL = 100
 
     neighbor_lists = np.full((num_particles, MAX_NEIGHBORS), -1, dtype=np.int32)
 
@@ -201,17 +207,21 @@ def compute_neighbors_grid(particles, x_max, y_max, radius):
 
 @njit(parallel=True, fastmath=True)
 def compute_influence_map(particles, interaction_matrix, neighbor_lists,
-                          influence_scale, x_max, y_max, grid_size=100):
+                          influence_radius, x_max, y_max, grid_size=100):
     """
     Builds a 2D influence map of shape (grid_size, grid_size, 2).
+    influence_radius wird genutzt, um zu prüfen, ob Partikel überhaupt
+    einen Einfluss innerhalb dieses Radius haben.
     """
     num_particles = particles.shape[0]
     influence_map = np.zeros((grid_size, grid_size, 2), dtype=np.float32)
 
     for i in prange(num_particles):
         x, y, _, _, color = particles[i]
-        gx = int(x // influence_scale)
-        gy = int(y // influence_scale)
+
+        gx = int(grid_size * (x / x_max))
+        gy = int(grid_size * (y / y_max))
+
         if gx < 0 or gx >= grid_size or gy < 0 or gy >= grid_size:
             continue
 
@@ -222,53 +232,56 @@ def compute_influence_map(particles, interaction_matrix, neighbor_lists,
             x2, y2, _, _, color2 = particles[j]
             dx = x2 - x
             dy = y2 - y
-            dist_sq = dx * dx + dy * dy
-            if dist_sq < (influence_scale * influence_scale) and dist_sq > 1e-5:
+            dist_sq = dx*dx + dy*dy
+
+            if dist_sq < (influence_radius*influence_radius) and dist_sq > 1e-5:
                 dist = math.sqrt(dist_sq)
                 inv_dist = 1.0 / dist
 
-                influence = 0.0
-                ncols = interaction_matrix.shape[0]
-                for col in range(ncols):
-                    influence += (interaction_matrix[int(color), col] *
-                                  interaction_matrix[col, int(color2)])
+                influence = interaction_matrix[int(color), int(color2)]
 
                 influence_map[gx, gy, 0] += influence * dx * inv_dist
                 influence_map[gx, gy, 1] += influence * dy * inv_dist
 
     return influence_map
 
+
 @njit(parallel=True, fastmath=True)
-def apply_influence(particles, influence_map, influence_scale, max_speed):
+def apply_influence(particles, influence_map, x_max, y_max, max_speed, min_speed):
     """
     Adjusts each particle's velocity based on the local influence map cell.
+    Now also respects a minimum speed.
     """
     num_particles = particles.shape[0]
+    grid_size = influence_map.shape[0]
 
     for i in prange(num_particles):
         x, y, vx, vy, _ = particles[i]
-        gx = int(x // influence_scale)
-        gy = int(y // influence_scale)
+
+        gx = int(grid_size * (x / x_max))
+        gy = int(grid_size * (y / y_max))
 
         if gx < 0:
             gx = 0
-        elif gx >= influence_map.shape[0]:
-            gx = influence_map.shape[0] - 1
+        elif gx >= grid_size:
+            gx = grid_size - 1
         if gy < 0:
             gy = 0
-        elif gy >= influence_map.shape[1]:
-            gy = influence_map.shape[1] - 1
+        elif gy >= grid_size:
+            gy = grid_size - 1
 
         fx, fy = influence_map[gx, gy]
 
         vx += min(max(fx * 0.1, -max_speed / 2), max_speed / 2)
         vy += min(max(fy * 0.1, -max_speed / 2), max_speed / 2)
-        vx, vy = limit_speed(vx, vy, max_speed, 0.1)
+
+        vx, vy = limit_speed(vx, vy, max_speed, min_speed)
 
         particles[i, 2] = vx
         particles[i, 3] = vy
 
     return particles
+
 
 @njit(parallel=True, fastmath=True)
 def update_positions_numba(
@@ -383,5 +396,11 @@ def handle_collisions(i, x_new, y_new, radius, radius_sq, particles, neighbor_li
             ny = dy / dist
             x_new -= overlap * nx
             y_new -= overlap * ny
+
+            vx, vy = particles[i, 2], particles[i, 3]
+            speed = math.sqrt(vx * vx + vy * vy)
+            if speed > 0:
+                x_new += (vx / speed) * overlap * nx
+                y_new += (vy / speed) * overlap * ny
 
     return x_new, y_new
