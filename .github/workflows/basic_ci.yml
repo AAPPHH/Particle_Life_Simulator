@@ -80,10 +80,23 @@ jobs:
       - name: Set Qt Backend
         run: echo "QT_QPA_PLATFORM=offscreen" >> $GITHUB_ENV
 
+      # Step 9.3: Ensure Python finds all modules
+      - name: Set PYTHONPATH
+        run: echo "PYTHONPATH=$GITHUB_WORKSPACE/particle_life_simulator" >> $GITHUB_ENV
+
 
       # Step 10: Run tests with pytest
       - name: Execute tests with pytest
         run: pytest tests/
+
+      # Step 10.1: Run all tests except profiling
+      - name: Run standard tests
+        run: pytest tests/ --ignore=tests/test_profiler.py
+
+      # Step 10.2: Run profiling tests separately
+      - name: Run profiling tests
+        run: pytest tests/test_profiler.py
+
 
   generate-diagrams:
     name: Generate Profiling Diagrams
