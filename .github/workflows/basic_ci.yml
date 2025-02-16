@@ -13,51 +13,48 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: ["3.12"]
     steps:
-      # Step 1: Check out the repository
       - name: Checkout repository
         uses: actions/checkout@v3
-      # Step 2: Set up Python environment
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-      # Step 3: Display Python version and location
+
       - name: Display Python version
         run: |
           echo "Python executable: $(which python)"
           python --version
-      # Step 4: Install project dependencies
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -e .[dev]
-      # Step 4.1: Install GUI dependencies for VisPy
-      - name: Install GUI dependencies
-        run: |
-          pip install PyQt5
-      # Step 4.2: Set VisPy backend
+
+      - name: Install GUI dependencies for VisPy
+        run: pip install PyQt5
+
       - name: Set VisPy backend
         run: echo "VISPY_USE_APP=pyqt5" >> $GITHUB_ENV
-      # Step 4.3: Ensure Python finds all modules
+
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$GITHUB_WORKSPACE/particle_life_simulator" >> $GITHUB_ENV
-      # Step 5: Show installed Python packages
+
       - name: Show installed Python packages
         run: pip list
-      # Step 6: Check and reformat code with Black
+
       - name: Run Black (format code)
         run: black .
-      # Step 7: Automatically format imports with isort
+
       - name: Run isort (format imports)
         run: isort .
-      # Step 8: Check import sorting with isort
+
       - name: Verify import sorting with isort
         run: isort --check-only .
-      # Step 9: Run linter with Ruff
+
       - name: Run code linting with Ruff
         run: ruff check .
         
-      # Step 9.1: Set up virtual display for GUI-based tests on Linux
       - name: Set up virtual display (Linux)
         if: runner.os == 'Linux'
         run: |
@@ -65,14 +62,13 @@ jobs:
           sudo apt-get install -y xvfb
           Xvfb :99 -screen 0 1280x1024x24 & echo "Virtual display started"
           echo "DISPLAY=:99" >> $GITHUB_ENV
-      
-      # Step 9.2: Set Qt backend explicitly
+
       - name: Set Qt Backend
         run: echo "QT_QPA_PLATFORM=offscreen" >> $GITHUB_ENV
-      # Step 10: Run all standard tests
+
       - name: Run standard tests
         run: pytest tests/ --ignore=tests/test_profiler.py --tb=long -v --maxfail=3
-      # Step 11: Run profiling tests separately (only on Linux)
+
       - name: Run profiling tests
         if: runner.os == 'Linux'
         run: pytest tests/test_profiler.py --tb=long -v --maxfail=3
@@ -83,14 +79,26 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
           python-version: "3.12"
+
       - name: Install dependencies
         run: pip install matplotlib pandas
+
+      - name: Ensure profiling results exist
+        run: |
+          if [ ! -f profiling/profiling_results.txt ]; then
+            echo "⚠ Warning: profiling_results.txt not found. Creating an empty file."
+            mkdir -p profiling
+            echo "No profiling data available." > profiling/profiling_results.txt
+          fi
+
       - name: Generate profiling diagrams
         run: python profiling/visualize_profiling.py
+
       - name: Upload profiling diagrams
         uses: actions/upload-artifact@v4
         with:
