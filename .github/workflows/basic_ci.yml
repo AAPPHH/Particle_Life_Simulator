@@ -41,8 +41,7 @@ jobs:
       # Step 4.1: Install GUI dependencies for VisPy
       - name: Install GUI dependencies
         run: |
-          pip install PyQt5
-          pip install pyqt5-tools  # Added missing Qt dependency
+          pip install PyQt5  # Removed pyqt5-tools to fix dependency issue
 
       # Step 4.2: Set VisPy backend
       - name: Set VisPy backend
