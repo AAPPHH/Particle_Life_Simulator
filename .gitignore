@@ -44,3 +44,6 @@ coverage.xml
 
 # Personal sandbox dictionary
 sandbox/
+profiling/profiling_results.prof
+profiling/profiling_results.txt
+profiling/profiling_visualization.png
