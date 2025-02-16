@@ -7,6 +7,7 @@ import tkinter as tk
 
 
 class GUI:
+    
     def __init__(
         self,
         window_width: int = None,
@@ -49,10 +50,11 @@ class GUI:
 
         # FPS Label
         self.fps_label = scene.Label("FPS: 0", color="white", font_size=14, anchor_x="right", anchor_y="top")
-        self.fps_label.transform = transforms.STTransform(translate=(self.window_width - 10, 10))
+        self.fps_label.transform = transforms.STTransform(translate=(self.window_width * 0.124, self.window_height * 0.86))
         self.view.add(self.fps_label)
 
         self.add_buttons()
+
 
     def add_buttons(self):
         # Dynamische Positionen basierend auf Bildschirmgröße
@@ -69,7 +71,19 @@ class GUI:
             parent=self.view.scene,
         )
 
+        self.stop_label = scene.Text(
+            "STOP",
+            color="white",
+            font_size=int(self.window_width * 0.008),
+            bold=True,
+            parent=self.view.scene,
+            pos=(self.button_x, self.button_y),
+            anchor_x="center",
+            anchor_y="center",
+        )
+
         self.canvas.events.mouse_release.connect(self.on_mouse_release)
+
 
     def on_mouse_release(self, event):
         if event.pos is not None:
@@ -84,16 +98,19 @@ class GUI:
             if button_x_min <= mouse_x <= button_x_max and button_y_min <= mouse_y <= button_y_max:
                 self.stop_simulation()
 
+
     def stop_simulation(self):
         print("Simulation stopped.")
         self.canvas.close()
         app.quit()
 
+
     def update_fps(self, fps: float) -> None:
         self.fps_label.text = f"FPS: {fps:.2f}"
         self.fps_label.transform = transforms.STTransform(
-            translate=(self.window_width * 0.068, self.window_height * 0.815)
+            translate=(self.window_width * 0.124, self.window_height * 0.86)
         )
+
 
     def draw_particles(self, particles: np.ndarray, num_particles: int) -> None:
         """
