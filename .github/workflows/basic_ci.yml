@@ -47,6 +47,10 @@ jobs:
       - name: Set VisPy backend
         run: echo "VISPY_USE_APP=pyqt5" >> $GITHUB_ENV
 
+      # Step 4.3: Ensure Python finds all modules
+      - name: Set PYTHONPATH
+        run: echo "PYTHONPATH=$GITHUB_WORKSPACE/particle_life_simulator" >> $GITHUB_ENV
+
       # Step 5: Show installed Python packages
       - name: Show installed Python packages
         run: pip list
@@ -80,23 +84,14 @@ jobs:
       - name: Set Qt Backend
         run: echo "QT_QPA_PLATFORM=offscreen" >> $GITHUB_ENV
 
-      # Step 9.3: Ensure Python finds all modules
-      - name: Set PYTHONPATH
-        run: echo "PYTHONPATH=$GITHUB_WORKSPACE/particle_life_simulator" >> $GITHUB_ENV
-
-
-      # Step 10: Run tests with pytest
-      - name: Execute tests with pytest
-        run: pytest tests/
-
-      # Step 10.1: Run all tests except profiling
+      # Step 10: Run all standard tests
       - name: Run standard tests
-        run: pytest tests/ --ignore=tests/test_profiler.py
+        run: pytest tests/ --ignore=tests/test_profiler.py --tb=long -v --maxfail=3
 
-      # Step 10.2: Run profiling tests separately
+      # Step 11: Run profiling tests separately (only on Linux)
       - name: Run profiling tests
-        run: pytest tests/test_profiler.py
-
+        if: runner.os == 'Linux'
+        run: pytest tests/test_profiler.py --tb=long -v --maxfail=3
 
   generate-diagrams:
     name: Generate Profiling Diagrams
