@@ -22,7 +22,31 @@ spec = [
 @jitclass(spec)
 class CreateParticle:
     """
-    Particle system with float-based radius and radius_sq.
+    Represents a particle system with color-based interactions.
+
+    This class manages particle attributes (positions, velocities, and colors)
+    and updates them according to various interaction rules. Interactions
+    are partially determined by an interaction matrix that encodes how
+    different colors influence each other.
+
+    Attributes:
+        num_particles (int32): Total number of particles.
+        x_max (int32): Maximum x-dimension (e.g., screen width).
+        y_max (int32): Maximum y-dimension (e.g., screen height).
+        speed_range (float32[:]): Range from which initial velocities are drawn (min, max).
+        max_speed (float32): Maximum allowed speed for any particle.
+        min_speed (float32): Minimum speed below which velocities will be corrected upward.
+        radius (float32): Radius used to determine the interaction neighborhood.
+        radius_sq (float32): The square of an effective interaction diameter (used to speed up distance checks).
+        num_colors (int32): Number of distinct colors in the system.
+        interaction_strength (float32): Scaling factor for inter-particle color-based forces.
+        color_interaction (float32[:, :]): A 2D matrix defining interaction coefficients between colors.
+        particles (float32[:, :]): Array of shape (num_particles, 5) storing particle data:
+            - [:, 0]: x-position
+            - [:, 1]: y-position
+            - [:, 2]: x-velocity
+            - [:, 3]: y-velocity
+            - [:, 4]: color index
     """
 
     def __init__(
@@ -38,6 +62,24 @@ class CreateParticle:
         interaction_strength: float = 0.1,
         radius_factor: float = 0.75,
     ):
+        """
+        Initializes the CreateParticle system and allocates memory for particles.
+
+        Args:
+            num_particles (int, optional): Number of particles to create.
+            x_max (int, optional): Maximum x-dimension.
+            y_max (int, optional): Maximum y-dimension.
+            speed_range (tuple, optional): Range for initial random velocities (min, max).
+            max_speed (float, optional): Maximum allowed speed.
+            min_speed (float, optional): Minimum allowed speed.
+            radius (float, optional): Base radius for interaction neighborhoods.
+            num_colors (int, optional): Number of distinct colors.
+            interaction_strength (float, optional): Scaling factor for color-based forces.
+            radius_factor (float, optional): Factor to scale the interaction radius.
+
+        Raises:
+            ValueError: If scaled_radius becomes too small (less than 0.01).
+        """
         self.num_particles = num_particles
         self.x_max = x_max
         self.y_max = y_max
@@ -50,6 +92,7 @@ class CreateParticle:
             scaled_radius = 0.01
         self.radius = np.float32(scaled_radius)
 
+        # The effective squared "diameter" is used for collision checks
         self.radius_sq = np.float32((2.0 * self.radius) * (2.0 * self.radius))
 
         self.num_colors = num_colors
@@ -61,7 +104,13 @@ class CreateParticle:
     def set_interaction_matrix(self, matrix: np.ndarray):
         """
         Sets a custom color interaction matrix.
-        The matrix shape must match (num_colors, num_colors).
+
+        Args:
+            matrix (np.ndarray): A 2D matrix of shape (num_colors, num_colors)
+                that specifies color interaction coefficients.
+
+        Raises:
+            ValueError: If the provided matrix does not have the shape (num_colors, num_colors).
         """
         if matrix.shape != (self.num_colors, self.num_colors):
             raise ValueError("Matrix has incorrect dimensions.")
@@ -69,7 +118,12 @@ class CreateParticle:
 
     def generate_particles(self) -> None:
         """
-        Randomly initializes particle positions, velocities, and colors.
+        Initializes each particle with random positions, velocities, and colors.
+        
+        Notes:
+            - Positions are randomly chosen in [0, x_max) for x and in [0, y_max) for y.
+            - Velocities are sampled from the provided speed_range.
+            - Colors are randomly assigned from 0 to num_colors-1.
         """
         self.particles[:, 0] = np.random.randint(
             0, self.x_max, self.num_particles
@@ -89,11 +143,12 @@ class CreateParticle:
 
     def update_positions(self):
         """
-        Performs a single update step:
-         1) Build neighbor lists
-         2) Compute influence map
-         3) Apply influence
-         4) Update final positions with collisions, wrap-around, etc.
+        Performs a single update step on all particles:
+        
+        1) Constructs neighbor lists using a grid-based approach.
+        2) Computes an influence map over the domain (based on local interactions).
+        3) Applies the influence to modify particle velocities.
+        4) Updates final positions with collision handling and wrap-around at borders.
         """
         neighbor_lists = compute_neighbors_grid(
             self.particles, self.x_max, self.y_max, self.radius
@@ -129,7 +184,10 @@ class CreateParticle:
 
     def get_positions_and_colors(self) -> np.ndarray:
         """
-        Returns positions (x, y) and color for each particle in shape (num_particles, 3).
+        Returns a view of each particle's (x, y) position and color.
+
+        Returns:
+            np.ndarray: An array of shape (num_particles, 3) where each row is (x, y, color).
         """
         return np.column_stack((
             self.particles[:, 0],
@@ -141,7 +199,21 @@ class CreateParticle:
 @njit(parallel=True)
 def compute_neighbors_grid(particles, x_max, y_max, radius):
     """
-    Creates neighbor lists based on grid cells.
+    Generates neighbor lists for each particle based on a grid partition.
+
+    Cells are sized by 2*radius. Each particle is placed in a cell
+    depending on its (x, y) coordinates. Only nearby cells (in a 3x3 region
+    around each particle's cell) are searched to find potential neighbors.
+
+    Args:
+        particles (np.ndarray): Particle array of shape (N, 5).
+        x_max (int): Maximum x-dimension (width).
+        y_max (int): Maximum y-dimension (height).
+        radius (float): The neighborhood radius.
+
+    Returns:
+        np.ndarray: A 2D array (N, max_neighbors) that stores the indices of each particle's neighbors.
+                    Unused neighbor slots are filled with -1.
     """
     num_particles = particles.shape[0]
 
@@ -160,6 +232,7 @@ def compute_neighbors_grid(particles, x_max, y_max, radius):
     grid = np.full((grid_x, grid_y, MAX_PARTICLES_PER_CELL), -1, dtype=np.int32)
     grid_counts = np.zeros((grid_x, grid_y), dtype=np.int32)
 
+    # Place particles in the appropriate grid cell
     for i in prange(num_particles):
         x = particles[i, 0]
         y = particles[i, 1]
@@ -172,7 +245,8 @@ def compute_neighbors_grid(particles, x_max, y_max, radius):
             grid[cx, cy, ccount] = i
             grid_counts[cx, cy] = ccount + 1
 
-    max_dist_sq = (2.0 * radius) ** 2 
+    # Find neighbors in adjacent cells
+    max_dist_sq = (2.0 * radius) ** 2
 
     for i in prange(num_particles):
         x = particles[i, 0]
@@ -203,7 +277,25 @@ def compute_neighbors_grid(particles, x_max, y_max, radius):
 def compute_influence_map(particles, interaction_matrix, neighbor_lists,
                           influence_scale, x_max, y_max, grid_size=100):
     """
-    Builds a 2D influence map of shape (grid_size, grid_size, 2).
+    Computes a coarse "influence map" over a grid of size (grid_size x grid_size).
+
+    Influence is calculated by summing interaction forces between each
+    particle and its neighbors in a small local region. The map is used to
+    guide velocity adjustments in a subsequent step.
+
+    Args:
+        particles (np.ndarray): Array of shape (N, 5) containing particle data.
+        interaction_matrix (np.ndarray): The color interaction matrix (num_colors x num_colors).
+        neighbor_lists (np.ndarray): A 2D array of neighbor indices for each particle.
+        influence_scale (float): The spatial scaling for the influence grid cells.
+        x_max (int): Maximum x-dimension (width).
+        y_max (int): Maximum y-dimension (height).
+        grid_size (int, optional): The resolution of the influence map.
+
+    Returns:
+        np.ndarray: A float32 3D array (grid_size, grid_size, 2), where
+                    [:, :, 0] is the x-influence component and
+                    [:, :, 1] is the y-influence component.
     """
     num_particles = particles.shape[0]
     influence_map = np.zeros((grid_size, grid_size, 2), dtype=np.float32)
@@ -222,7 +314,7 @@ def compute_influence_map(particles, interaction_matrix, neighbor_lists,
             x2, y2, _, _, color2 = particles[j]
             dx = x2 - x
             dy = y2 - y
-            dist_sq = dx * dx + dy * dy
+            dist_sq = dx*dx + dy*dy
             if dist_sq < (influence_scale * influence_scale) and dist_sq > 1e-5:
                 dist = math.sqrt(dist_sq)
                 inv_dist = 1.0 / dist
@@ -241,7 +333,16 @@ def compute_influence_map(particles, interaction_matrix, neighbor_lists,
 @njit(parallel=True, fastmath=True)
 def apply_influence(particles, influence_map, influence_scale, max_speed):
     """
-    Adjusts each particle's velocity based on the local influence map cell.
+    Adjusts each particle's velocity based on the local influence map.
+
+    Args:
+        particles (np.ndarray): Array of shape (N, 5) containing particle data.
+        influence_map (np.ndarray): The influence map from `compute_influence_map()`.
+        influence_scale (float): Cell size for accessing the map.
+        max_speed (float): Maximum allowed speed for any particle.
+
+    Returns:
+        np.ndarray: The modified `particles` array with updated velocities.
     """
     num_particles = particles.shape[0]
 
@@ -285,8 +386,27 @@ def update_positions_numba(
     neighbor_lists,
 ):
     """
-    Performs the final position update for all particles, including
-    color-based forces, velocity limiting, wrap-around, and collision handling.
+    Finalizes the update of particle positions and velocities, including:
+    - Color-based force application.
+    - Speed limiting.
+    - Wrap-around at the domain edges.
+    - Collision handling (pushing particles apart if overlapping).
+
+    Args:
+        particles (np.ndarray): Particle data array of shape (N, 5).
+        num_particles (int): Total number of particles.
+        x_max (int): Maximum x-dimension (width).
+        y_max (int): Maximum y-dimension (height).
+        radius (float): Interaction radius for collisions.
+        radius_sq (float): Square of the collision interaction diameter.
+        interaction_matrix (np.ndarray): Color interaction coefficients.
+        interaction_strength (float): Global scaling for interaction forces.
+        max_speed (float): Maximum velocity magnitude.
+        min_speed (float): Minimum velocity magnitude.
+        neighbor_lists (np.ndarray): Neighbor indices for each particle.
+
+    Returns:
+        np.ndarray: Updated `particles` array after applying interactions and constraints.
     """
     for i in prange(num_particles):
         x, y, vx, vy, color = particles[i]
@@ -303,13 +423,16 @@ def update_positions_numba(
         x_new = x + vx
         y_new = y + vy
 
+        # Wrap-around
         x_new %= x_max
         y_new %= y_max
 
+        # Collision handling
         x_new, y_new = handle_collisions(
             i, x_new, y_new, radius, radius_sq, particles, neighbor_lists
         )
 
+        # Wrap-around again after collision adjustments
         x_new %= x_max
         y_new %= y_max
 
@@ -325,8 +448,22 @@ def update_positions_numba(
 def compute_forces_with_neighbors(idx, particles, neighbor_lists,
                                   interaction_matrix, interaction_strength, radius_sq):
     """
-    Same logic as compute_forces, but only over neighbor_lists.
-    This saves iterating again over all particles and redundant distance computations.
+    Computes the net force on a given particle from its neighbors.
+
+    The force is calculated based on color interactions and distance,
+    scaled by `interaction_strength`. Only particles within `neighbor_lists[idx]`
+    are considered, significantly reducing complexity.
+
+    Args:
+        idx (int): Index of the particle for which to compute the force.
+        particles (np.ndarray): Particle data array of shape (N, 5).
+        neighbor_lists (np.ndarray): Array of neighbor indices for each particle.
+        interaction_matrix (np.ndarray): Color interaction matrix (num_colors x num_colors).
+        interaction_strength (float): Global scale for color forces.
+        radius_sq (float): Squared diameter for collision/interaction checks.
+
+    Returns:
+        Tuple[float, float]: (fx, fy), the total force in x and y directions on the particle.
     """
     fx, fy = 0.0, 0.0
     x, y, _, _, color = particles[idx]
@@ -354,7 +491,16 @@ def compute_forces_with_neighbors(idx, particles, neighbor_lists,
 @njit(fastmath=True)
 def limit_speed(vx, vy, max_speed, min_speed):
     """
-    Keeps velocity between min_speed and max_speed.
+    Clamps the speed of a velocity vector to be within [min_speed, max_speed].
+
+    Args:
+        vx (float): Velocity in x-direction.
+        vy (float): Velocity in y-direction.
+        max_speed (float): Maximum speed allowed.
+        min_speed (float): Minimum speed allowed.
+
+    Returns:
+        Tuple[float, float]: (vx, vy), the corrected velocity.
     """
     speed = math.sqrt(vx * vx + vy * vy)
     if speed > max_speed:
@@ -368,7 +514,22 @@ def limit_speed(vx, vy, max_speed, min_speed):
 @njit(fastmath=True)
 def handle_collisions(i, x_new, y_new, radius, radius_sq, particles, neighbor_lists):
     """
-    Resolves collisions by shifting particle i away from overlapping neighbors.
+    Resolves collisions by pushing overlapping particles apart.
+
+    For the particle at index `i`, checks all neighbors in `neighbor_lists[i]`
+    and adjusts the new position (x_new, y_new) to avoid overlap.
+
+    Args:
+        i (int): Index of the current particle.
+        x_new (float): Proposed new x-position for this particle.
+        y_new (float): Proposed new y-position for this particle.
+        radius (float): Particle collision radius.
+        radius_sq (float): Squared collision diameter for overlap checks.
+        particles (np.ndarray): Array of particle data.
+        neighbor_lists (np.ndarray): Array of neighbor indices for each particle.
+
+    Returns:
+        Tuple[float, float]: (x_corr, y_corr), the potentially corrected position.
     """
     for j in neighbor_lists[i]:
         if j == -1:
